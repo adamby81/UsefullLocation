@@ -1,0 +1,84 @@
+package com.example.adam.myusefulllocations.Util;
+
+public class PlaceOfInterest {
+
+    private int _id;
+    private String address;
+    private double latitude;
+    private double longitude;
+    private String name;
+    private String photoUrl;
+
+
+    //TODO NEEDS TO CHANGE ALL DB AND LOCATION CLASSES ACCORDING THE NEW COLUMNS!!9חח
+
+
+    public PlaceOfInterest(String address, double latitude, double longitude, String name, String photoUrl) {
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+        this.photoUrl = photoUrl;
+    }
+
+    public PlaceOfInterest(int _id, String address, long latitude, long longitude, String name, String photoUrl) {
+        this._id = _id;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+        this.photoUrl = photoUrl;
+    }
+
+    public PlaceOfInterest(){
+
+    }
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+}

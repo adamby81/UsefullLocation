@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">My Usefull Locations</string>
+    <string name="title_search">Search</string>
+    <string name="title_map">Map</string>
+    <string name="title_favorites">Favorites</string>
+    <string name="title_home">Home</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_where_I_am">Where am I?</string>
+    <string name="title_my_location">My Location</string>
+    <string name="action_share">Share Location</string>
+    <string name="title_activity_maps_fragment">Map</string>
+    <string name="usbCharge_Toast">USB Charger Plugged in</string>
+    <string name="acCharge_Toast">AC Charger Plugged in</string>
+    <string name="lat_view_text">Latitude: </string>
+    <string name="long_view_text">Longitude: </string>
+    <string name="acc_view_text">Accuracy: </string>
+    <string name="altitude_view_text">Altitude: </string>
+    <string name="address_view_text">Address: \n 123 FAKE STREET \n FAKE TOWN \n FAKE COUNTRY</string>
+    <string name="my_current_location">My Current Location</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_maps_bbbb">Map</string>
+    <string name="newLocation">Add A New Location</string>
+    <string name="address_title">Address:</string>
+    <string name="full_address_View">Country, City, Street</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude:</string>
+    <string name="altitude">Altitude:</string>
+    <string name="cancel">CANCEL</string>
+    <string name="ok">DELETE</string>
+    <string name="sure_text">You Are About to Delete the Location From your Favorites Location, Are You Sure ?</string>
+    <string name="tab1_TEXT_SEARCH">SEARCH BY TEXT</string>
+    <string name="tab2_LOCATION">SEARCH NEARBY</string>
+    <string name="search_hint">Search</string>
+    <string name="name">Name:</string>
+</resources>
