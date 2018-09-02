@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
+            //v-1 testing changes on git
             @Override
             public void onLocationChanged(Location location) {
 
