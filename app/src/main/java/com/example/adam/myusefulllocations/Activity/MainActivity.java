@@ -27,7 +27,6 @@ import android.widget.TextView;
 import com.example.adam.myusefulllocations.Data.CurrentLocation;
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
 import com.example.adam.myusefulllocations.Fragment.MapsActivity;
-import com.example.adam.myusefulllocations.Fragment.SearchFragment;
 import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
@@ -186,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
-        loadFragment(new SearchFragment());
+        loadFragment(new ItemSearchFragment());
 
             // רכיב טעינה
         receiver = new PowerConnectionReceiver();
@@ -286,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
 
             case R.id.navigation_search_ID:
-                fragment = new SearchFragment();
+                fragment = new ItemSearchFragment();
                 break;
             case R.id.navigation_map_ID:
                fragment = new MapsActivity();

@@ -16,6 +16,7 @@ import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent.DummyItem
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class ItemSearchFragment extends Fragment {
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     private List<PlaceOfInterest> placeOfInterestList;
-    private List<PlaceOfInterest> ListPlaceOfInterests;
+    private List<PlaceOfInterest> listPlaceOfInterests;
     private DatabaseHandler db;
 
     private MyItemRecyclerViewAdapter myItemRecyclerViewAdapter;
@@ -66,10 +67,17 @@ public class ItemSearchFragment extends Fragment {
         }
     }
 
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_item_list, container, false);
+
+        placeOfInterestList = new ArrayList<>();
+        listPlaceOfInterests = new ArrayList<>();
+
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -77,6 +85,22 @@ public class ItemSearchFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
             view = view.findViewById(R.id.search_recyclerView_ID);
             ((RecyclerView) view).setHasFixedSize(true);
+            placeOfInterestList = db.getAllLocations();
+
+            for (PlaceOfInterest p: placeOfInterestList) {
+
+                PlaceOfInterest place = new PlaceOfInterest();
+
+                place.set_id(p.get_id());
+                place.setName(p.getName());
+                place.setAddress(p.getAddress());
+                place.setLatitude(p.getLatitude());
+                place.setLongitude(p.getLongitude());
+                place.setPhotoUrl(p.getPhotoUrl());
+
+                listPlaceOfInterests.add(place);
+
+            }
 
 
             if (mColumnCount <= 1) {
