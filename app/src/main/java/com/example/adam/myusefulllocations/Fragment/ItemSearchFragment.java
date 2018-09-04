@@ -1,21 +1,23 @@
 package com.example.adam.myusefulllocations.Fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
+import com.example.adam.myusefulllocations.Data.CurrentLocation;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
-import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent;
 import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent.DummyItem;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,8 +31,11 @@ public class ItemSearchFragment extends Fragment {
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     private List<PlaceOfInterest> placeOfInterestList;
-    private List<PlaceOfInterest> ListPlaceOfInterests;
+    private List<PlaceOfInterest> listPlaceOfInterests;
     private DatabaseHandler db;
+    CurrentLocation currentLocation = null;
+    private EditText search;
+
 
     private MyItemRecyclerViewAdapter myItemRecyclerViewAdapter;
 
@@ -49,11 +54,13 @@ public class ItemSearchFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemSearchFragment newInstance(int columnCount) {
+    public ItemSearchFragment newInstance(int columnCount) {
         ItemSearchFragment fragment = new ItemSearchFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
+        // get current Location from MainActivity:
+            Bundle bundle =  getArguments();
+            double latitude = bundle.getDouble("latitude");
+            double longitude = bundle.getDouble("longitude");
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -66,25 +73,64 @@ public class ItemSearchFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onAttach(Activity context) {
+        super.onAttach(context);
+
+        currentLocation = (CurrentLocation) context;
+
+        //currentLocation.currentLocation();
+
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_search_item_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
+
+        placeOfInterestList = new ArrayList<>();
+        listPlaceOfInterests = new ArrayList<>();
 
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             view = view.findViewById(R.id.search_recyclerView_ID);
-            ((RecyclerView) view).setHasFixedSize(true);
+//            ((RecyclerView) view).setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            // get current Location from MainActivity:
+            Bundle bundle =  getArguments();
+            if (bundle != null) {
+                double latitude = bundle.getDouble("latitude");
+                double longitude = bundle.getDouble("longitude");
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+//            if (db.getAllLocations().size() > 0) {
+//                placeOfInterestList = db.getAllLocations();
+//
+//                for (PlaceOfInterest p : placeOfInterestList) {
+//
+//                    PlaceOfInterest place = new PlaceOfInterest();
+//
+//                    place.set_id(p.get_id());
+//                    place.setName(p.getName());
+//                    place.setAddress(p.getAddress());
+//                    place.setLatitude(p.getLatitude());
+//                    place.setLongitude(p.getLongitude());
+//                    place.setPhotoUrl(p.getPhotoUrl());
+//
+//                    listPlaceOfInterests.add(place);
+//
+//                }
+//            } else{
+//
+//                Log.e("DB content", "NO CONTENT TO RETRIVE FROM DB");
+//
+//            }
+
+
         }
         return view;
     }

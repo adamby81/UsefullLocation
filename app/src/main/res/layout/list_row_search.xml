@@ -34,6 +34,7 @@
                 android:id="@+id/address_title_row_search_ID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="5dp"
                 android:layout_below="@+id/name_row_search_ID"
                 android:text="@string/address_title"
                 android:textSize="14sp" />
@@ -46,8 +47,16 @@
                 android:paddingTop="5dp"
                 android:text="@string/full_address_View"
                 android:textSize="14sp" />
+            <TextView
+                android:id="@+id/distance_row_search_ID"
+                android:layout_below="@id/address_Full_row_search_ID"
+                android:textSize="12sp"
+                android:paddingTop="5dp"
+                android:text="@string/distance_search_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="194dp"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/address_Full_row_search_ID"
@@ -55,7 +64,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="165dp"
                 android:orientation="horizontal"
-                android:paddingLeft="10dp"
                 tools:ignore="NotSibling">
 
                 <ImageView
@@ -63,9 +71,10 @@
                     android:layout_width="183dp"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    app:srcCompat="@drawable/no_image_available" />
+                    app:srcCompat="@drawable/no_image_available"
+                    tools:ignore="ObsoleteLayoutParam" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

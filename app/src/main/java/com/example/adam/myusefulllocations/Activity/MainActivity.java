@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -17,20 +18,22 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.adam.myusefulllocations.Data.CurrentLocation;
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
 import com.example.adam.myusefulllocations.Fragment.MapsActivity;
-import com.example.adam.myusefulllocations.Fragment.SearchFragment;
 import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
+import com.google.android.gms.maps.GoogleMap;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,9 +41,14 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener
-        , DataPassListene, CurrentLocation, ItemSearchFragment.OnListFragmentInteractionListener {
+        , DataPassListener, CurrentLocation, ItemSearchFragment.OnListFragmentInteractionListener {
 
 
+    FragmentTransaction fragmentTransaction;
+    FrameLayout frameLayoutSearch, frameLayoutMap;
+    GoogleMap mMap;
+    MapsActivity myMapFragment;
+    ItemSearchFragment itemSearchFragment;
 
     public String address;
     public static double latitude;
@@ -51,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements
     PowerConnectionReceiver receiver;
 
 
-        LocationManager locationManager;
-        LocationListener locationListener;
+       static LocationManager locationManager;
+       static LocationListener locationListener;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -107,10 +115,8 @@ public class MainActivity extends AppCompatActivity implements
 
                 address = "Address: " + "\n";
                 if (listAddresses.get(0).getSubThoroughfare() != null) {
-
                     // רחוב
                     address += listAddresses.get(0).getSubThoroughfare() + " ";
-
                 }
 
                 if (listAddresses.get(0).getThoroughfare() != null) {
@@ -122,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements
                 if (listAddresses.get(0).getLocality() != null) {
                     // עיר
                     address += listAddresses.get(0).getLocality() + ", ";
-
                 }
                 if (listAddresses.get(0).getPostalCode() != null) {
                     // תיבת דואר
@@ -181,12 +186,52 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
 
+        // fragments handeling - landScape
+
+        ItemSearchFragment itemSearchFragment = new ItemSearchFragment();
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+
+            fragmentTransaction.add(R.id.fragment_container_main, itemSearchFragment);
+            fragmentTransaction.commit();
+            BottomNavigationView navigation = findViewById(R.id.navigation);
+            navigation.setOnNavigationItemSelectedListener(this);
+
+        }else {
+
+            frameLayoutSearch = findViewById(R.id.fragment_container_search);
+            frameLayoutMap = findViewById(R.id.fragment_container_map);
+            frameLayoutMap.removeAllViews();
+            frameLayoutSearch.removeAllViews();
+
+            myMapFragment = new MapsActivity();
+            fragmentTransaction.add(R.id.fragment_container_search, itemSearchFragment);
+            fragmentTransaction.add(R.id.fragment_container_map, myMapFragment);
+            fragmentTransaction.commit();
+
+            Bundle bundleMapsAndSearch = new Bundle();
+            bundleMapsAndSearch.putDouble("latitude", latitude);
+            bundleMapsAndSearch.putDouble("longitude", longitude);
+            bundleMapsAndSearch.putString("address", address);
+
+            myMapFragment.setArguments(bundleMapsAndSearch);
+            itemSearchFragment.setArguments(bundleMapsAndSearch);
+
+        }
+
+        if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
 
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(this);
 
-        loadFragment(new SearchFragment());
+        }else {
+
+
+        }
+
+//        BottomNavigationView navigation = findViewById(R.id.navigation);
+//        navigation.setOnNavigationItemSelectedListener(this);
+
+     //   loadFragment(new ItemSearchFragment());
 
             // רכיב טעינה
         receiver = new PowerConnectionReceiver();
@@ -197,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
+            //v-1 testing changes on git
             @Override
             public void onLocationChanged(Location location) {
 
@@ -266,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
+                    .replace(R.id.fragment_container_main, fragment)
                     .commit();
 
 
@@ -285,20 +331,28 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
 
             case R.id.navigation_search_ID:
-                fragment = new SearchFragment();
+                fragment = new ItemSearchFragment();
+
+                Bundle bundleSearch = new Bundle();
+                bundleSearch.putDouble("latitude", latitude);
+                bundleSearch.putDouble("longitude", longitude);
+
+                fragment.setArguments(bundleSearch);
+
                 break;
+
             case R.id.navigation_map_ID:
                fragment = new MapsActivity();
 
-                Bundle bundle = new Bundle();
-                bundle.putDouble("latitude", latitude);
-                bundle.putDouble("longitude", longitude);
-                bundle.putString("address", address);
+                Bundle bundleMaps = new Bundle();
+                bundleMaps.putDouble("latitude", latitude);
+                bundleMaps.putDouble("longitude", longitude);
+                bundleMaps.putString("address", address);
 
+                fragment.setArguments(bundleMaps);
 
-
-                fragment.setArguments(bundle);
                 break;
+
             case R.id.navigation_favorites_ID:
                 loadFavoritesActivity(item);
                 break;
@@ -319,15 +373,12 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public void currentLocation(long lat, long lon, String currentAddress) {
+    public void currentLocation(double lat, double lon, String currentAddress) {
 
 
-//        lat = latitude;
-//        lng = longitude;
-//        alt = altitude;
-//        currentAddress = address;
-
-
+        lat = latitude;
+        lon = longitude;
+        currentAddress = address;
 
     }
 
@@ -422,6 +473,15 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
+
+    @Override
+    public void passDataMyLocation(double lat, double lng, String address) {
+
+
+
+
 
     }
 }

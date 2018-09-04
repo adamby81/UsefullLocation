@@ -3,6 +3,7 @@ package com.example.adam.myusefulllocations.Util;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.adam.myusefulllocations.Data.CurrentLocation;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -17,12 +18,16 @@ import java.io.IOException;
 
 import static android.content.ContentValues.TAG;
 
-public class SearchJsonAsyncTask extends AsyncTask {
+public class SearchJsonAsyncTask extends AsyncTask implements CurrentLocation {
 
 
     public String name, fullAddress, placePhoto;
     public double lat;
     public double lng;
+    public double myDistance;
+    double currentLat;
+    double currentLng;
+
 
     public DatabaseHandler db;
 
@@ -74,6 +79,9 @@ public class SearchJsonAsyncTask extends AsyncTask {
                             name = jsonObject.getString("name");
                             fullAddress = jsonObject.getString("formatted_address");
 
+                            myDistance = distance(currentLat, currentLng, lat, lng);
+
+
                             // לשאול את רואי איך הוא השתמש ב- distance
 
                             // להשתמש ב- URI
@@ -84,7 +92,7 @@ public class SearchJsonAsyncTask extends AsyncTask {
 
                             }
 
-                            PlaceOfInterest placeOfInterest = new PlaceOfInterest(fullAddress, lat, lng, name, placePhoto);
+                            PlaceOfInterest placeOfInterest = new PlaceOfInterest(fullAddress, lat, lng, name, placePhoto, distance(currentLat, currentLng, lat, lng));
 
 
                             db.addPlace(placeOfInterest);
@@ -103,8 +111,43 @@ public class SearchJsonAsyncTask extends AsyncTask {
 
     }
 
+    private double distance (double myLat, double myLng, double placeLat, double placeLng) {
+
+        double radiusMyLat = Math.PI * myLat / 180;
+        double radiusPlaceLat = Math.PI * placeLng / 180;
+        double delta = myLng - placeLng;
+        double radiusDelta = Math.PI * delta / 180;
+
+        double fixedDistance = Math.sin(radiusMyLat) * Math.sin(radiusPlaceLat)
+                + Math.cos(radiusMyLat) * Math.cos(radiusPlaceLat)
+                * Math.cos(radiusDelta);
+        if (fixedDistance > 1) {
+
+            fixedDistance = 1;
+
+        }
+
+        fixedDistance = Math.acos(fixedDistance);
+        fixedDistance = fixedDistance * 180 / Math.PI;
+        fixedDistance = fixedDistance * 60 * 1.1515;
+        fixedDistance = 1.609334;
+        return fixedDistance;
+
+
+
+    }
+
     @Override
     protected Object doInBackground(Object[] objects) {
         return null;
+    }
+
+    @Override
+    public void currentLocation(double lat, double lon, String currentAddress) {
+
+        currentLat = lat;
+        currentLng = lon;
+
+
     }
 }

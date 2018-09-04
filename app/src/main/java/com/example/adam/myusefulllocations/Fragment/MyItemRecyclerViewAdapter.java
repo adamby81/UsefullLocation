@@ -1,14 +1,17 @@
 package com.example.adam.myusefulllocations.Fragment;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment.OnListFragmentInteractionListener;
 import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent.DummyItem;
 import com.example.adam.myusefulllocations.R;
+import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 
 import java.util.List;
 
@@ -19,26 +22,37 @@ import java.util.List;
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    private List<PlaceOfInterest> placeOfInterestList;
+
+    private Context context;
+
+
+
+// here was a DummyItem list as content
+    public MyItemRecyclerViewAdapter(Context cxt, List<PlaceOfInterest> placesList, OnListFragmentInteractionListener listener) {
+        placeOfInterestList = placesList;
+        context = cxt;
         mListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_item, parent, false);
+                .inflate(R.layout.list_row_search, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+
+        PlaceOfInterest place = placeOfInterestList.get(position);
+
+        holder.name.setText(place.getName());
+        holder.address.setText(place.getAddress());
+        //holder.photo.setImageBitmap();
+        holder.distance.setText((int) place.getDistance());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +60,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                   // mListener.onListFragmentInteraction(holder.m);
                 }
             }
         });
@@ -54,25 +68,29 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return placeOfInterestList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public View mView;
+        public TextView address;
+        public TextView name;
+        public TextView distance;
+        public ImageView photo;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            name = (TextView) view.findViewById(R.id.name_row_search_ID);
+            address = (TextView) view.findViewById(R.id.address_Full_row_search_ID);
+            distance = (TextView) view.findViewById(R.id.distance_row_search_ID);
+            photo = view.findViewById(R.id.imageView_row_search_ID);
+
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }
+//        @Override
+//        public String toString() {
+//            return super.toString() + " '" + mContentView.getText() + "'";
+//        }
     }
 }

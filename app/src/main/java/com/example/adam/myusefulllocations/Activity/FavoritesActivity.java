@@ -57,13 +57,10 @@ public class FavoritesActivity extends AppCompatActivity implements GlogalValues
         setContentView(R.layout.activity_favorites);
 
 
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.SEND_SMS)!= PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(FavoritesActivity.this, new String[]{Manifest.permission.SEND_SMS}, 100);
 
         }
-
-
-
 
 
         db = new DatabaseHandler(this);
@@ -74,29 +71,33 @@ public class FavoritesActivity extends AppCompatActivity implements GlogalValues
         placeOfInterestList = new ArrayList<>();
         listPlaceOfInterests = new ArrayList<>();
 
-       // countView = findViewById(R.id.count_View_ID);
-
+        // countView = findViewById(R.id.count_View_ID);
 
 
         // Get tasks from the db
 
         placeOfInterestList = db.getAllLocations();
 
-        for (PlaceOfInterest c: placeOfInterestList) {
-            PlaceOfInterest placeOfInterest = new PlaceOfInterest();
-            placeOfInterest.setAddress(c.getAddress());
-            placeOfInterest.setLatitude(c.getLatitude());
-            placeOfInterest.setLongitude(c.getLongitude());
-            placeOfInterest.setName(c.getName());
-            placeOfInterest.setPhotoUrl(c.getPhotoUrl());
-            placeOfInterest.set_id(c.get_id());
+        if (placeOfInterestList.size() > 0) {
+
+            for (PlaceOfInterest c : placeOfInterestList) {
+                PlaceOfInterest placeOfInterest = new PlaceOfInterest();
+                placeOfInterest.setAddress(c.getAddress());
+                placeOfInterest.setLatitude(c.getLatitude());
+                placeOfInterest.setLongitude(c.getLongitude());
+                placeOfInterest.setName(c.getName());
+                placeOfInterest.setPhotoUrl(c.getPhotoUrl());
+                placeOfInterest.set_id(c.get_id());
+
+                listPlaceOfInterests.add(placeOfInterest);
+            }
+
+        } else {
 
 
 
-
-
-            listPlaceOfInterests.add(placeOfInterest);
         }
+
 
         recyclerViewAdapterFav = new RecyclerViewAdapterFav(this, listPlaceOfInterests);
         recyclerView.setAdapter(recyclerViewAdapterFav);

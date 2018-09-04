@@ -14,7 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.adam.myusefulllocations.Data.DataPassListener;
+import com.example.adam.myusefulllocations.Activity.DataPassListener;
+import com.example.adam.myusefulllocations.Data.DataPassListen;
 import com.example.adam.myusefulllocations.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,7 +26,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends Fragment implements DataPassListener {
+public class MapsActivity extends Fragment implements DataPassListener,DataPassListen, OnMapReadyCallback {
     MapView mMapView;
     private GoogleMap googleMap;
 
@@ -56,11 +57,12 @@ public class MapsActivity extends Fragment implements DataPassListener {
 
 
         Bundle bundle =  getArguments();
-        final double latitude = bundle.getDouble("latitude");
-        final double longitude = bundle.getDouble("longitude");
-        double altitude = bundle.getDouble("altitude");
 
-        final String address = bundle.getString("address");
+
+            final double latitude = bundle.getDouble("latitude");
+            final double longitude = bundle.getDouble("longitude");
+
+            final String address = bundle.getString("address");
 
 
 
@@ -74,7 +76,7 @@ public class MapsActivity extends Fragment implements DataPassListener {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
-                Context context = getContext()==null?getContext():null;
+                Context context = getContext();
 
                 // we will need to use ReceiveFragment.this in the permission requests!!
                 if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -138,6 +140,16 @@ public class MapsActivity extends Fragment implements DataPassListener {
 
     @Override
     public void positionRowPass(int position) {
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
+
+    @Override
+    public void passDataMyLocation(double lat, double lng, String address) {
 
     }
 

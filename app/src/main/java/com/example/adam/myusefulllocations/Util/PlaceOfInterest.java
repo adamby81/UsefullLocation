@@ -8,30 +8,42 @@ public class PlaceOfInterest {
     private double longitude;
     private String name;
     private String photoUrl;
+    private double distance;
 
 
     //TODO NEEDS TO CHANGE ALL DB AND LOCATION CLASSES ACCORDING THE NEW COLUMNS!!9חח
 
 
-    public PlaceOfInterest(String address, double latitude, double longitude, String name, String photoUrl) {
+    public PlaceOfInterest(String address, double latitude, double longitude, String name, String photoUrl, double distance) {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
         this.photoUrl = photoUrl;
+        this.distance = distance;
     }
 
-    public PlaceOfInterest(int _id, String address, long latitude, long longitude, String name, String photoUrl) {
+    public PlaceOfInterest(int _id, String address, long latitude, long longitude, String name, String photoUrl, double distance) {
         this._id = _id;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
         this.photoUrl = photoUrl;
+        this.distance = distance;
+
     }
 
     public PlaceOfInterest(){
 
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public int get_id() {
