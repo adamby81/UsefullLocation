@@ -9,12 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 
 import com.example.adam.myusefulllocations.Data.CurrentLocation;
-import com.example.adam.myusefulllocations.Data.DatabaseHandler;
-import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent.DummyItem;
+import com.example.adam.myusefulllocations.Data.FavDatabaseHandler;
 import com.example.adam.myusefulllocations.R;
+import com.example.adam.myusefulllocations.UI.MyItemRecyclerViewAdapter;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 
 import java.util.ArrayList;
@@ -32,9 +32,11 @@ public class ItemSearchFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private List<PlaceOfInterest> placeOfInterestList;
     private List<PlaceOfInterest> listPlaceOfInterests;
-    private DatabaseHandler db;
+
+    private List<PlaceOfInterest> searchList;
+    private FavDatabaseHandler db;
     CurrentLocation currentLocation = null;
-    private EditText search;
+    private AutoCompleteTextView search;
 
 
     private MyItemRecyclerViewAdapter myItemRecyclerViewAdapter;
@@ -74,16 +76,7 @@ public class ItemSearchFragment extends Fragment {
     }
 
 
-    @Override
-    public void onAttach(Activity context) {
-        super.onAttach(context);
 
-        currentLocation = (CurrentLocation) context;
-
-        //currentLocation.currentLocation();
-
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,6 +86,12 @@ public class ItemSearchFragment extends Fragment {
         placeOfInterestList = new ArrayList<>();
         listPlaceOfInterests = new ArrayList<>();
 
+        searchList = new ArrayList<>();
+
+        search = view.findViewById(R.id.search_Bar_ID);
+
+        if (search != null){
+
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -101,12 +100,7 @@ public class ItemSearchFragment extends Fragment {
 //            ((RecyclerView) view).setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            // get current Location from MainActivity:
-            Bundle bundle =  getArguments();
-            if (bundle != null) {
-                double latitude = bundle.getDouble("latitude");
-                double longitude = bundle.getDouble("longitude");
-            }
+
 //            if (db.getAllLocations().size() > 0) {
 //                placeOfInterestList = db.getAllLocations();
 //
@@ -129,7 +123,12 @@ public class ItemSearchFragment extends Fragment {
 //                Log.e("DB content", "NO CONTENT TO RETRIVE FROM DB");
 //
 //            }
+        }else{
 
+            //TODO: Needs to create a message that says "ENTER A KEY WORD FOR SEARCHING
+
+
+        }
 
         }
         return view;
@@ -137,7 +136,7 @@ public class ItemSearchFragment extends Fragment {
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Activity context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
@@ -164,7 +163,9 @@ public class ItemSearchFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
+        void onListFragmentInteraction(ItemSearchFragment item);
+
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(PlaceOfInterest item);
     }
 }

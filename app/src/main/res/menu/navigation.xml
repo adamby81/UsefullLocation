@@ -12,8 +12,6 @@
     <item
         android:id="@+id/navigation_favorites_ID"
         android:icon="@android:drawable/btn_star_big_on"
-        android:onClick="loadFavoritesActivity"
-        tools:ignore="OnClick"
         android:title="@string/title_favorites" />
     <item
         android:id="@+id/navigation_map_ID"

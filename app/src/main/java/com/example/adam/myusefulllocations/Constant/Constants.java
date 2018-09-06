@@ -22,6 +22,7 @@ public class Constants {
     public static final String KEY_LOCATION_ID = "_id";
     public static final String KEY_LOCATION_ADDRESS = "address";
     public static final String KEY_LOCATION_NAME = "name";
+    public static final String KEY_LOCATION_DISTANCE = "distance";
     public static final String KEY_LOCATION_IMAGE = "image";
 
     public static final String KEY_LOCATION_LATITUDE = "latitude";

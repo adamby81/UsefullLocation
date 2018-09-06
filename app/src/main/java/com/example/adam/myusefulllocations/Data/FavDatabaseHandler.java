@@ -13,11 +13,11 @@ import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+public class FavDatabaseHandler extends SQLiteOpenHelper {
 
     private String[] queryLocationList;
     private Context ctx;
-    public DatabaseHandler(Context context) {
+    public FavDatabaseHandler(Context context) {
         super(context, Constants.DB_NAME, null, Constants.DB_VERSION );
 
         this.ctx = context;
@@ -32,6 +32,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + Constants.KEY_LOCATION_ID + " INTEGER PRIMARY KEY, "
                 + Constants.KEY_LOCATION_ADDRESS + " TEXT,"
                 + Constants.KEY_LOCATION_NAME + " TEXT,"
+                + Constants.KEY_LOCATION_DISTANCE + "TEXT, "
                 + Constants.KEY_LOCATION_IMAGE + " TEXT,"
                 + Constants.KEY_LOCATION_LATITUDE + " LONG,"
                 + Constants.KEY_LOCATION_LONGITUDE + " LONG);";
@@ -69,11 +70,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-
+        values.put(Constants.KEY_LOCATION_NAME,placeOfInterest.getName());
         values.put(Constants.KEY_LOCATION_ADDRESS, placeOfInterest.getAddress());
         values.put(Constants.KEY_LOCATION_LATITUDE, placeOfInterest.getLatitude());
         values.put(Constants.KEY_LOCATION_LONGITUDE, placeOfInterest.getLongitude());
-        values.put(Constants.KEY_LOCATION_NAME,placeOfInterest.getName());
+        values.put(Constants.KEY_LOCATION_DISTANCE,placeOfInterest.getDistance());
         values.put(Constants.KEY_LOCATION_IMAGE,placeOfInterest.getPhotoUrl());
 
 
@@ -93,6 +94,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.query(Constants.TABLE_NAME_LOCATION, new String[] {
                         Constants.KEY_LOCATION_ID, Constants.KEY_LOCATION_ADDRESS, Constants.KEY_LOCATION_LATITUDE,
                         Constants.KEY_LOCATION_LONGITUDE, Constants.KEY_LOCATION_NAME,
+                        Constants.KEY_LOCATION_DISTANCE,
                         Constants.KEY_LOCATION_IMAGE},
                 Constants.KEY_LOCATION_ID + "=?",
                 new String [] {String.valueOf(id)}, null, null, null, null);
@@ -103,8 +105,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         PlaceOfInterest placeOfInterest = new PlaceOfInterest();
         placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_ID))));
         placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_ADDRESS)));
-        placeOfInterest.setLatitude(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LATITUDE))));
-        placeOfInterest.setLongitude(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LONGITUDE))));
+        placeOfInterest.setLatitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LATITUDE))));
+        placeOfInterest.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LONGITUDE))));
+        placeOfInterest.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_DISTANCE))));
         placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_NAME)));
         placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_IMAGE)));
 
@@ -127,6 +130,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 Constants.KEY_LOCATION_ID,
                 Constants.KEY_LOCATION_ADDRESS, Constants.KEY_LOCATION_LATITUDE,
                 Constants.KEY_LOCATION_LONGITUDE, Constants.KEY_LOCATION_NAME,
+                Constants.KEY_LOCATION_DISTANCE,
                 Constants.KEY_LOCATION_IMAGE};
 
         Cursor cursor = db.query(Constants.TABLE_NAME_LOCATION, queryLocationList,
@@ -138,8 +142,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 PlaceOfInterest placeOfInterest = new PlaceOfInterest();
                 placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_ID))));
                 placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_ADDRESS)));
-                placeOfInterest.setLatitude(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LATITUDE))));
-                placeOfInterest.setLongitude(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LONGITUDE))));
+                placeOfInterest.setLatitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LATITUDE))));
+                placeOfInterest.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LONGITUDE))));
+                placeOfInterest.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_DISTANCE))));
                 placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_NAME)));
                 placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_IMAGE)));
 
@@ -166,6 +171,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(Constants.KEY_LOCATION_ADDRESS, placeOfInterest.getAddress());
         values.put(Constants.KEY_LOCATION_LATITUDE, placeOfInterest.getLatitude());
         values.put(Constants.KEY_LOCATION_LONGITUDE, placeOfInterest.getLongitude());
+        values.put(Constants.KEY_LOCATION_DISTANCE, placeOfInterest.getDistance());
         values.put(Constants.KEY_LOCATION_NAME, placeOfInterest.getName());
         values.put(Constants.KEY_LOCATION_IMAGE, placeOfInterest.getPhotoUrl());
         //update row

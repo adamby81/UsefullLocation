@@ -1,4 +1,4 @@
-package com.example.adam.myusefulllocations.Fragment;
+package com.example.adam.myusefulllocations.UI;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment.OnListFragmentInteractionListener;
-import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent.DummyItem;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 
@@ -31,9 +30,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
 
 // here was a DummyItem list as content
-    public MyItemRecyclerViewAdapter(Context cxt, List<PlaceOfInterest> placesList, OnListFragmentInteractionListener listener) {
-        placeOfInterestList = placesList;
-        context = cxt;
+    public MyItemRecyclerViewAdapter(Context mContext, List<PlaceOfInterest> placesList, OnListFragmentInteractionListener listener) {
+        this.placeOfInterestList = placesList;
+        this.context = mContext;
         mListener = listener;
     }
 
@@ -85,6 +84,15 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             address = (TextView) view.findViewById(R.id.address_Full_row_search_ID);
             distance = (TextView) view.findViewById(R.id.distance_row_search_ID);
             photo = view.findViewById(R.id.imageView_row_search_ID);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    // TODO: GO TO MAPS FRAGMENT AT THE SAME ITEM LOCATION
+
+                }
+            });
 
         }
 

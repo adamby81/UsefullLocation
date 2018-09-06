@@ -28,10 +28,11 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.adam.myusefulllocations.Data.CurrentLocation;
+import com.example.adam.myusefulllocations.Fragment.FavoritesFragment;
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
 import com.example.adam.myusefulllocations.Fragment.MapsActivity;
-import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent;
 import com.example.adam.myusefulllocations.R;
+import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
 import com.google.android.gms.maps.GoogleMap;
 
@@ -41,7 +42,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener
-        , DataPassListener, CurrentLocation, ItemSearchFragment.OnListFragmentInteractionListener {
+        , DataPassListener,  CurrentLocation, ItemSearchFragment.OnListFragmentInteractionListener {
 
 
     FragmentTransaction fragmentTransaction;
@@ -178,6 +179,12 @@ public class MainActivity extends AppCompatActivity implements
 
 
         super.onDestroy();
+    }
+
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
     }
 
     @Override
@@ -354,7 +361,8 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.navigation_favorites_ID:
-                loadFavoritesActivity(item);
+
+                fragment = new FavoritesFragment();
                 break;
 
         }
@@ -362,11 +370,11 @@ public class MainActivity extends AppCompatActivity implements
             return loadFragment(fragment);
     }
 
-    public void loadFavoritesActivity(MenuItem item) {
-
-        Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
-        startActivity(intent);
-    }
+//    public void loadFavoritesActivity(MenuItem item) {
+//
+//        Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
+//        startActivity(intent);
+//    }
 
        // מיקום נוכחי
 
@@ -472,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(ItemSearchFragment item) {
 
     }
 
@@ -482,6 +490,11 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(PlaceOfInterest item) {
 
     }
 }

@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.adam.myusefulllocations.Data.CurrentLocation;
-import com.example.adam.myusefulllocations.Data.DatabaseHandler;
+import com.example.adam.myusefulllocations.Data.FavDatabaseHandler;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -29,7 +29,7 @@ public class SearchJsonAsyncTask extends AsyncTask implements CurrentLocation {
     double currentLng;
 
 
-    public DatabaseHandler db;
+    public FavDatabaseHandler db;
 
     public String api = "&key=AIzaSyDQEqDOPsDKZKyAqYGBbewEVd-I3PY-SVM";
 

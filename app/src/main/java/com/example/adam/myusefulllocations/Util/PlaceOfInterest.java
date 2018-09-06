@@ -23,7 +23,7 @@ public class PlaceOfInterest {
         this.distance = distance;
     }
 
-    public PlaceOfInterest(int _id, String address, long latitude, long longitude, String name, String photoUrl, double distance) {
+    public PlaceOfInterest(int _id, String address, double latitude, double longitude, String name, String photoUrl, double distance) {
         this._id = _id;
         this.address = address;
         this.latitude = latitude;

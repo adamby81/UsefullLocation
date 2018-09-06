@@ -33,4 +33,8 @@
     <string name="search_hint">Search</string>
     <string name="name">Name:</string>
     <string name="distance_search_row">Distance:</string>
+    <string name="instructions_heading">Add New Location:</string>
+    <string name="instructions">How would you like to search for a place?</string>
+    <string name="distance">Distance from me:</string>
+    <string name="name_fav">Name:</string>
 </resources>
