@@ -37,4 +37,6 @@
     <string name="instructions">How would you like to search for a place?</string>
     <string name="distance">Distance from me:</string>
     <string name="name_fav">Name:</string>
+    <string name="add_new_location">Add New Location</string>
+    <string name="location">Locations:</string>
 </resources>

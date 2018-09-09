@@ -1,6 +1,7 @@
 package com.example.adam.myusefulllocations.Fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
@@ -30,12 +31,12 @@ public class MapsActivity extends Fragment implements DataPassListener,DataPassL
     MapView mMapView;
     private GoogleMap googleMap;
 
-//    public  long latitude;
-//    public  long longitude;
-//    public  long altitude;
-//    public  String address;
+    public double latitude;
+    public double longitude;
+    public String address;
 
 
+    private Context mContext;
     private LocationManager locationManager;
     private LocationListener locationListener;
 
@@ -76,10 +77,10 @@ public class MapsActivity extends Fragment implements DataPassListener,DataPassL
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
-                Context context = getContext();
+                mContext = getContext();
 
                 // we will need to use ReceiveFragment.this in the permission requests!!
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -91,6 +92,8 @@ public class MapsActivity extends Fragment implements DataPassListener,DataPassL
 
                     // googleMap.setMyLocationEnabled(true);
                 }
+                DataPassListener dataPassListener;
+                passDataMyLocation(latitude, longitude, address);
                 googleMap.setMyLocationEnabled(true);
                 // For dropping a marker at a point on the Map
                 LatLng mylocation = new LatLng(latitude, longitude);
@@ -107,8 +110,10 @@ public class MapsActivity extends Fragment implements DataPassListener,DataPassL
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Activity context) {
         super.onAttach(context);
+
+        mContext = getActivity();
 
 
 

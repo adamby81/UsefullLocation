@@ -10,12 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 
-import com.example.adam.myusefulllocations.Data.CurrentLocation;
-import com.example.adam.myusefulllocations.Data.FavDatabaseHandler;
+import com.example.adam.myusefulllocations.Data.DataPassListen;
+import com.example.adam.myusefulllocations.Data.SearchDatabaseHandler;
 import com.example.adam.myusefulllocations.R;
-import com.example.adam.myusefulllocations.UI.MyItemRecyclerViewAdapter;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
+import com.example.adam.myusefulllocations.Util.SearchJsonAsyncTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,16 @@ public class ItemSearchFragment extends Fragment {
     private List<PlaceOfInterest> listPlaceOfInterests;
 
     private List<PlaceOfInterest> searchList;
-    private FavDatabaseHandler db;
-    CurrentLocation currentLocation = null;
+    private SearchDatabaseHandler db;
     private AutoCompleteTextView search;
+    private DataPassListen dataPassListen;
+
+    private SearchJsonAsyncTask searchJsonAsyncTask;
+
+    private Button searchByText;
+    private Button searchNearby;
 
 
-    private MyItemRecyclerViewAdapter myItemRecyclerViewAdapter;
 
 
 
@@ -88,9 +93,37 @@ public class ItemSearchFragment extends Fragment {
 
         searchList = new ArrayList<>();
 
+        searchByText = view.findViewById(R.id.search_by_Text_ID);
+        searchNearby = view.findViewById(R.id.search_nearby_ID);
+
+//        Bundle bundle =  getArguments();
+//        final double latitude = bundle.getDouble("latitude");
+//        final double longitude = bundle.getDouble("longitude");
+
+
         search = view.findViewById(R.id.search_Bar_ID);
 
-        if (search != null){
+
+        searchByText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // get current location function placed here
+                String textToSearch = String.valueOf(search.getThreshold()).trim();
+
+                if (textToSearch.length()>0){
+
+                 //   db.deleteSearchLocationTable();
+                    searchJsonAsyncTask = new SearchJsonAsyncTask();
+
+                    searchJsonAsyncTask.setContext(getActivity());
+                    searchJsonAsyncTask.setApiRequest(textToSearch);
+                    //searchJsonAsyncTask.
+
+
+                }
+            }
+        });
+
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -99,6 +132,8 @@ public class ItemSearchFragment extends Fragment {
             view = view.findViewById(R.id.search_recyclerView_ID);
 //            ((RecyclerView) view).setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+
 
 
 //            if (db.getAllLocations().size() > 0) {
@@ -130,7 +165,7 @@ public class ItemSearchFragment extends Fragment {
 
         }
 
-        }
+
         return view;
     }
 

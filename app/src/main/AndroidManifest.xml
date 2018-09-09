@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
 
     <application
         android:allowBackup="true"
@@ -28,6 +30,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".FavoritesFeature.FavoritesActivity"
+
+            tools:ignore="InnerclassSeparator"/>
 
         <receiver android:name=".Util.PowerConnectionReceiver" />
 
@@ -52,6 +58,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <provider
+            android:authorities="com.example.adam.myusefulllocations"
+            android:name="com.example.adam.myusefulllocations.FavoritesFeature.provider.PlaceContentProvider"
+            android:exported="false"
+            tools:ignore="InnerclassSeparator" />
 
     </application>
 

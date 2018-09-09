@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="Activity.FavoritesActivity">
+
+    <LinearLayout
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:text="@string/add_new_location"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:onClick="onAddPlaceButtonClicked"
+            android:layout_marginTop="16sp"
+            android:paddingTop="8dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="OnClick" />
+        <TextView
+            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="@string/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        
+        <View
+            android:layout_marginTop="4dp"
+            android:background="@color/colorPrimary"
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/place_list_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

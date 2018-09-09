@@ -5,54 +5,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-   <RelativeLayout
+
+    <RelativeLayout
        android:layout_width="match_parent"
        android:layout_height="match_parent">
 
-       <android.support.design.widget.TabLayout
-           android:id="@+id/tabs_ID"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content">
 
-           <android.support.design.widget.TabItem
-               android:id="@+id/by_Text_ID"
-               android:layout_width="wrap_content"
-               android:onClick="loadSearchByTextRV"
-               tools:ignore="OnClick"
-               android:layout_height="wrap_content"
-               android:text="@string/tab1_TEXT_SEARCH" />
-
-           <android.support.design.widget.TabItem
-               android:id="@+id/by_Location_ID"
-               android:layout_width="wrap_content"
-               android:onClick="loadNearbyRV"
-               tools:ignore="OnClick"
-               android:layout_height="wrap_content"
-               android:text="@string/tab2_LOCATION" />
-
-
-
-       </android.support.design.widget.TabLayout>
-<RelativeLayout
+        <RelativeLayout
     android:id="@+id/search_layout_ID"
-    android:layout_below="@id/tabs_ID"
-    android:background="@drawable/search_view"
+            android:background="@color/colorPrimary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <AutoCompleteTextView
         android:id="@+id/search_Bar_ID"
-        android:queryHint="@string/search_hint"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:queryHint="@string/search_hint" />
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/search_by_Text_ID"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/search_Bar_ID"
+                android:layout_height="wrap_content"
+                android:text="@string/tab1_TEXT_SEARCH" />
+
+            <Button
+                android:id="@+id/search_nearby_ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/search_Bar_ID"
+                android:text="@string/tab2_LOCATION"
+                android:layout_alignParentRight="true" />
+
+
+
+        </RelativeLayout>
 
        <RelativeLayout
 
            android:layout_below="@+id/search_layout_ID"
            android:layout_width="match_parent"
            android:layout_height="match_parent">
+
 
            <android.support.v7.widget.RecyclerView
                android:id="@+id/search_recyclerView_ID"

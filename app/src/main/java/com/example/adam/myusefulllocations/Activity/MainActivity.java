@@ -27,14 +27,14 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.example.adam.myusefulllocations.Data.CurrentLocation;
-import com.example.adam.myusefulllocations.Fragment.FavoritesFragment;
+import com.example.adam.myusefulllocations.FavoritesFeature.FavoritesActivity;
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
 import com.example.adam.myusefulllocations.Fragment.MapsActivity;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,7 +42,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener
-        , DataPassListener,  CurrentLocation, ItemSearchFragment.OnListFragmentInteractionListener {
+        , DataPassListener, ItemSearchFragment.OnListFragmentInteractionListener {
 
 
     FragmentTransaction fragmentTransaction;
@@ -274,7 +274,10 @@ public class MainActivity extends AppCompatActivity implements
 
         if (Build.VERSION.SDK_INT > 23) {
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                    != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -362,7 +365,8 @@ public class MainActivity extends AppCompatActivity implements
 
             case R.id.navigation_favorites_ID:
 
-                fragment = new FavoritesFragment();
+                loadFavoritesActivity(item);
+//                fragment = new FavoritesFragment();
                 break;
 
         }
@@ -370,25 +374,17 @@ public class MainActivity extends AppCompatActivity implements
             return loadFragment(fragment);
     }
 
-//    public void loadFavoritesActivity(MenuItem item) {
-//
-//        Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
-//        startActivity(intent);
-//    }
+    public void loadFavoritesActivity(MenuItem item) {
+
+        Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
+        startActivity(intent);
+    }
 
        // מיקום נוכחי
 
 
 
-    @Override
-    public void currentLocation(double lat, double lon, String currentAddress) {
 
-
-        lat = latitude;
-        lon = longitude;
-        currentAddress = address;
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -485,11 +481,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void passDataMyLocation(double lat, double lng, String address) {
+    public void passDataMyLocation(double lat, double lng, String address1) {
 
-
-
-
+       LatLng latLng = new LatLng(lat, lng);
 
     }
 

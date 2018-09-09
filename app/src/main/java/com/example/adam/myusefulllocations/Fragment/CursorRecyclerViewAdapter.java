@@ -18,7 +18,7 @@ import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
  * Created by timbuchalka on 1/12/16.
  */
 
-class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewAdapter.FavPlaceViewHolder> {
+class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewAdapter.SearchViewHolder> {
     private static final String TAG = "CursorRecyclerViewAdapt";
     private Cursor mCursor;
     private OnPlaceClickListener mListener;
@@ -35,14 +35,14 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
     }
 
     @Override
-    public FavPlaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SearchViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 //        Log.d(TAG, "onCreateViewHolder: new view requested");
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row_favorites, parent, false);
-        return new FavPlaceViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_row_search, parent, false);
+        return new SearchViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(FavPlaceViewHolder holder, int position) {
+    public void onBindViewHolder(SearchViewHolder holder, int position) {
 //        Log.d(TAG, "onBindViewHolder: starts");
 
         if((mCursor == null) || (mCursor.getCount() == 0)) {
@@ -119,7 +119,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
      * If the given new Cursor is the same instance as the previously set
      * Cursor, null is also returned.
      */
-    Cursor swapCursor(Cursor newCursor) {
+   public Cursor swapCursor(Cursor newCursor) {
         if (newCursor == mCursor) {
             return null;
         }
@@ -137,8 +137,8 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
     }
 
-    static class FavPlaceViewHolder extends RecyclerView.ViewHolder {
-        private static final String TAG = "FavPlaceViewHolder";
+    static class SearchViewHolder extends RecyclerView.ViewHolder {
+        private static final String TAG = "SearchViewHolder";
 
         TextView name = null;
         TextView address = null;
@@ -150,22 +150,22 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
         ImageButton infoDetailsBtn = null;
         ImageButton searchBtn = null;
 
-        public FavPlaceViewHolder(View itemView) {
+        public SearchViewHolder(View itemView) {
             super(itemView);
-//            Log.d(TAG, "FavPlaceViewHolder: starts");
+//            Log.d(TAG, "SearchViewHolder: starts");
 
-            this.name = (TextView) itemView.findViewById(R.id.name_row_Fav_ID);
-            this.address = (TextView) itemView.findViewById(R.id.address_Full_row_Fav_ID);
-            this.lat = itemView.findViewById(R.id.latitude_row_Fav_ID);
-            this.lng = itemView.findViewById(R.id.longitude_row_Fav_ID);
-            this.distance = itemView.findViewById(R.id.distance_row_Fav_ID);
+            this.name = (TextView) itemView.findViewById(R.id.name_row_search_ID);
+            this.address = (TextView) itemView.findViewById(R.id.address_Full_row_search_ID);
+//            this.lat = itemView.findViewById(R.id.);
+//            this.lng = itemView.findViewById(R.id.);
+            this.distance = itemView.findViewById(R.id.distance_row_search_ID);
 
-            this.placePhoto = itemView.findViewById(R.id.imageView_row_Fav_ID);
+            this.placePhoto = itemView.findViewById(R.id.imageView_row_search_ID);
 
 
 
-            this.infoDetailsBtn = (ImageButton) itemView.findViewById(R.id.infoDetailsBtn_row_Fav_ID);
-            this.searchBtn = (ImageButton) itemView.findViewById(R.id.searchBtn_row_Fav_ID);
+//            this.infoDetailsBtn = (ImageButton) itemView.findViewById(R.id.infoDetailsBtn_row_Fav_ID);
+//            this.searchBtn = (ImageButton) itemView.findViewById(R.id.searchBtn_row_Fav_ID);
         }
     }
 }

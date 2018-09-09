@@ -1,69 +1,136 @@
 package com.example.adam.myusefulllocations.Util;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.example.adam.myusefulllocations.Data.CurrentLocation;
-import com.example.adam.myusefulllocations.Data.FavDatabaseHandler;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import com.example.adam.myusefulllocations.Activity.DataPassListener;
+import com.example.adam.myusefulllocations.Data.SearchDatabaseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static android.content.ContentValues.TAG;
 
-public class SearchJsonAsyncTask extends AsyncTask implements CurrentLocation {
+public class SearchJsonAsyncTask extends AsyncTask <Void, Void, String> {
 
-
-    public String name, fullAddress, placePhoto;
-    public double lat;
-    public double lng;
     public double myDistance;
     double currentLat;
     double currentLng;
+    String address;
+    double lat;
+    double lng;
+    private DataPassListener dataPassListener;
 
 
-    public FavDatabaseHandler db;
+    private String apiRequest = "";
+    private Context context;
+
+    public String getApiRequest() {
+        return apiRequest;
+    }
+
+    public void setApiRequest(String apiRequest) {
+        this.apiRequest = apiRequest;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public SearchDatabaseHandler getDb() {
+        return db;
+    }
+
+    public void setDb(SearchDatabaseHandler db) {
+        this.db = db;
+    }
+
+
+
+    private SearchDatabaseHandler db;
+    public RecyclerView adapter;
+    private final String API_KEY = "AIzaSyDQEqDOPsDKZKyAqYGBbewEVd-I3PY-SVM";
 
     public String api = "&key=AIzaSyDQEqDOPsDKZKyAqYGBbewEVd-I3PY-SVM";
 
     @Override
-    protected void onPostExecute(Object o) {
-        super.onPostExecute(o);
+    protected void onPreExecute() {
 
-        String URL = "https://maps.googleapis.com/maps/api/place/details/json?placeid&fields=name,formatted_phone_number,photo,place_id,geometry,formatted_address&key=AIzaSyDQEqDOPsDKZKyAqYGBbewEVd-I3PY-SVM";
+        db = new SearchDatabaseHandler(this.context);
+        dataPassListener.passDataMyLocation(currentLat, currentLng, address );
+
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+
+    }
+
+    StringBuilder stringBuilder;
+    HttpURLConnection myConnection;
 
 
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(URL).build();
 
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                e.printStackTrace();
+    @Override
+    protected String doInBackground(Void... urls) {
 
+        URL url = null;
+        try {
+            url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json?query =" +  this.getApiRequest() + "&key=" + API_KEY);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+
+            myConnection = (HttpURLConnection) url.openConnection();
+            myConnection.setRequestMethod("GET");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(myConnection.getInputStream()));
+
+            stringBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+
+                stringBuilder.append(line).append("\n");
             }
+            bufferedReader.close();
 
-            @Override
-            public void onResponse(Response response) throws IOException {
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
 
-                JSONObject json = new JSONObject();
-                JSONObject jsonObject, geometry, location, opening_hours;
-                JSONArray photos;
-                String urlPhotoRef = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
 
-                if (response == null) {
+            String name, fullAddress;
+            String placePhoto = "";
+            String urlPhotoRef = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
 
-                   // לשאול את דוד Toast.makeText(??? , "", Toast.LENGTH_SHORT).show();
 
-                }else {
-                    try {
+            JSONObject jsonObject, geometry, location;
+            JSONArray photos;
+
+            if (stringBuilder == null) {
+
+            //no result was found
+
+            }try {
+
+                JSONObject json = new JSONObject(stringBuilder.toString());
                         JSONArray jsonArray = json.getJSONArray("candidates");
                         Log.e(TAG, "Json Async Task: " + jsonArray.toString());
 
@@ -86,35 +153,31 @@ public class SearchJsonAsyncTask extends AsyncTask implements CurrentLocation {
 
                             // להשתמש ב- URI
                             photos = jsonObject.getJSONArray("photos");
-                            for (i = 0; i > photos.length(); i++) {
-                                jsonObject = photos.getJSONObject(i);
-                                placePhoto = urlPhotoRef + "&photoreference=" + jsonObject.getString("photo_reference") + api;
 
+                            if (photos.length() >0)
+                             {
+                                jsonObject = photos.getJSONObject(0);
+                                placePhoto = urlPhotoRef + "&photoreference=" + jsonObject.getString("photo_reference") + api;
+                                placePhoto +=  "&key="+API_KEY;
                             }
 
                             PlaceOfInterest placeOfInterest = new PlaceOfInterest(fullAddress, lat, lng, name, placePhoto, distance(currentLat, currentLng, lat, lng));
 
 
                             db.addPlace(placeOfInterest);
-
-
                         }
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-
-            }
-        });
-
+        return stringBuilder.toString();
     }
+
+
 
     private double distance (double myLat, double myLng, double placeLat, double placeLng) {
 
         double radiusMyLat = Math.PI * myLat / 180;
-        double radiusPlaceLat = Math.PI * placeLng / 180;
+        double radiusPlaceLat = Math.PI * placeLat / 180;
         double delta = myLng - placeLng;
         double radiusDelta = Math.PI * delta / 180;
 
@@ -137,17 +200,4 @@ public class SearchJsonAsyncTask extends AsyncTask implements CurrentLocation {
 
     }
 
-    @Override
-    protected Object doInBackground(Object[] objects) {
-        return null;
-    }
-
-    @Override
-    public void currentLocation(double lat, double lon, String currentAddress) {
-
-        currentLat = lat;
-        currentLng = lon;
-
-
-    }
 }

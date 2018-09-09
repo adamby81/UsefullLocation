@@ -170,12 +170,10 @@ public class SearchDatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Delete PlaceOfInterest
-    public void deleteLocation (int id) {
+    public void deleteSearchLocationTable () {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        db.delete(Constants.TABLE_NAME_SEARCH, Constants.KEY_SEARCH_ID + "=?",
-                new String[]{String.valueOf(id)});
-        getLocationsCounter();
+        db.delete(Constants.TABLE_NAME_SEARCH, null, null);
 
         db.close();
 
