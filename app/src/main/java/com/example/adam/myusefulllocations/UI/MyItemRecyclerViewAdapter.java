@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment.OnListFragmentInteractionListener;
 import com.example.adam.myusefulllocations.R;
@@ -15,13 +16,11 @@ import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final OnListFragmentInteractionListener mListener;
 
     private List<PlaceOfInterest> placeOfInterestList;
 
@@ -30,10 +29,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
 
 // here was a DummyItem list as content
-    public MyItemRecyclerViewAdapter(Context mContext, List<PlaceOfInterest> placesList, OnListFragmentInteractionListener listener) {
+    public MyItemRecyclerViewAdapter(Context mContext, List<PlaceOfInterest> placesList) {
         this.placeOfInterestList = placesList;
         this.context = mContext;
-        mListener = listener;
     }
 
     @Override
@@ -50,19 +48,19 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
         holder.name.setText(place.getName());
         holder.address.setText(place.getAddress());
-        //holder.photo.setImageBitmap();
-        holder.distance.setText((int) place.getDistance());
+       // holder.distance.setText((int)place.getDistance());
+        Picasso.get().load(place.getPhotoUrl()).into(holder.photo);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                   // mListener.onListFragmentInteraction(holder.m);
-                }
-            }
-        });
+//        holder.mView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (null != mListener) {
+//                    // Notify the active callbacks interface (the activity, if the
+//                    // fragment is attached to one) that an item has been selected.
+//                   // mListener.onListFragmentInteraction(holder.m);
+//                }
+//            }
+//        });
     }
 
     @Override

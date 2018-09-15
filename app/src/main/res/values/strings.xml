@@ -39,4 +39,10 @@
     <string name="name_fav">Name:</string>
     <string name="add_new_location">Add New Location</string>
     <string name="location">Locations:</string>
+    <string name="title_popup_welcome">WELCOME</string>
+    <string name="mile_km_title">What unit of measurement would you like to use?</string>
+    <string name="startusing">Start Using The App</string>
+    <string name="by_mile_RADIO_BTN">MILES</string>
+    <string name="by_km_RADIO_BTN">KM</string>
+    <string name="about_us_View_ID">ABOUT US TEXT</string>
 </resources>

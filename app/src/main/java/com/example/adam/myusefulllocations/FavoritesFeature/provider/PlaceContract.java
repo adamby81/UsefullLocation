@@ -17,6 +17,13 @@ public class PlaceContract {
 
                 public static final String TABLE_NAME = "places";
                 public static final String COLUMNS_PLACE_ID = "placeID";
+            public static final String KEY_FAV_PLACE_NAME = "name";
+            public static final String KEY_FAV_PLACE_ADDRESS = "address";
+            public static final String KEY_FAV_PLACE_LATITUDE = "latitude";
+            public static final String KEY_FAV_PLACE_LONGITUDE = "longitude";
+            public static final String KEY_FAV_PLACE_PHOTOURL = "photo";
+            public static final String KEY_FAV_PLACE_DISTANCE = "distance";
+
 
         }
 

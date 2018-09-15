@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -11,13 +13,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.adam.myusefulllocations.Activity.DataPassListener;
-import com.example.adam.myusefulllocations.Data.DataPassListen;
+import com.example.adam.myusefulllocations.FavoritesFeature.provider.PlaceDBHelper;
 import com.example.adam.myusefulllocations.R;
+import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -27,13 +30,25 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends Fragment implements DataPassListener,DataPassListen, OnMapReadyCallback {
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+public class MapsActivity extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
     MapView mMapView;
     private GoogleMap googleMap;
 
     public double latitude;
     public double longitude;
     public String address;
+
+    private PlaceDBHelper db;
+    private String mFeatureName;
+    private String mPhotoUrl;
+    double latitudeMarker;
+    double longitudeMarker;
+    double mDistance;
+
 
 
     private Context mContext;
@@ -92,8 +107,6 @@ public class MapsActivity extends Fragment implements DataPassListener,DataPassL
 
                     // googleMap.setMyLocationEnabled(true);
                 }
-                DataPassListener dataPassListener;
-                passDataMyLocation(latitude, longitude, address);
                 googleMap.setMyLocationEnabled(true);
                 // For dropping a marker at a point on the Map
                 LatLng mylocation = new LatLng(latitude, longitude);
@@ -144,17 +157,99 @@ public class MapsActivity extends Fragment implements DataPassListener,DataPassL
     }
 
     @Override
-    public void positionRowPass(int position) {
-
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
 
     }
 
+
+    String addressMarker;
+
     @Override
-    public void passDataMyLocation(double lat, double lng, String address) {
+    public void onMapLongClick(LatLng latLng) {
+
+        Log.i("PlaceOfInterest Info: ", latLng.toString());
+
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        try {
+
+            addressMarker = "Could not find any address";
+            List<Address> listAddresses = geocoder.getFromLocation(latLng.latitude,
+                    latLng.longitude, 1);
+
+            if (listAddresses != null && listAddresses.size() >0) {
+                Log.i("Address Info: ", listAddresses.get(0).toString());
+
+                addressMarker = "Address: " + "\n";
+                if (listAddresses.get(0).getSubThoroughfare() != null) {
+                    // רחוב
+                    addressMarker += listAddresses.get(0).getSubThoroughfare() + " ";
+                }
+
+                if (listAddresses.get(0).getThoroughfare() != null) {
+                    // מספר בית
+                    addressMarker += listAddresses.get(0).getThoroughfare() + "\n";
+
+                }
+
+                if (listAddresses.get(0).getLocality() != null) {
+                    // עיר
+                    addressMarker += listAddresses.get(0).getLocality() + ", ";
+                }
+                if (listAddresses.get(0).getPostalCode() != null) {
+                    // תיבת דואר
+                    addressMarker += listAddresses.get(0).getPostalCode() + "\n";
+
+                }
+
+                if (listAddresses.get(0).getCountryName() != null) {
+                    // מדינה
+                    addressMarker += listAddresses.get(0).getCountryName() + "\n";
+
+                }
+                if (listAddresses.get(0).getFeatureName() != null) {
+                    // רחוב
+                    mFeatureName = listAddresses.get(0).getFeatureName();
+                }
+                if (listAddresses.get(0).getUrl() != null) {
+                    // רחוב
+                    mPhotoUrl = listAddresses.get(0).getUrl();
+                }
+
+            }
+
+            latitudeMarker = latLng.latitude;
+            longitudeMarker =  latLng.longitude;
+            mDistance = distance(latitudeMarker, longitudeMarker, latitude, longitude);
+
+
+
+            Log.e("location: ", "updateLocationInfo: " + latitudeMarker + " AND " + latLng.latitude + " AND " + mFeatureName);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        googleMap.addMarker(new MarkerOptions().position(latLng).title(addressMarker));
+
+                PlaceOfInterest location = new PlaceOfInterest();
+
+                String mNewName = mFeatureName;
+                String mNewFullAddress = addressMarker;
+                double mNewLatitude = latitudeMarker;
+                double mNewLongitude = longitudeMarker;
+                String mNewPhoto = mPhotoUrl;
+                double mNewdistance = mDistance;
+
+                location.setName(mNewName);
+                location.setAddress(mNewFullAddress);
+                location.setLatitude(mNewLatitude);
+                location.setLongitude(mNewLongitude);
+                location.setPhotoUrl(mNewPhoto);
+                location.setDistance(mNewdistance);
+
+            db.addPlace(location);
 
     }
 
@@ -180,4 +275,33 @@ public class MapsActivity extends Fragment implements DataPassListener,DataPassL
 //
 //        Snackbar.make(v, "Task Saved!", Snackbar.LENGTH_LONG).show();
 //    }
+
+
+    private double distance (double myLat, double myLng, double placeLat, double placeLng) {
+
+        double radiusMyLat = Math.PI * myLat / 180;
+        double radiusPlaceLat = Math.PI * placeLat / 180;
+        double delta = myLng - placeLng;
+        double radiusDelta = Math.PI * delta / 180;
+
+        double fixedDistance = Math.sin(radiusMyLat) * Math.sin(radiusPlaceLat)
+                + Math.cos(radiusMyLat) * Math.cos(radiusPlaceLat)
+                * Math.cos(radiusDelta);
+        if (fixedDistance > 1) {
+
+            fixedDistance = 1;
+
+        }
+
+        fixedDistance = Math.acos(fixedDistance);
+        fixedDistance = fixedDistance * 180 / Math.PI;
+        fixedDistance = fixedDistance * 60 * 1.1515;
+        fixedDistance = 1.609334;
+        return fixedDistance;
+
+
+
+    }
+
+
 }

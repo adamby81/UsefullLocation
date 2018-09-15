@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -25,7 +23,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.example.adam.myusefulllocations.FavoritesFeature.FavoritesActivity;
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
@@ -36,14 +33,9 @@ import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener
         , DataPassListener, ItemSearchFragment.OnListFragmentInteractionListener {
-
 
     FragmentTransaction fragmentTransaction;
     FrameLayout frameLayoutSearch, frameLayoutMap;
@@ -51,17 +43,16 @@ public class MainActivity extends AppCompatActivity implements
     MapsActivity myMapFragment;
     ItemSearchFragment itemSearchFragment;
 
-    public String address;
+    public static String address;
     public static double latitude;
     public static double longitude;
-    public static double altitude;
 
     public static int popOnceChecker = -1;
     PowerConnectionReceiver receiver;
 
 
-       static LocationManager locationManager;
-       static LocationListener locationListener;
+       public static LocationManager locationManager;
+       public static LocationListener locationListener;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -86,67 +77,9 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public void updateLocationInfo(Location location) {
-
-        Log.i("PlaceOfInterest Info: ", location.toString());
-
-
-        // קבלת המיקום בפועל
-        TextView latView;
-//        TextView longView = findViewById(R.id.longitudeView_ID);
-//        TextView accView = findViewById(R.id.accView_ID);
-//        TextView altView = findViewById(R.id.altitudeView_ID);
-//
-//        latView.setText("Latitude: " + location.getLatitude());
-//        longView.setText("Longitude: " + location.getLongitude());
-//        accView.setText("Accuracy: " + location.getAccuracy());
-//        altView.setText("Altitude: " + location.getAltitude());
-
-
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-
-        try {
-
-            address = "Could not find any address";
-            List<Address> listAddresses = geocoder.getFromLocation(location.getLatitude(),
-                    location.getLongitude(), 1);
-
-            if (listAddresses != null && listAddresses.size() >0) {
-                Log.i("Address Info: ", listAddresses.get(0).toString());
-
-                address = "Address: " + "\n";
-                if (listAddresses.get(0).getSubThoroughfare() != null) {
-                    // רחוב
-                    address += listAddresses.get(0).getSubThoroughfare() + " ";
-                }
-
-                if (listAddresses.get(0).getThoroughfare() != null) {
-                    // מספר בית
-                    address += listAddresses.get(0).getThoroughfare() + "\n";
-
-                }
-
-                if (listAddresses.get(0).getLocality() != null) {
-                    // עיר
-                    address += listAddresses.get(0).getLocality() + ", ";
-                }
-                if (listAddresses.get(0).getPostalCode() != null) {
-                    // תיבת דואר
-                    address += listAddresses.get(0).getPostalCode() + "\n";
-
-                }
-
-                if (listAddresses.get(0).getCountryName() != null) {
-                    // מדינה
-                    address += listAddresses.get(0).getCountryName() + "\n";
-
-                }
-
-            }
-
+    public static void updateLocationInfo(Location location) {
             latitude = location.getLatitude();
             longitude =  location.getLongitude();
-            altitude =  location.getAltitude();
 
             Log.e("location: ", "updateLocationInfo: " + latitude + " AND " + location.getLatitude());
 
@@ -161,14 +94,6 @@ public class MainActivity extends AppCompatActivity implements
             // TextView addView = findViewById(R.id.addressView_ID);
 
             // addView.setText(address);
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-
     }
 
     @Override
@@ -186,6 +111,10 @@ public class MainActivity extends AppCompatActivity implements
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
     }
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

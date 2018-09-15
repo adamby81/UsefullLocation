@@ -5,9 +5,9 @@ import android.content.Context;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public interface SetPlace {
-    void getSearchResult(String myPlaces);
-    void getPlaceID(String placeID);
+public interface SetPlaceSearchList {
+    void getJSONaddress(String myPlaces);
+    void getJASONphotoURL(String placeID);
     void getPlace(PlaceOfInterest myPlace);
     void setPlaceTablet(LatLng latLng, Context context, Activity activity, int cHour);
     void getNearbyPlaceDialog(String placeID, LatLng latLng);

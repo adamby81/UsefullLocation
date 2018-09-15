@@ -59,14 +59,14 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
                 throw new IllegalStateException("Couldn't move cursor to position " + position);
             }
 
-            final PlaceOfInterest place = new PlaceOfInterest(mCursor.getInt(mCursor.getColumnIndex(Constants.KEY_LOCATION_ID)),
-                    mCursor.getString(mCursor.getColumnIndex(Constants.KEY_LOCATION_ADDRESS)),
-                    mCursor.getDouble(mCursor.getColumnIndex(Constants.KEY_LOCATION_LATITUDE)),
-                    mCursor.getDouble(mCursor.getColumnIndex(Constants.KEY_LOCATION_LONGITUDE)),
-                    mCursor.getString(mCursor.getColumnIndex(Constants.KEY_LOCATION_NAME)),
+            final PlaceOfInterest place = new PlaceOfInterest(mCursor.getInt(mCursor.getColumnIndex(Constants.KEY_SEARCH_ID)),
+                    mCursor.getString(mCursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_ADDRESS)),
+                    mCursor.getDouble(mCursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE)),
+                    mCursor.getDouble(mCursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE)),
+                    mCursor.getString(mCursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME)),
 
-                    mCursor.getString(mCursor.getColumnIndex(Constants.KEY_LOCATION_IMAGE)),
-                    mCursor.getDouble(mCursor.getColumnIndex(Constants.KEY_LOCATION_DISTANCE)));
+                    mCursor.getString(mCursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE)),
+                    mCursor.getDouble(mCursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE)));
 
             holder.name.setText(place.getName());
             holder.address.setText(place.getAddress());
@@ -94,8 +94,6 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
                 }
             };
 
-            holder.infoDetailsBtn.setOnClickListener(buttonListener);
-            holder.searchBtn.setOnClickListener(buttonListener);
         }
 
     }
@@ -154,13 +152,13 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
             super(itemView);
 //            Log.d(TAG, "SearchViewHolder: starts");
 
-            this.name = (TextView) itemView.findViewById(R.id.name_row_search_ID);
-            this.address = (TextView) itemView.findViewById(R.id.address_Full_row_search_ID);
+            name = (TextView) itemView.findViewById(R.id.name_row_search_ID);
+            address = (TextView) itemView.findViewById(R.id.address_Full_row_search_ID);
 //            this.lat = itemView.findViewById(R.id.);
 //            this.lng = itemView.findViewById(R.id.);
-            this.distance = itemView.findViewById(R.id.distance_row_search_ID);
+            distance = itemView.findViewById(R.id.distance_row_search_ID);
 
-            this.placePhoto = itemView.findViewById(R.id.imageView_row_search_ID);
+            placePhoto = itemView.findViewById(R.id.imageView_row_search_ID);
 
 
 
