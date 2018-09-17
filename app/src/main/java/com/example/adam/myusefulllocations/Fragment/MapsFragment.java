@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.adam.myusefulllocations.Activity.DataPassListener;
 import com.example.adam.myusefulllocations.FavoritesFeature.provider.PlaceDBHelper;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
@@ -34,13 +35,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class MapsActivity extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
+public class MapsActivity extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, DataPassListener {
     MapView mMapView;
     private GoogleMap googleMap;
 
     public double latitude;
     public double longitude;
     public String address;
+    String name;
+
+
+
 
     private PlaceDBHelper db;
     private String mFeatureName;
@@ -61,7 +66,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
 
 
     }
-
+//
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_maps, container, false);
@@ -94,32 +99,31 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
                 googleMap = mMap;
                 mContext = getContext();
 
-                // we will need to use ReceiveFragment.this in the permission requests!!
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ItemSearchFragment.fromSearchFrag) {
 
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                    passDataMyLocation(latitude, longitude, address);
 
-                    // googleMap.setMyLocationEnabled(true);
-                }
-                googleMap.setMyLocationEnabled(true);
-                // For dropping a marker at a point on the Map
-                LatLng mylocation = new LatLng(latitude, longitude);
-                googleMap.addMarker(new MarkerOptions().position(mylocation).title("You Are Here!").snippet(address));
+                } else {
+
+                    // we will need to use ReceiveFragment.this in the permission requests!!
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                    }
+                    googleMap.setMyLocationEnabled(true);
+                    // For dropping a marker at a point on the Map
+                    LatLng mylocation = new LatLng(latitude, longitude);
+                    googleMap.addMarker(new MarkerOptions().position(mylocation).title("You Are Here!").snippet(address));
 //
 //                // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(mylocation).zoom(12).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(mylocation).zoom(12).build();
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
+                }
             }
         });
 
         return rootView;
+
     }
 
     @Override
@@ -212,7 +216,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
                     mFeatureName = listAddresses.get(0).getFeatureName();
                 }
                 if (listAddresses.get(0).getUrl() != null) {
-                    // רחוב
                     mPhotoUrl = listAddresses.get(0).getUrl();
                 }
 
@@ -304,4 +307,23 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
     }
 
 
+    @Override
+    public void passDataMyLocation(double lat, double lng, String name) {
+
+            this.latitude = lat;
+            this.longitude = lng;
+            this.address = name;
+
+
+//        public void setLocation(LatLng location,GoogleMap map,String name){
+//        GoogleMap mMap = map;
+//        if(location==null)
+//            location=new LatLng(0,0);
+//        mMap.addMarker(new MarkerOptions().position(location).title(name));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,10));
+//    }
+
+
+
+    }
 }
