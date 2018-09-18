@@ -1,15 +1,25 @@
 package com.example.adam.myusefulllocations.Util;
 
-import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
-import com.google.android.gms.maps.model.LatLng;
+public class Global{
+    Context mContext;
 
-public interface SetPlaceSearchList {
-    void getJSONaddress(String myPlaces);
-    void getJASONphotoURL(String placeID);
-    void getPlace(PlaceOfInterest myPlace);
-    void setPlaceTablet(LatLng latLng, Context context, Activity activity, int cHour);
-    void getNearbyPlaceDialog(String placeID, LatLng latLng);
+    // constructor
+    public Global(Context context){
+        this.mContext = context;
+    }
+
+    //Check If device connected to internet by any way
+    public boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null) {
+            // There are no active networks.
+            return false;
+        } else
+            return true;
+    }
 }
-

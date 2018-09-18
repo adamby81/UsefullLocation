@@ -10,16 +10,20 @@ import android.util.Log;
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 
-public class DatabaseHandlerSearch extends SQLiteOpenHelper {
+public class DatabaseHandler extends SQLiteOpenHelper {
 
     private Context ctx;
 
-    public DatabaseHandlerSearch(Context context) {
-        super(context, Constants.SEARCH_DB_NAME, null, Constants.DB_VERSION);
-
-        this.ctx = context;
-
+    public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
     }
+
+//    public DatabaseHandler(Context context) {
+//        super(context, Constants.SEARCH_DB_NAME, null, Constants.DB_VERSION);
+//
+//        this.ctx = context;
+//
+//    }
 
 
 

@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/search_lv_layout_ID"
+        android:layout_width="match_parent"
+        android:background="@drawable/background"
+        android:layout_height="wrap_content">
+
+        <SearchView
+            android:id="@+id/search_lv_Bar_ID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:queryHint="@string/search_hint" />
+
+
+
+        <Button
+            android:id="@+id/search_lv_by_Text_ID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/search_lv_Bar_ID"
+            android:text="@string/tab1_TEXT_SEARCH" />
+
+        <Button
+            android:id="@+id/search_lv_nearby_ID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/search_lv_Bar_ID"
+            android:text="@string/tab2_LOCATION" />
+
+    <ListView
+        android:id="@+id/search_lv_holder_ID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_below="@+id/search_lv_by_Text_ID"
+        android:scrollbars="vertical"
+        tools:layout_editor_absoluteX="0dp">
+
+    </ListView>
+    </RelativeLayout>
+
+
+</LinearLayout>

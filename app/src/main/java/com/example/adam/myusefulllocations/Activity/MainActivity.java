@@ -24,9 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import com.example.adam.myusefulllocations.FavoritesFeature.FavoritesActivity;
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
-import com.example.adam.myusefulllocations.Fragment.MapsActivity;
+import com.example.adam.myusefulllocations.Fragment.MapsFragment;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
@@ -40,19 +39,21 @@ public class MainActivity extends AppCompatActivity implements
     FragmentTransaction fragmentTransaction;
     FrameLayout frameLayoutSearch, frameLayoutMap;
     GoogleMap mMap;
-    MapsActivity myMapFragment;
+    MapsFragment myMapFragment;
     ItemSearchFragment itemSearchFragment;
 
     public static String address;
-    public static double latitude;
-    public static double longitude;
+    public static float latitude;
+    public static float longitude;
 
     public static int popOnceChecker = -1;
     PowerConnectionReceiver receiver;
 
+    public LatLng latLng;
 
-       public static LocationManager locationManager;
+    public static LocationManager locationManager;
        public static LocationListener locationListener;
+    private String name;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -78,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public static void updateLocationInfo(Location location) {
-            latitude = location.getLatitude();
-            longitude =  location.getLongitude();
+            latitude = (float) location.getLatitude();
+            longitude = (float) location.getLongitude();
 
             Log.e("location: ", "updateLocationInfo: " + latitude + " AND " + location.getLatitude());
 
@@ -88,12 +89,12 @@ public class MainActivity extends AppCompatActivity implements
 //            currLocationEditor.putLong("Latitude", latitude );
 //            currLocationEditor.putLong("Longitude", longitude );
 //            currLocationEditor.putLong("Altitude", altitude );
-//            currLocationEditor.putString("address", address);
+//            currLocationEditor.putString("name", name);
 
             // מיקום בפועל
             // TextView addView = findViewById(R.id.addressView_ID);
 
-            // addView.setText(address);
+            // addView.setText(name);
     }
 
     @Override
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements
             frameLayoutMap.removeAllViews();
             frameLayoutSearch.removeAllViews();
 
-            myMapFragment = new MapsActivity();
+            myMapFragment = new MapsFragment();
             fragmentTransaction.add(R.id.fragment_container_search, itemSearchFragment);
             fragmentTransaction.add(R.id.fragment_container_map, myMapFragment);
             fragmentTransaction.commit();
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements
             Bundle bundleMapsAndSearch = new Bundle();
             bundleMapsAndSearch.putDouble("latitude", latitude);
             bundleMapsAndSearch.putDouble("longitude", longitude);
-            bundleMapsAndSearch.putString("address", address);
+            bundleMapsAndSearch.putString("name", address);
 
             myMapFragment.setArguments(bundleMapsAndSearch);
             itemSearchFragment.setArguments(bundleMapsAndSearch);
@@ -281,12 +282,12 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.navigation_map_ID:
-               fragment = new MapsActivity();
+               fragment = new MapsFragment();
 
                 Bundle bundleMaps = new Bundle();
                 bundleMaps.putDouble("latitude", latitude);
                 bundleMaps.putDouble("longitude", longitude);
-                bundleMaps.putString("address", address);
+                bundleMaps.putString("name", address);
 
                 fragment.setArguments(bundleMaps);
 
@@ -305,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void loadFavoritesActivity(MenuItem item) {
 
-        Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
+        Intent intent = new Intent(MainActivity.this, FavoritesLvActivity.class);
         startActivity(intent);
     }
 
@@ -377,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements
 //                                JSONObject jsonResults = jsonObject.getJSONObject("results");
 //
 //                                name = jsonResults.getString("name");
-//                                address = jsonResults.getString("formatted_address");
+//                                name = jsonResults.getString("formatted_address");
 //                                place_id = jsonResults.getString("place_id");
 //
 //                                JSONObject geometry = jsonResults.getJSONObject("geometry");
@@ -410,10 +411,31 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void passDataMyLocation(double lat, double lng, String address1) {
+    public void passDataMyLocation(double lat, double lng, String name) {
 
-       LatLng latLng = new LatLng(lat, lng);
+        this.name=name;
+        latLng = new LatLng(lat, lng);
+         myMapFragment = new MapsFragment();
+        //Device is in Portrait
+        if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container_main, myMapFragment).addToBackStack(null);
+            fragmentTransaction.commit();
+            // If device is in landscape no need to replace fragments
+        } else {
 
+           // myMapFragment.passDataMyLocation(latitude, longitude ,name);
+            Fragment fragment = new MapsFragment();
+
+            Bundle bundleMaps = new Bundle();
+            bundleMaps.putDouble("latitude", lat);
+            bundleMaps.putDouble("longitude", lng);
+            bundleMaps.putString("name", name);
+
+
+
+            fragment.setArguments(bundleMaps);
+        }
     }
 
     @Override

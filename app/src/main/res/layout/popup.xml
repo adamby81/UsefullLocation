@@ -59,21 +59,21 @@
                 android:layout_marginLeft="40dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp">
-
-                <RadioButton
-                    android:id="@+id/miles_RB_ID"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:text="@string/by_mile_RADIO_BTN" />
-
                 <RadioButton
                     android:id="@+id/km_RB_ID"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:checked="true"
                     android:text="@string/by_km_RADIO_BTN" />
+                <RadioButton
+                    android:id="@+id/miles_RB_ID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/by_mile_RADIO_BTN" />
+
+
             </RadioGroup>
 
             <Button

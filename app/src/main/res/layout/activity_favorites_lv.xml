@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="Activity.FavoritesActivity">
+    android:background="@drawable/background_favorites"
+
+    tools:context=".Activity.FavoritesLvActivity">
 
     <LinearLayout
         android:layout_marginBottom="24dp"
@@ -14,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <Button
+            android:id="@+id/FAV_add_Btn_lv_ID"
             android:text="@string/add_new_location"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:onClick="onAddPlaceButtonClicked"
@@ -26,20 +29,22 @@
             tools:ignore="OnClick" />
         <TextView
             android:textSize="16sp"
+            android:layout_marginTop="5dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/colorPrimaryDark"
             android:text="@string/location"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         
         <View
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="10dp"
             android:background="@color/colorPrimary"
             android:layout_width="fill_parent"
             android:layout_height="2dip"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/place_list_recycler_view"
+        <ListView
+            android:id="@+id/FAV_list_view_ID"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

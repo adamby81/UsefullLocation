@@ -4,9 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.adam.myusefulllocations.Activity.DataPassListener;
 import com.example.adam.myusefulllocations.Constant.Constants;
-import com.example.adam.myusefulllocations.Data.SearchDatabaseHandler;
+import com.example.adam.myusefulllocations.Data.DatabaseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,16 +18,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
 
-    public double myDistance;
-    public double currentLat;
-    public double currentLng;
-    String address;
-    double lat;
-    double lng;
-    private DataPassListener dataPassListener;
-    private final String SEARCH_TABLE_NAME = Constants.TABLE_NAME_SEARCH;
-    private final String FAV_TABLE_NAME = Constants.TABLE_NAME_LOCATION;
-
+    public float currentLat;
+    public float currentLng;
 
     private String searchText = "";
     private Context context;
@@ -49,23 +40,23 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
         this.context = context;
     }
 
-    public SearchDatabaseHandler getDb() {
+    public DatabaseHandler getDb() {
         return db;
     }
 
-    public void setDb(SearchDatabaseHandler db) {
+    public void setDb(DatabaseHandler db) {
         this.db = db;
     }
 
 
-    private SearchDatabaseHandler db;
+    private DatabaseHandler db;
     private final String API_KEY = "AIzaSyCmEYpUa4JvvgEefYJnzTtISDhJzpES84M";
 
 
     @Override
     protected void onPreExecute() {
 
-        db = new SearchDatabaseHandler(this.context);
+        db = new DatabaseHandler(this.context, Constants.SEARCH_DB_NAME,null, Constants.SEARCH_DB_VERSION);
 
     }
 
@@ -95,7 +86,10 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
 
 
                 String name, address, img = "", prefix = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
-                double lon, lat, distance;
+                float lon;
+                float lat;
+                int jsonLen = 0;
+                float distance;
                 JSONObject jsonobject, geometry, viewport, northeast;
                 JSONArray photos;
 //                Log.d(TAG, "onPostExecute: " + stringBuilder);
@@ -105,30 +99,34 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
 //      Log.e(TAG, "onPostExecute: " + jArray.toString());
                     for (int i = 0; i < jArray.length(); i++) { //Iterate through the array of results
                         jsonobject = jArray.getJSONObject(i);
+
+                        jsonLen = jsonLen++;
                         geometry = jsonobject.getJSONObject("geometry");
                         viewport = geometry.getJSONObject("viewport");
                         northeast = viewport.getJSONObject("northeast");
+
                         name = jsonobject.getString("name");
                         address = jsonobject.getString("formatted_address");
-                        lat = Double.valueOf(northeast.getString("lat"));
-                        lon = Double.valueOf(northeast.getString("lng"));
+
+                        lat = Float.parseFloat(northeast.getString("lat"));
+                        lon = Float.parseFloat(northeast.getString("lng"));
+
                         distance = distance(currentLat, currentLng, lat, lon);
+
                         photos = jsonobject.getJSONArray("photos");
                         for (int j = 0; j < photos.length(); j++) {
                             jsonobject = photos.getJSONObject(j);
                             img = prefix + "&photoreference=" + jsonobject.getString("photo_reference");
                         }
                         img += "&key=" + API_KEY;
-                        PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,img,distance);
-                        db.addPlace(place,Constants.TABLE_NAME_SEARCH); //Add to the downloaded list table
+                        PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,img, distance);
+                        db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH); //Add to the downloaded list table
                     }
+                    Log.i("JSON LENGTH: ", Integer.toString(jsonLen));
 //      update.updateTable();
                 } catch (Exception e) {
                     Log.e("My App", "Could not parse malformed JSON: \"" + e.getMessage() + "\"");
                 }
-
-
-
                 return stringBuilder.toString();
             } finally {
                 myConnection.disconnect(); //Close the HTTP connection
@@ -139,30 +137,26 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
         }
     }
 
+    private float distance(float myLat, float myLng, float placeLat, float placeLng) {
 
+        float radiusMyLat = (float) (Math.PI * myLat / 180);
+        float radiusPlaceLat = (float) (Math.PI * placeLat / 180);
+        float delta = myLng - placeLng;
+        float radiusDelta = (float) (Math.PI * delta / 180);
 
-
-
-    private double distance(double myLat, double myLng, double placeLat, double placeLng) {
-
-        double radiusMyLat = Math.PI * myLat / 180;
-        double radiusPlaceLat = Math.PI * placeLat / 180;
-        double delta = myLng - placeLng;
-        double radiusDelta = Math.PI * delta / 180;
-
-        double fixedDistance = Math.sin(radiusMyLat) * Math.sin(radiusPlaceLat)
-                + Math.cos(radiusMyLat) * Math.cos(radiusPlaceLat)
-                * Math.cos(radiusDelta);
+        float fixedDistance = (float) (Math.sin(radiusMyLat) * Math.sin(radiusPlaceLat)
+                        + Math.cos(radiusMyLat) * Math.cos(radiusPlaceLat)
+                        * Math.cos(radiusDelta));
         if (fixedDistance > 1) {
 
             fixedDistance = 1;
 
         }
 
-        fixedDistance = Math.acos(fixedDistance);
-        fixedDistance = fixedDistance * 180 / Math.PI;
-        fixedDistance = fixedDistance * 60 * 1.1515;
-        fixedDistance = 1.609334;
+        fixedDistance = (float) Math.acos(fixedDistance);
+        fixedDistance = (float) (fixedDistance * 180 / Math.PI);
+        fixedDistance = (float) (fixedDistance * 60 * 1.1515);
+        fixedDistance = (float) 1.609334;
         return fixedDistance;
 
 

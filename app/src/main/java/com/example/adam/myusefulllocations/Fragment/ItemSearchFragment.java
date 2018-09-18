@@ -1,7 +1,7 @@
 package com.example.adam.myusefulllocations.Fragment;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -10,25 +10,29 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.example.adam.myusefulllocations.Activity.DataPassListener;
 import com.example.adam.myusefulllocations.Activity.MainActivity;
 import com.example.adam.myusefulllocations.Constant.Constants;
-import com.example.adam.myusefulllocations.Data.SearchDatabaseHandler;
+import com.example.adam.myusefulllocations.Data.DatabaseHandler;
 import com.example.adam.myusefulllocations.R;
-import com.example.adam.myusefulllocations.UI.MyItemRecyclerViewAdapter;
+import com.example.adam.myusefulllocations.Util.Global;
+import com.example.adam.myusefulllocations.Util.LocationsCursorAdapter;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.SearchJsonAsyncTask;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 /**
  * A fragment representing a list of Items.
@@ -39,24 +43,36 @@ import java.util.List;
 public class ItemSearchFragment extends Fragment implements LocationListener {
 
     // TODO: Customize parameter argument names
+    private static final String TAG = "SearchFragment";
+    public static boolean fromSearchFrag;
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     public static final String MY_PREFS = "MyPrefsFile";
     public SharedPreferences mPrefs;
     public boolean firstTime;
-    private String[] querySearchList;
+    RequestQueue requestQueue;
 
 
-    private List<PlaceOfInterest> placeOfInterestList;
-    private List<PlaceOfInterest> listPlaceOfInterests;
+    public LocationsCursorAdapter locationsCursorAdapter;
+//    private String[] querySearchList;
+    private ListView listViewSearch;
+    RadioButton isKm;
+    MapsFragment mapsFragment;
 
-    private SearchDatabaseHandler db;
 
-    private EditText search;
+//    private List<PlaceOfInterest> placeOfInterestList;
+//    private List<PlaceOfInterest> listPlaceOfInterests;
+
+    private DatabaseHandler db;
+
+    private SearchView search;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
 
+    private Cursor cursor;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
+    DataPassListener dataPassListener;
     // popup
 
     private TextView aboutUs;
@@ -68,7 +84,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     private Button searchByText;
     private Button searchNearby;
 
-    private MyItemRecyclerViewAdapter adapter;
+//    private CursorRecyclerViewAdapter adapter;
 
 
 
@@ -95,106 +111,158 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         ItemSearchFragment fragment = new ItemSearchFragment();
         // get current Location from MainActivity:
             Bundle bundle =  getArguments();
-            double latitude = bundle.getDouble("latitude");
-            double longitude = bundle.getDouble("longitude");
+            float latitude = bundle.getFloat("latitude");
+            float longitude = bundle.getFloat("longitude");
         fragment.setArguments(bundle);
         return fragment;
     }
-    public List<PlaceOfInterest> getAllLocations(Cursor cursor) {
-
-
-        List<PlaceOfInterest> searchList = new ArrayList<>();
-
-        querySearchList = new String[]{
-                Constants.KEY_SEARCH_ID,
-                Constants.KEY_SEARCH_LOCATION_ADDRESS, Constants.KEY_SEARCH_LOCATION_LATITUDE,
-                Constants.KEY_SEARCH_LOCATION_LONGITUDE, Constants.KEY_SEARCH_LOCATION_NAME,
-                Constants.KEY_SEARCH_LOCATION_DISTANCE,
-                Constants.KEY_SEARCH_LOCATION_IMAGE};
-
-        if (cursor.moveToFirst()) {
-            do {
-                PlaceOfInterest placeOfInterest = new PlaceOfInterest();
-                placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_ID))));
-                placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_ADDRESS)));
-                placeOfInterest.setLatitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE))));
-                placeOfInterest.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE))));
-                placeOfInterest.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE))));
-                placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME)));
-                placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE)));
-
-
-                //add to the tasks list
-
-                searchList.add(placeOfInterest);
-
-
-            } while (cursor.moveToNext());
-        }
-        return searchList;
-    }
+//
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        fromSearchFrag = false;
+
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
     }
 
-
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        final View view = inflater.inflate(R.layout.fragment_lv_search, container, false);
 
-        db = new SearchDatabaseHandler(getActivity());
-
-        placeOfInterestList = new ArrayList<>();
-        placeOfInterestList=getAllLocations(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
-        listPlaceOfInterests = new ArrayList<>();
-
-        adapter = new MyItemRecyclerViewAdapter(getActivity(), placeOfInterestList);
+        db = new DatabaseHandler(getActivity(), Constants.SEARCH_DB_NAME, null, Constants.SEARCH_DB_VERSION);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
 
-        searchByText = view.findViewById(R.id.search_by_Text_ID);
-        searchNearby = view.findViewById(R.id.search_nearby_ID);
+        listViewSearch = view.findViewById(R.id.search_lv_holder_ID);
 
-        search = view.findViewById(R.id.search_Bar_ID);
+        searchByText = view.findViewById(R.id.search_lv_by_Text_ID);
+        searchNearby = view.findViewById(R.id.search_lv_nearby_ID);
 
-        Context context = view.getContext();
-        RecyclerView recyclerView = view.findViewById(R.id.search_recyclerView_ID);
-//        ((RecyclerView) view).setHasFixedSize(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setAdapter(adapter);
+        search = view.findViewById(R.id.search_lv_Bar_ID);
 
-            for (PlaceOfInterest place : placeOfInterestList) {
+        cursor = db.getAllLocations(Constants.TABLE_NAME_SEARCH);
+        cursor.moveToFirst();
 
-                PlaceOfInterest placeOfInterest = new PlaceOfInterest();
+        locationsCursorAdapter = new LocationsCursorAdapter(getActivity(), cursor);
+        listViewSearch.setAdapter(locationsCursorAdapter);
 
-                placeOfInterest.setName(place.getName());
-                placeOfInterest.setAddress(place.getAddress());
-                placeOfInterest.setDistance(place.getDistance());
+        locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+        registerForContextMenu(listViewSearch);
+        Global global = new Global(getActivity());
 
 
-                listPlaceOfInterests.add(placeOfInterest);
+        search.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                // responsible for the user focus on the search view, keyboard...
+
             }
-            searchByText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // get current location function placed here
-                    String textToSearch = search.getText().toString().trim().replace(" ", "%20");
+        });
 
-                    if (textToSearch.length() > 0) {
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-                        jsonParse(textToSearch);
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                if (newText.length() >= 2){
+
+                    listViewSearch.setVisibility(View.VISIBLE);
+                    searchJsonAsyncTask = new SearchJsonAsyncTask();
+
+                    try {
+
+                        searchJsonAsyncTask.setContext(getActivity());
+                        searchJsonAsyncTask.setSearchText(newText);
+                        searchJsonAsyncTask.currentLat=MainActivity.latitude;
+                        searchJsonAsyncTask.currentLng=MainActivity.longitude;
+                        searchJsonAsyncTask.execute();
+
+                    }catch (Exception e) {
+                        Log.e(TAG, "onClick: " + e.getMessage());
                     }
+                }else{
+
+                    listViewSearch.setVisibility(View.INVISIBLE);
+
                 }
-            });
 
 
+                return false;
+            }
+        });
+
+        if (global.isNetworkConnected()){
+
+            //TODO - ADD NOTIFICATION ABOUT THE CONNECTION
+
+        }else {
+        }
+
+//
+//            searchByText.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                        // get current location function placed here
+//                        String textToSearch = search.toString().trim().replace(" ", "%20");
+//
+//                    if (!(search.toString().trim().length() <= 0)) {
+//
+//                        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
+//                        searchJsonAsyncTask = new SearchJsonAsyncTask();
+//
+//                        try {
+//
+//                                searchJsonAsyncTask.setContext(getActivity());
+//                                searchJsonAsyncTask.setSearchText(textToSearch);
+//                                searchJsonAsyncTask.currentLat=MainActivity.latitude;
+//                                searchJsonAsyncTask.currentLng=MainActivity.longitude;
+//                                searchJsonAsyncTask.execute();
+//                            }catch (Exception e) {
+//                                Log.e(TAG, "onClick: " + e.getMessage());
+//                            }
+//
+//                            locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+//                        }
+//                }
+//            });
+
+
+        listViewSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            private FragmentManager supportFragmentManager;
+
+            public FragmentManager getSupportFragmentManager() {
+                return supportFragmentManager;
+            }
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                fromSearchFrag = true;
+                cursor = (Cursor) parent.getAdapter().getItem(position);
+                float lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
+                float lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
+                String name = cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
+                //mapsFragment.passDataMyLocation(lat, lng, name);
+
+                mPrefs = getActivity().getSharedPreferences(MY_PREFS,0);
+                SharedPreferences.Editor editor = mPrefs.edit();
+                editor.putFloat("place_lat", lat);
+                editor.putFloat("place_lng", lng);
+                editor.putString("place_name", name);
+
+
+            }
+        });
 
                 return view;
     }
@@ -218,19 +286,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
 
     }
 
-    private void jsonParse(String textToSearch) {
-
-        searchJsonAsyncTask = new SearchJsonAsyncTask();
-        searchJsonAsyncTask.setContext(getActivity());
-        searchJsonAsyncTask.setSearchText(textToSearch);
-        searchJsonAsyncTask.currentLat=MainActivity.latitude;
-        searchJsonAsyncTask.currentLng=MainActivity.longitude;
-        searchJsonAsyncTask.execute();
-
-
-    }
-
-    private void welcomePopup() {
+    public void welcomePopup() {
 
 
         dialogBuilder = new AlertDialog.Builder(getContext());
@@ -243,6 +299,9 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         dialog = dialogBuilder.create();
         dialog.show();
 
+        isKm = view.findViewById(R.id.km_RB_ID);
+
+
         startUsingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,17 +309,22 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
                 mPrefs = getActivity().getSharedPreferences(MY_PREFS,0);
                 SharedPreferences.Editor editor = mPrefs.edit();
                 editor.putBoolean("ifFirstTime", false);
-                editor.putBoolean("isMiles", true);
 
+                if (isKm.isChecked()) {
 
+                    editor.putBoolean("isKM", true);
+
+                }else {
+
+                    editor.putBoolean("isKM", false);
+
+                }
+                editor.apply();
                 editor.commit();
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-
-
 
                     }
                 }, 1000); // = 1 second

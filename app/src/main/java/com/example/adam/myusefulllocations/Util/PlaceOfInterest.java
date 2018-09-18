@@ -4,17 +4,17 @@ public class PlaceOfInterest {
 
     private int _id;
     private String address;
-    private double latitude;
-    private double longitude;
+    private float latitude;
+    private float longitude;
     private String name;
     private String photoUrl;
-    private double distance;
+    private float distance;
 
 
     //TODO NEEDS TO CHANGE ALL DB AND LOCATION CLASSES ACCORDING THE NEW COLUMNS!!9חח
 
 
-    public PlaceOfInterest(String address, double latitude, double longitude, String name, String photoUrl, double distance) {
+    public PlaceOfInterest(String address, float latitude, float longitude, String name, String photoUrl, float distance) {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -23,7 +23,7 @@ public class PlaceOfInterest {
         this.distance = distance;
     }
 
-    public PlaceOfInterest(int _id, String address, double latitude, double longitude, String name, String photoUrl, double distance) {
+    public PlaceOfInterest(int _id, String address, float latitude, float longitude, String name, String photoUrl, float distance) {
         this._id = _id;
         this.address = address;
         this.latitude = latitude;
@@ -34,15 +34,11 @@ public class PlaceOfInterest {
 
     }
 
-    public PlaceOfInterest(){
-
-    }
-
-    public double getDistance() {
+    public float getDistance() {
         return distance;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance(float distance) {
         this.distance = distance;
     }
 
@@ -62,19 +58,19 @@ public class PlaceOfInterest {
         this.address = address;
     }
 
-    public double getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
 
