@@ -16,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -33,6 +33,8 @@ import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.SearchJsonAsyncTask;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -60,12 +62,12 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     MapsFragment mapsFragment;
 
 
-//    private List<PlaceOfInterest> placeOfInterestList;
+    private List<PlaceOfInterest> placeOfInterestList;
 //    private List<PlaceOfInterest> listPlaceOfInterests;
 
     private DatabaseHandler db;
 
-    private SearchView search;
+    private EditText search;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
 
@@ -156,85 +158,36 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         Global global = new Global(getActivity());
 
 
-        search.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
 
-                // responsible for the user focus on the search view, keyboard...
 
-            }
-        });
+            searchByText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                        // get current location function placed here
+                        String textToSearch = search.getText().toString().trim().replace(" ", "%20");
 
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+                    if (!(search.getText().toString().trim().length() <= 0)) {
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
+                        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
+                        searchJsonAsyncTask = new SearchJsonAsyncTask();
 
-                if (newText.length() >= 2){
+                        try {
 
-                    listViewSearch.setVisibility(View.VISIBLE);
-                    searchJsonAsyncTask = new SearchJsonAsyncTask();
+                                searchJsonAsyncTask.setContext(getActivity());
+                                searchJsonAsyncTask.setSearchText(textToSearch);
+                                searchJsonAsyncTask.currentLat=MainActivity.latitude;
+                                searchJsonAsyncTask.currentLng=MainActivity.longitude;
+                                searchJsonAsyncTask.execute();
+                            }catch (Exception e) {
+                                Log.e(TAG, "onClick: " + e.getMessage());
+                            }
 
-                    try {
+                            locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+                        }
 
-                        searchJsonAsyncTask.setContext(getActivity());
-                        searchJsonAsyncTask.setSearchText(newText);
-                        searchJsonAsyncTask.currentLat=MainActivity.latitude;
-                        searchJsonAsyncTask.currentLng=MainActivity.longitude;
-                        searchJsonAsyncTask.execute();
-
-                    }catch (Exception e) {
-                        Log.e(TAG, "onClick: " + e.getMessage());
-                    }
-                }else{
-
-                    listViewSearch.setVisibility(View.INVISIBLE);
 
                 }
-
-
-                return false;
-            }
-        });
-
-        if (global.isNetworkConnected()){
-
-            //TODO - ADD NOTIFICATION ABOUT THE CONNECTION
-
-        }else {
-        }
-
-//
-//            searchByText.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                        // get current location function placed here
-//                        String textToSearch = search.toString().trim().replace(" ", "%20");
-//
-//                    if (!(search.toString().trim().length() <= 0)) {
-//
-//                        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-//                        searchJsonAsyncTask = new SearchJsonAsyncTask();
-//
-//                        try {
-//
-//                                searchJsonAsyncTask.setContext(getActivity());
-//                                searchJsonAsyncTask.setSearchText(textToSearch);
-//                                searchJsonAsyncTask.currentLat=MainActivity.latitude;
-//                                searchJsonAsyncTask.currentLng=MainActivity.longitude;
-//                                searchJsonAsyncTask.execute();
-//                            }catch (Exception e) {
-//                                Log.e(TAG, "onClick: " + e.getMessage());
-//                            }
-//
-//                            locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
-//                        }
-//                }
-//            });
+            });
 
 
         listViewSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -380,4 +333,5 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(PlaceOfInterest item);
     }
+
 }

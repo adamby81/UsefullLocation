@@ -12,7 +12,7 @@
         android:background="@drawable/background"
         android:layout_height="wrap_content">
 
-        <SearchView
+        <EditText
             android:id="@+id/search_lv_Bar_ID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,14 +23,22 @@
 
         <Button
             android:id="@+id/search_lv_by_Text_ID"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
             android:layout_below="@+id/search_lv_Bar_ID"
-            android:text="@string/tab1_TEXT_SEARCH" />
+            android:text="@string/tab1_TEXT_SEARCH"
+            android:layout_marginStart="8dp" />
 
         <Button
             android:id="@+id/search_lv_nearby_ID"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
+            android:layout_marginLeft="8dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            android:layout_marginRight="8dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
@@ -41,7 +49,8 @@
         android:id="@+id/search_lv_holder_ID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
         android:layout_below="@+id/search_lv_by_Text_ID"
         android:scrollbars="vertical"
         tools:layout_editor_absoluteX="0dp">

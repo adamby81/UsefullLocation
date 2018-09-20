@@ -79,8 +79,11 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
                 StringBuilder stringBuilder = new StringBuilder(); //Build the response
                 String line;
+
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuilder.append(line).append("\n");
+//                    Log.i("String Builder: ", "Line Content: " +stringBuilder.toString());
+
                 }
                 bufferedReader.close();
 
@@ -92,11 +95,12 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
                 float distance;
                 JSONObject jsonobject, geometry, viewport, northeast;
                 JSONArray photos;
+
 //                Log.d(TAG, "onPostExecute: " + stringBuilder);
                 try {
                     JSONObject json = new JSONObject(stringBuilder.toString()); // Make a JSON object out of the String response
                     JSONArray jArray = json.getJSONArray("results"); // Get the array of results inside the JSON ignore the rest of the information
-//      Log.e(TAG, "onPostExecute: " + jArray.toString());
+     Log.i( "IN THE JSON: ","onPostExecute: " + jArray.length());
                     for (int i = 0; i < jArray.length(); i++) { //Iterate through the array of results
                         jsonobject = jArray.getJSONObject(i);
 
@@ -121,6 +125,10 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
                         img += "&key=" + API_KEY;
                         PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,img, distance);
                         db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH); //Add to the downloaded list table
+
+                        Log.i("Row Count - JSON: ", " Row Num: " + i);
+
+
                     }
                     Log.i("JSON LENGTH: ", Integer.toString(jsonLen));
 //      update.updateTable();

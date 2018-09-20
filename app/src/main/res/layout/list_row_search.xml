@@ -67,7 +67,7 @@
 
                 <ImageView
                     android:id="@+id/imageView_row_search_ID"
-                    android:layout_width="183dp"
+                    android:layout_width="160dp"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     app:srcCompat="@drawable/no_image_available"
