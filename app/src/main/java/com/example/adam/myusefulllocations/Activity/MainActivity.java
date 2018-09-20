@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -25,42 +23,37 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
-import com.example.adam.myusefulllocations.Data.CurrentLocation;
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
-import com.example.adam.myusefulllocations.Fragment.MapsActivity;
-import com.example.adam.myusefulllocations.Fragment.dummy.DummyContent;
+import com.example.adam.myusefulllocations.Fragment.MapsFragment;
 import com.example.adam.myusefulllocations.R;
+import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
 import com.google.android.gms.maps.GoogleMap;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
+import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener
-        , DataPassListener, CurrentLocation, ItemSearchFragment.OnListFragmentInteractionListener {
-
+        , DataPassListener, ItemSearchFragment.OnListFragmentInteractionListener {
 
     FragmentTransaction fragmentTransaction;
     FrameLayout frameLayoutSearch, frameLayoutMap;
     GoogleMap mMap;
-    MapsActivity myMapFragment;
+    MapsFragment myMapFragment;
     ItemSearchFragment itemSearchFragment;
 
-    public String address;
-    public static double latitude;
-    public static double longitude;
-    public static double altitude;
+    public static String address;
+    public static float latitude;
+    public static float longitude;
 
     public static int popOnceChecker = -1;
     PowerConnectionReceiver receiver;
 
+    public LatLng latLng;
 
-       static LocationManager locationManager;
-       static LocationListener locationListener;
+    public static LocationManager locationManager;
+       public static LocationListener locationListener;
+    private String name;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -85,67 +78,9 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public void updateLocationInfo(Location location) {
-
-        Log.i("PlaceOfInterest Info: ", location.toString());
-
-
-        // קבלת המיקום בפועל
-        TextView latView;
-//        TextView longView = findViewById(R.id.longitudeView_ID);
-//        TextView accView = findViewById(R.id.accView_ID);
-//        TextView altView = findViewById(R.id.altitudeView_ID);
-//
-//        latView.setText("Latitude: " + location.getLatitude());
-//        longView.setText("Longitude: " + location.getLongitude());
-//        accView.setText("Accuracy: " + location.getAccuracy());
-//        altView.setText("Altitude: " + location.getAltitude());
-
-
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-
-        try {
-
-            address = "Could not find any address";
-            List<Address> listAddresses = geocoder.getFromLocation(location.getLatitude(),
-                    location.getLongitude(), 1);
-
-            if (listAddresses != null && listAddresses.size() >0) {
-                Log.i("Address Info: ", listAddresses.get(0).toString());
-
-                address = "Address: " + "\n";
-                if (listAddresses.get(0).getSubThoroughfare() != null) {
-                    // רחוב
-                    address += listAddresses.get(0).getSubThoroughfare() + " ";
-                }
-
-                if (listAddresses.get(0).getThoroughfare() != null) {
-                    // מספר בית
-                    address += listAddresses.get(0).getThoroughfare() + "\n";
-
-                }
-
-                if (listAddresses.get(0).getLocality() != null) {
-                    // עיר
-                    address += listAddresses.get(0).getLocality() + ", ";
-                }
-                if (listAddresses.get(0).getPostalCode() != null) {
-                    // תיבת דואר
-                    address += listAddresses.get(0).getPostalCode() + "\n";
-
-                }
-
-                if (listAddresses.get(0).getCountryName() != null) {
-                    // מדינה
-                    address += listAddresses.get(0).getCountryName() + "\n";
-
-                }
-
-            }
-
-            latitude = location.getLatitude();
-            longitude =  location.getLongitude();
-            altitude =  location.getAltitude();
+    public static void updateLocationInfo(Location location) {
+            latitude = (float) location.getLatitude();
+            longitude = (float) location.getLongitude();
 
             Log.e("location: ", "updateLocationInfo: " + latitude + " AND " + location.getLatitude());
 
@@ -154,20 +89,12 @@ public class MainActivity extends AppCompatActivity implements
 //            currLocationEditor.putLong("Latitude", latitude );
 //            currLocationEditor.putLong("Longitude", longitude );
 //            currLocationEditor.putLong("Altitude", altitude );
-//            currLocationEditor.putString("address", address);
+//            currLocationEditor.putString("name", name);
 
             // מיקום בפועל
             // TextView addView = findViewById(R.id.addressView_ID);
 
-            // addView.setText(address);
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-
+            // addView.setText(name);
     }
 
     @Override
@@ -179,6 +106,16 @@ public class MainActivity extends AppCompatActivity implements
 
         super.onDestroy();
     }
+
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+    }
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements
             frameLayoutMap.removeAllViews();
             frameLayoutSearch.removeAllViews();
 
-            myMapFragment = new MapsActivity();
+            myMapFragment = new MapsFragment();
             fragmentTransaction.add(R.id.fragment_container_search, itemSearchFragment);
             fragmentTransaction.add(R.id.fragment_container_map, myMapFragment);
             fragmentTransaction.commit();
@@ -212,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements
             Bundle bundleMapsAndSearch = new Bundle();
             bundleMapsAndSearch.putDouble("latitude", latitude);
             bundleMapsAndSearch.putDouble("longitude", longitude);
-            bundleMapsAndSearch.putString("address", address);
+            bundleMapsAndSearch.putString("name", address);
 
             myMapFragment.setArguments(bundleMapsAndSearch);
             itemSearchFragment.setArguments(bundleMapsAndSearch);
@@ -267,7 +204,10 @@ public class MainActivity extends AppCompatActivity implements
 
         if (Build.VERSION.SDK_INT > 23) {
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                    != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -342,19 +282,21 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.navigation_map_ID:
-               fragment = new MapsActivity();
+               fragment = new MapsFragment();
 
                 Bundle bundleMaps = new Bundle();
                 bundleMaps.putDouble("latitude", latitude);
                 bundleMaps.putDouble("longitude", longitude);
-                bundleMaps.putString("address", address);
+                bundleMaps.putString("name", address);
 
                 fragment.setArguments(bundleMaps);
 
                 break;
 
             case R.id.navigation_favorites_ID:
+
                 loadFavoritesActivity(item);
+//                fragment = new FavoritesFragment();
                 break;
 
         }
@@ -364,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void loadFavoritesActivity(MenuItem item) {
 
-        Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
+        Intent intent = new Intent(MainActivity.this, FavoritesLvActivity.class);
         startActivity(intent);
     }
 
@@ -372,15 +314,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    @Override
-    public void currentLocation(double lat, double lon, String currentAddress) {
 
-
-        lat = latitude;
-        lon = longitude;
-        currentAddress = address;
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -444,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements
 //                                JSONObject jsonResults = jsonObject.getJSONObject("results");
 //
 //                                name = jsonResults.getString("name");
-//                                address = jsonResults.getString("formatted_address");
+//                                name = jsonResults.getString("formatted_address");
 //                                place_id = jsonResults.getString("place_id");
 //
 //                                JSONObject geometry = jsonResults.getJSONObject("geometry");
@@ -472,16 +406,40 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(ItemSearchFragment item) {
 
     }
 
     @Override
-    public void passDataMyLocation(double lat, double lng, String address) {
+    public void passDataMyLocation(double lat, double lng, String name) {
+
+        this.name=name;
+        latLng = new LatLng(lat, lng);
+         myMapFragment = new MapsFragment();
+        //Device is in Portrait
+        if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container_main, myMapFragment).addToBackStack(null);
+            fragmentTransaction.commit();
+            // If device is in landscape no need to replace fragments
+        } else {
+
+           // myMapFragment.passDataMyLocation(latitude, longitude ,name);
+            Fragment fragment = new MapsFragment();
+
+            Bundle bundleMaps = new Bundle();
+            bundleMaps.putDouble("latitude", lat);
+            bundleMaps.putDouble("longitude", lng);
+            bundleMaps.putString("name", name);
 
 
 
+            fragment.setArguments(bundleMaps);
+        }
+    }
 
+    @Override
+    public void onListFragmentInteraction(PlaceOfInterest item) {
 
     }
 }

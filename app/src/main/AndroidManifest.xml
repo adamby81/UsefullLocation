@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -29,9 +30,9 @@
             </intent-filter>
         </activity>
 
+
         <receiver android:name=".Util.PowerConnectionReceiver" />
 
-        <activity android:name=".Activity.FavoritesActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -54,6 +55,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+
+
+        <activity android:name=".Activity.FavoritesLvActivity"></activity>
     </application>
 
 </manifest>

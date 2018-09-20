@@ -20,5 +20,5 @@
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
     -->                                                                     // plasma-buckeye-213604 - googles id project
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDQEqDOPsDKZKyAqYGBbewEVd-I3PY-SVM</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCmEYpUa4JvvgEefYJnzTtISDhJzpES84M</string>
 </resources>

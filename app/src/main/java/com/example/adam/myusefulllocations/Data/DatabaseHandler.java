@@ -10,196 +10,250 @@ import android.util.Log;
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private String[] queryLocationList;
     private Context ctx;
-    public DatabaseHandler(Context context) {
-        super(context, Constants.DB_NAME, null, Constants.DB_VERSION );
 
-        this.ctx = context;
-
+    public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
     }
+
+//    public DatabaseHandler(Context context) {
+//        super(context, Constants.SEARCH_DB_NAME, null, Constants.DB_VERSION);
+//
+//        this.ctx = context;
+//
+//    }
+
+
+
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        // יצירת טבלת מועדפים
 
-        String CREATE_LOCATION_TABLE = "CREATE TABLE " + Constants.TABLE_NAME_LOCATION + "("
-                + Constants.KEY_LOCATION_ID + " INTEGER PRIMARY KEY, "
-                + Constants.KEY_LOCATION_ADDRESS + " TEXT,"
-                + Constants.KEY_LOCATION_NAME + " TEXT,"
-                + Constants.KEY_LOCATION_IMAGE + " TEXT,"
-                + Constants.KEY_LOCATION_LATITUDE + " LONG,"
-                + Constants.KEY_LOCATION_LONGITUDE + " LONG);";
-
-        db.execSQL(CREATE_LOCATION_TABLE);
-
-        // יצירת טבלת חיפוש
-
-        String CREATE_SEARCH_TABLE = "CREATE TABLE " + Constants.TABLE_NAME_LOCATION + "("
+        String CREATE_SEARCH_TABLE = "CREATE TABLE " + Constants.TABLE_NAME_SEARCH + "("
                 + Constants.KEY_SEARCH_ID + " INTEGER PRIMARY KEY, "
                 + Constants.KEY_SEARCH_LOCATION_ADDRESS + " TEXT,"
                 + Constants.KEY_SEARCH_LOCATION_NAME + " TEXT,"
                 + Constants.KEY_SEARCH_LOCATION_IMAGE + " TEXT,"
                 + Constants.KEY_SEARCH_LOCATION_LATITUDE + " LONG,"
                 + Constants.KEY_SEARCH_LOCATION_LONGITUDE + " LONG,"
-                + Constants.KEY_SEARCH_LOCATION_DISTANCE + "LONG);";
+                + Constants.KEY_SEARCH_LOCATION_DISTANCE + " LONG);";
 
         db.execSQL(CREATE_SEARCH_TABLE);
+
+        final String SQL_CREATE_FAV_TABLE = "CREATE TABLE " + Constants.TABLE_NAME_FAV
+                + " (" + Constants.KEY_FAV_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + Constants.KEY_FAV_NAME + " TEXT, "
+                + Constants.KEY_FAV_ADDRESS + " TEXT, "
+                + Constants.KEY_FAV_IMAGE + " TEXT, "
+                + Constants.KEY_FAV_LATITUDE + " LONG, "
+                + Constants.KEY_FAV_LONGITUDE + " LONG, "
+                + Constants.KEY_FAV_DISTANCE+ " LONG);";
+
+        db.execSQL(SQL_CREATE_FAV_TABLE);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_LOCATION);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_SEARCH);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_FAV);
+
 
         onCreate(db);
     }
 
+
+
     /**
-     *   CRUD OPERATIOND: Create, Read, Update, Delete Methods
+     * CRUD OPERATIOND: Create, Read, Update, Delete Methods
      */
 
-    public void addPlace(PlaceOfInterest placeOfInterest) {
+    public void addPlaceSearch(Context mContext, PlaceOfInterest placeOfInterest, String tableName) {
         SQLiteDatabase db = this.getWritableDatabase();
-
+        this.ctx = mContext;
         ContentValues values = new ContentValues();
-
-        values.put(Constants.KEY_LOCATION_ADDRESS, placeOfInterest.getAddress());
-        values.put(Constants.KEY_LOCATION_LATITUDE, placeOfInterest.getLatitude());
-        values.put(Constants.KEY_LOCATION_LONGITUDE, placeOfInterest.getLongitude());
-        values.put(Constants.KEY_LOCATION_NAME,placeOfInterest.getName());
-        values.put(Constants.KEY_LOCATION_IMAGE,placeOfInterest.getPhotoUrl());
-
-
-
+        values.put(Constants.KEY_SEARCH_LOCATION_NAME, placeOfInterest.getName());
+        values.put(Constants.KEY_SEARCH_LOCATION_ADDRESS, placeOfInterest.getAddress());
+        values.put(Constants.KEY_SEARCH_LOCATION_LATITUDE, placeOfInterest.getLatitude());
+        values.put(Constants.KEY_SEARCH_LOCATION_LONGITUDE, placeOfInterest.getLongitude());
+        values.put(Constants.KEY_SEARCH_LOCATION_IMAGE, placeOfInterest.getPhotoUrl());
+        values.put(Constants.KEY_SEARCH_LOCATION_DISTANCE, placeOfInterest.getDistance());
 
 
         // Insert the row
 
-        db.insert(Constants.TABLE_NAME_LOCATION, null, values);
+        db.insert(tableName, null, values);
 
         Log.d("Saved", "New PlaceOfInterest was Added to DB");
 
     }
-    //Get a PlaceOfInterest
-    public PlaceOfInterest getLocation (int id) {
+
+    public void addPlaceFavorites(Context mContext, PlaceOfInterest placeOfInterest, String tableName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.query(Constants.TABLE_NAME_LOCATION, new String[] {
-                        Constants.KEY_LOCATION_ID, Constants.KEY_LOCATION_ADDRESS, Constants.KEY_LOCATION_LATITUDE,
-                        Constants.KEY_LOCATION_LONGITUDE, Constants.KEY_LOCATION_NAME,
-                        Constants.KEY_LOCATION_IMAGE},
-                Constants.KEY_LOCATION_ID + "=?",
-                new String [] {String.valueOf(id)}, null, null, null, null);
-
-        if (cursor!=null)
-            cursor.moveToFirst();
-
-        PlaceOfInterest placeOfInterest = new PlaceOfInterest();
-        placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_ID))));
-        placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_ADDRESS)));
-        placeOfInterest.setLatitude(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LATITUDE))));
-        placeOfInterest.setLongitude(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LONGITUDE))));
-        placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_NAME)));
-        placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_IMAGE)));
-
-        // Convert time stamp to something readable
+        this.ctx = mContext;
+        ContentValues values = new ContentValues();
+        values.put(Constants.KEY_FAV_NAME, placeOfInterest.getName());
+        values.put(Constants.KEY_FAV_ADDRESS, placeOfInterest.getAddress());
+        values.put(Constants.KEY_FAV_LATITUDE, placeOfInterest.getLatitude());
+        values.put(Constants.KEY_FAV_LONGITUDE, placeOfInterest.getLongitude());
+        values.put(Constants.KEY_FAV_IMAGE, placeOfInterest.getPhotoUrl());
+        values.put(Constants.KEY_FAV_DISTANCE, placeOfInterest.getDistance());
 
 
-        return placeOfInterest;
+        // Insert the row
+
+        db.insert(tableName, null, values);
+
+        Log.d("Saved", "New PlaceOfInterest was Added to DB");
 
     }
+
+//    //Get a PlaceOfInterest
+//    public PlaceOfInterest getPlaceSearch(int id) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.query(Constants.TABLE_NAME_SEARCH, new String[]{
+//                        Constants.KEY_SEARCH_ID, Constants.KEY_SEARCH_LOCATION_ADDRESS, Constants.KEY_SEARCH_LOCATION_LATITUDE,
+//                        Constants.KEY_SEARCH_LOCATION_LONGITUDE, Constants.KEY_SEARCH_LOCATION_NAME,
+//                        Constants.KEY_SEARCH_LOCATION_DISTANCE,
+//                        Constants.KEY_SEARCH_LOCATION_IMAGE},
+//                Constants.KEY_SEARCH_ID + "=?",
+//                new String[]{String.valueOf(id)}, null, null, null, null);
+//
+//        if (cursor != null)
+//            cursor.moveToFirst();
+//
+//        PlaceOfInterest placeOfInterest = new PlaceOfInterest(id, address1, lat, lon, name, img, distance);
+//        placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_ID))));
+//        placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_ADDRESS)));
+//        placeOfInterest.setLatitude(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE))));
+//        placeOfInterest.setLongitude(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE))));
+//        placeOfInterest.setDistance(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE))));
+//        placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME)));
+//        placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE)));
+//
+//        return placeOfInterest;
+//
+//    }
+
+//    public PlaceOfInterest getPlaceFavorites(int id) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.query(Constants.TABLE_NAME_FAV, new String[]{
+//                        Constants.KEY_FAV_ID, Constants.KEY_FAV_ADDRESS, Constants.KEY_FAV_LATITUDE,
+//                        Constants.KEY_FAV_LONGITUDE, Constants.KEY_FAV_NAME,
+//                        Constants.KEY_FAV_DISTANCE,
+//                        Constants.KEY_FAV_IMAGE},
+//                Constants.KEY_FAV_ID + "=?",
+//                new String[]{String.valueOf(id)}, null, null, null, null);
+//
+//        if (cursor != null)
+//            cursor.moveToFirst();
+//
+//        PlaceOfInterest placeOfInterest = new PlaceOfInterest(id, address1, lat, lon, name, img, distance);
+//        placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_ID))));
+//        placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_ADDRESS)));
+//        placeOfInterest.setLatitude(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE))));
+//        placeOfInterest.setLongitude(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE))));
+//        placeOfInterest.setDistance(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE))));
+//        placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME)));
+//        placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE)));
+//
+//        return placeOfInterest;
+//
+//    }
+//
 
     // Get All Locations
 
-    public List<PlaceOfInterest> getAllLocations () {
-
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        List<PlaceOfInterest> placeOfInterestList = new ArrayList<>();
-
-        queryLocationList = new String[] {
-                Constants.KEY_LOCATION_ID,
-                Constants.KEY_LOCATION_ADDRESS, Constants.KEY_LOCATION_LATITUDE,
-                Constants.KEY_LOCATION_LONGITUDE, Constants.KEY_LOCATION_NAME,
-                Constants.KEY_LOCATION_IMAGE};
-
-        Cursor cursor = db.query(Constants.TABLE_NAME_LOCATION, queryLocationList,
-                null,null, null, null,
-                Constants.KEY_LOCATION_ID + " DESC");
-
-        if (cursor.moveToFirst()) {
-            do {
-                PlaceOfInterest placeOfInterest = new PlaceOfInterest();
-                placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_ID))));
-                placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_ADDRESS)));
-                placeOfInterest.setLatitude(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LATITUDE))));
-                placeOfInterest.setLongitude(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_LONGITUDE))));
-                placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_NAME)));
-                placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_LOCATION_IMAGE)));
 
 
 
-
-                //add to the tasks list
-
-                placeOfInterestList.add(placeOfInterest);
-
-
-            }while (cursor.moveToNext());
-        }
-        return placeOfInterestList;
-    }
-
-    // Update PlaceOfInterest
-
-    public int updateLocation (PlaceOfInterest placeOfInterest) {
+    public int updateLocationsFavorites(PlaceOfInterest placeOfInterest) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Constants.KEY_LOCATION_ADDRESS, placeOfInterest.getAddress());
-        values.put(Constants.KEY_LOCATION_LATITUDE, placeOfInterest.getLatitude());
-        values.put(Constants.KEY_LOCATION_LONGITUDE, placeOfInterest.getLongitude());
-        values.put(Constants.KEY_LOCATION_NAME, placeOfInterest.getName());
-        values.put(Constants.KEY_LOCATION_IMAGE, placeOfInterest.getPhotoUrl());
-        //update row
-        getLocationsCounter();
+        values.put(Constants.KEY_SEARCH_LOCATION_NAME, placeOfInterest.getName());
+        values.put(Constants.KEY_SEARCH_LOCATION_ADDRESS, placeOfInterest.getAddress());
+        values.put(Constants.KEY_SEARCH_LOCATION_LATITUDE, placeOfInterest.getLatitude());
+        values.put(Constants.KEY_SEARCH_LOCATION_LONGITUDE, placeOfInterest.getLongitude());
+        values.put(Constants.KEY_SEARCH_LOCATION_DISTANCE, placeOfInterest.getDistance());
+        values.put(Constants.KEY_SEARCH_LOCATION_IMAGE, placeOfInterest.getPhotoUrl());
 
-        return db.update(Constants.TABLE_NAME_LOCATION, values, Constants.KEY_LOCATION_ID +"=?",
+        //update row
+        getLocationsCounter(Constants.TABLE_NAME_SEARCH);
+
+        return db.update(Constants.TABLE_NAME_SEARCH, values, Constants.KEY_SEARCH_ID + "=?",
                 new String[]{String.valueOf(placeOfInterest.get_id())});
     }
 
     // Delete PlaceOfInterest
-    public void deleteLocation (int id) {
+    public long deleteSearchLocationTable(String tableName) {
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        db.delete(Constants.TABLE_NAME_LOCATION, Constants.KEY_LOCATION_ID + "=?",
-                new String[]{String.valueOf(id)});
-        getLocationsCounter();
+        SQLiteDatabase db = this.getWritableDatabase();
 
-        db.close();
-
+        return db.delete(tableName, null, null);
 
     }
 
+    public long deleteFavoriteshLocationTable(String tableName) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        return db.delete(tableName, null, null);
+
+    }
+
+
     //Get Count Tasks
 
-    public int getLocationsCounter() {
+    public int getLocationsCounter(String tableName) {
 
         //TODO: ADD A TEXT VIEW FOR COUNTING OPEN TASKS
 
-        String countQuery = "SELECT * FROM " + Constants.TABLE_NAME_LOCATION;
+        String countQuery = "SELECT * FROM " + Constants.TABLE_NAME_SEARCH;
         SQLiteDatabase db = this.getReadableDatabase();
 
 
         Cursor cursor = db.rawQuery(countQuery, null);
 
         return cursor.getCount();
+    }
+
+    public int getLocationsCounterFavorites(String tableName) {
+
+        //TODO: ADD A TEXT VIEW FOR COUNTING OPEN TASKS
+
+        String countQuery = "SELECT * FROM " + Constants.TABLE_NAME_SEARCH;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        return cursor.getCount();
+    }
+
+    public Cursor getAllLocations(String tableName) {
+
+        //TODO: ADD A TEXT VIEW FOR COUNTING OPEN TASKS
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+
+
+        return db.rawQuery("SELECT * FROM " + tableName, null);
+    }
+
+    public Cursor getAllLocationsFavorites(String tableName) {
+
+        //TODO: ADD A TEXT VIEW FOR COUNTING OPEN TASKS
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+
+
+        return db.rawQuery("SELECT * FROM " + tableName, null);
     }
 }

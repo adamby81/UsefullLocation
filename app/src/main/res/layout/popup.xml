@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:layout_editor_absoluteY="81dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+        <TextView
+            android:id="@+id/titleTextView_POP_ID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/title_popup_welcome"
+            android:textSize="16sp"
+            android:textStyle="italic" />
+        <TextView
+            android:id="@+id/aboutTextView_POP_ID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/titleTextView_POP_ID"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="@string/about_us_View_ID"
+            android:textSize="16sp"
+            android:textStyle="italic" />
+        <TextView
+            android:id="@+id/title_settings_POP_ID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/aboutTextView_POP_ID"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:text="@string/mile_km_title"
+            android:textSize="16sp"
+            android:textStyle="italic" />
+
+
+            <RadioGroup
+                android:id="@+id/miles_km_GR_ID"
+                android:layout_below="@+id/title_settings_POP_ID"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="40dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp">
+                <RadioButton
+                    android:id="@+id/km_RB_ID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/by_km_RADIO_BTN" />
+                <RadioButton
+                    android:id="@+id/miles_RB_ID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/by_mile_RADIO_BTN" />
+
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/startUsingBtn_POP_ID"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/startusing"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_below="@+id/miles_km_GR_ID"
+                android:layout_width="match_parent"
+                android:textColor="@android:color/white"
+                android:background="@color/colorPrimary"
+                android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+</LinearLayout>
