@@ -1,11 +1,15 @@
 package com.example.adam.myusefulllocations.Util;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
+import com.example.adam.myusefulllocations.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,16 +17,25 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
 public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    BufferedReader bufferedReader;
     public float currentLat;
     public float currentLng;
-
+    LocationsCursorAdapter locationsCursorAdapter;
+    FusedLocationProviderClient fusedLocationProviderClient;
     private String searchText = "";
-    private Context context;
+    public Context context;
+    Location mLocation;
+    List<PlaceOfInterest> placesList;
+
+    ProgressDialog progressDialog;
 
     public String getSearchText() {
         return searchText;
@@ -40,29 +53,22 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
         this.context = context;
     }
 
-    public DatabaseHandler getDb() {
-        return db;
-    }
-
-    public void setDb(DatabaseHandler db) {
-        this.db = db;
-    }
-
-
     private DatabaseHandler db;
     private final String API_KEY = "AIzaSyCmEYpUa4JvvgEefYJnzTtISDhJzpES84M";
 
 
     @Override
     protected void onPreExecute() {
-
-        db = new DatabaseHandler(this.context, Constants.SEARCH_DB_NAME,null, Constants.SEARCH_DB_VERSION);
-
+        int titleProg = (R.string.searching);
+        int messageProg = R.string.searchingMessage;
+        db = new DatabaseHandler(this.context, Constants.TABLE_NAME_SEARCH,null, Constants.SEARCH_DB_VERSION);
+        progressDialog = ProgressDialog.show(context, Integer.toString(titleProg), Integer.toString(messageProg), true);
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(String response) {
+
+            //locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
     }
 
@@ -76,15 +82,21 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
                     = (HttpsURLConnection) url.openConnection(); //Make the request
             myConnection.setRequestMethod("GET"); //Connection method for the HTTP request
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+                bufferedReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
                 StringBuilder stringBuilder = new StringBuilder(); //Build the response
                 String line;
-
+                int count = 0;
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuilder.append(line).append("\n");
-//                    Log.i("String Builder: ", "Line Content: " +stringBuilder.toString());
+                    count = count +1;
+                    //Log.i("String Builder: ", "Count: " + count +  stringBuilder.append(line).append("\n"));
+
+
 
                 }
+                Log.i("String Builder: ", "Count TOTAL: " + count);
+
+
                 bufferedReader.close();
 
 
@@ -96,7 +108,9 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
                 JSONObject jsonobject, geometry, viewport, northeast;
                 JSONArray photos;
 
-//                Log.d(TAG, "onPostExecute: " + stringBuilder);
+
+                progressDialog.dismiss();
+
                 try {
                     JSONObject json = new JSONObject(stringBuilder.toString()); // Make a JSON object out of the String response
                     JSONArray jArray = json.getJSONArray("results"); // Get the array of results inside the JSON ignore the rest of the information
@@ -131,13 +145,13 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
 
                     }
                     Log.i("JSON LENGTH: ", Integer.toString(jsonLen));
-//      update.updateTable();
                 } catch (Exception e) {
                     Log.e("My App", "Could not parse malformed JSON: \"" + e.getMessage() + "\"");
                 }
                 return stringBuilder.toString();
             } finally {
                 myConnection.disconnect(); //Close the HTTP connection
+
             }
         } catch (Exception e) {
             Log.e("ERROR", e.getMessage(), e);
@@ -169,5 +183,36 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
 
 
     }
+
+//    private void getCurrentLocation(Context context) {
+//        try {
+//            // Ask for permissions if they have not been given
+//            if ((ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+//                Task location = fusedLocationProviderClient.getLastLocation();
+//                location.addOnCompleteListener((Activity) context, new OnCompleteListener() {
+//                    @Override
+//                    public void onComplete(@NonNull Task task) {
+//                        if (task.isSuccessful() && task.getResult() != null) {
+//                            mLocation = (Location) task.getResult();
+//                            lat = (float) mLocation.getLatitude();
+//                            lon = (float) mLocation.getLongitude();
+////                            Log.e(TAG, String.format("getCurrentLocation(%f, %f)", mLocation.getLatitude(), mLocation.getLongitude()));
+//                        } else {
+//                            Toast.makeText(getContext(), "Failed to get current location", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                });
+//            } else {
+//                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+//                        Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+//            }
+//        } catch (Exception e) {
+//            Log.e(TAG, "getCurrentLocation: " + e.getMessage());
+//        }
+//    }
+
+
+
 
 }

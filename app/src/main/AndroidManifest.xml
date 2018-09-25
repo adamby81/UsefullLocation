@@ -30,7 +30,6 @@
             </intent-filter>
         </activity>
 
-
         <receiver android:name=".Util.PowerConnectionReceiver" />
 
         <!--
@@ -55,9 +54,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-
-
-        <activity android:name=".Activity.FavoritesLvActivity"></activity>
+        <activity android:name=".Activity.FavoritesLvActivity" />
     </application>
 
 </manifest>

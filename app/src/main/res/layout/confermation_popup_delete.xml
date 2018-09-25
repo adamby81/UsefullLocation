@@ -13,8 +13,8 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/Sure_dialog_text_ID"
-                android:text="@string/sure_text"
+                android:id="@+id/Sure_dialog_text_DEL_ID"
+                android:text="@string/sure_text_delete"
                 android:textSize="17sp"
                 android:layout_centerHorizontal="true"
                 android:paddingTop="5dp"
@@ -22,20 +22,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
-                android:id="@+id/cancelBtn_Dialog_ID"
+                android:id="@+id/cancelBtn_Dialog_DEL_ID"
                 android:background="@color/colorPrimary"
                 android:text="@string/cancel"
                 android:layout_marginTop="19dp"
-                android:layout_below="@+id/Sure_dialog_text_ID"
+                android:layout_below="@+id/Sure_dialog_text_DEL_ID"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
-                android:id="@+id/okBtn_Dialog_ID"
+                android:id="@+id/deleteBtn_Dialog_DEL_ID"
                 android:background="@color/colorPrimary"
                 android:text="@string/ok"
                 android:layout_marginTop="19dp"
-                android:layout_alignBottom="@+id/cancelBtn_Dialog_ID"
+                android:layout_alignBottom="@+id/cancelBtn_Dialog_DEL_ID"
                 android:layout_alignParentRight="true"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"

@@ -16,9 +16,11 @@ import com.squareup.picasso.Picasso;
 
 public class LocationsCursorAdapter extends CursorAdapter {
 
-    TextView tvLocationName, tvLocationAddress, tvLocationDistance;
-    ImageView ivLocationPhoto;
-    String MyPREFERENCES = "MyPrefsFile";
+    private TextView tvLocationName;
+    private TextView tvLocationAddress;
+    private TextView tvLocationDistance;
+    private ImageView ivLocationPhoto;
+    private String MyPREFERENCES = "MyPrefsFile";
 
 
     public LocationsCursorAdapter(Context context, Cursor c) {

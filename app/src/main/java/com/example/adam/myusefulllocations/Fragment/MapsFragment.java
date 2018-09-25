@@ -62,9 +62,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_maps, container, false);
 
+        MainActivity.hideKeyboard(getActivity()); 
+
+
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
+       // Keyboard keyboard = new Keyboard(MapsFragment.this, container, )
         mMapView.onResume(); // needed to get the map to display immediately
 
         if (!ItemSearchFragment.fromSearchFrag) {

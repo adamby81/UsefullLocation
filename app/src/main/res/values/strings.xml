@@ -4,10 +4,8 @@
     <string name="title_map">Map</string>
     <string name="title_favorites">Favorites</string>
     <string name="title_home">Home</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_where_I_am">Where am I?</string>
+    <string name="action_settings">Set KM or MILES</string>
     <string name="title_my_location">My Location</string>
-    <string name="action_share">Share Location</string>
     <string name="title_activity_maps_fragment">Map</string>
     <string name="usbCharge_Toast">USB Charger Plugged in</string>
     <string name="acCharge_Toast">AC Charger Plugged in</string>
@@ -27,7 +25,8 @@
     <string name="altitude">Altitude:</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">DELETE</string>
-    <string name="sure_text">You Are About to Delete the Location From your Favorites Location, Are You Sure ?</string>
+    <string name="sure_text">You Are About to Delete All Of your Last Search Results, Are You Sure ?</string>
+    <string name="sure_text_delete">You Are About to Delete All Of your Favorites Saved Locations, Are You Sure ?</string>
     <string name="tab1_TEXT_SEARCH">SEARCH BY TEXT</string>
     <string name="tab2_LOCATION">SEARCH NEARBY</string>
     <string name="search_hint">Search</string>
@@ -45,4 +44,10 @@
     <string name="by_mile_RADIO_BTN">MILES</string>
     <string name="by_km_RADIO_BTN">KM</string>
     <string name="about_us_View_ID">ABOUT US TEXT</string>
+    <string name="searching">Searching</string>
+    <string name="searchingMessage">Searching... Please Wait</string>
+    <string name="save">SAVE</string>
+    <string name="settings_popup">No Changes Where Set</string>
+    <string name="action_delete">Delete All List</string>
+
 </resources>

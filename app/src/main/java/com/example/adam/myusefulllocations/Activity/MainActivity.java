@@ -2,9 +2,13 @@ package com.example.adam.myusefulllocations.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
@@ -12,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -22,15 +27,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RadioButton;
+import android.widget.Toast;
 
+import com.example.adam.myusefulllocations.Constant.Constants;
+import com.example.adam.myusefulllocations.Data.DatabaseHandler;
 import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
 import com.example.adam.myusefulllocations.Fragment.MapsFragment;
 import com.example.adam.myusefulllocations.R;
+import com.example.adam.myusefulllocations.Util.Global;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+
+import static com.example.adam.myusefulllocations.Fragment.ItemSearchFragment.MY_PREFS;
 
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener
@@ -45,6 +60,14 @@ public class MainActivity extends AppCompatActivity implements
     public static String address;
     public static float latitude;
     public static float longitude;
+
+    private android.support.v7.app.AlertDialog.Builder dialogBuilder;
+    private android.support.v7.app.AlertDialog dialog;
+    RadioButton isKm;
+    RadioButton isMiles;
+    public SharedPreferences mPrefs;
+
+
 
     public static int popOnceChecker = -1;
     PowerConnectionReceiver receiver;
@@ -122,7 +145,20 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Global global = new Global(MainActivity.this);
 
+        if (!global.isNetworkConnected()) {
+            AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setTitle("No Internet Connection Identified");
+            alertDialogBuilder.setMessage("App will work in Offline mode");
+            alertDialogBuilder.setPositiveButton("I Understand", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
+        }
         // fragments handeling - landScape
 
         ItemSearchFragment itemSearchFragment = new ItemSearchFragment();
@@ -332,17 +368,109 @@ public class MainActivity extends AppCompatActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+
+            dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
+            View view = getLayoutInflater().inflate(R.layout.settings_popup, null);
+
+            Button save = view.findViewById(R.id.saveBtn_POP_ID);
+
+            dialogBuilder.setView(view);
+            dialog = dialogBuilder.create();
+            dialog.show();
+
+            isKm = view.findViewById(R.id.km_RB_ID);
+            isMiles = view.findViewById(R.id.miles_RB_ID);
+
+            mPrefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
+
+            boolean isKM = mPrefs.getBoolean("isKm", true);
+            if (isKM) {
+                isKm.isChecked();
+            }else{
+
+                isMiles.isChecked();
+            }
+
+            save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (isKm.isChecked()){
+
+                        mPrefs = getSharedPreferences(MY_PREFS,0);
+                        SharedPreferences.Editor editor = mPrefs.edit();
+                        editor.putBoolean("isKM", true);
+                        editor.apply();
+                        editor.commit();
+
+                    }else{
+
+                        if (isMiles.isChecked()){
+                            mPrefs = getSharedPreferences(MY_PREFS,0);
+                            SharedPreferences.Editor editor = mPrefs.edit();
+                            editor.putBoolean("isKM", false);
+                            editor.apply();
+                            editor.commit();
+
+                        }else{
+
+                            Toast.makeText(MainActivity.this, R.string.settings_popup,
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    }, 1000); // = 1 second
+
+                    dialog.dismiss();
+
+
+                }
+            });
+
+
         }
 
-        if (id == R.id.action_share){
-            return true;
+        if (id == R.id.action_delete){
+
+            dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
+            View view = getLayoutInflater().inflate(R.layout.confermation_dialog_search, null);
+
+            dialogBuilder.setView(view);
+            dialog = dialogBuilder.create();
+            dialog.show();
+
+            Button delete = view.findViewById(R.id.deleteBtn_search_ID);
+            Button cancel = view.findViewById(R.id.cancelBtn_search_ID);
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    DatabaseHandler databaseHandler = new DatabaseHandler(MainActivity.this, Constants.TABLE_NAME_SEARCH, null, Constants.SEARCH_DB_VERSION);
+                    databaseHandler.deleteFavoriteshLocationTable(Constants.TABLE_NAME_SEARCH);
+
+                    dialog.dismiss();
+
+                }
+            });
+
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+
         }
 
-        if (id == R.id.action_where_I_am_ID){
-
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -405,6 +533,18 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
     @Override
     public void onListFragmentInteraction(ItemSearchFragment item) {
 
@@ -442,4 +582,6 @@ public class MainActivity extends AppCompatActivity implements
     public void onListFragmentInteraction(PlaceOfInterest item) {
 
     }
+
+
 }
