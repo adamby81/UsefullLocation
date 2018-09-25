@@ -17,16 +17,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
-
-//    public DatabaseHandler(Context context) {
-//        super(context, Constants.DB_NAME, null, Constants.DB_VERSION);
-//
-//        this.ctx = context;
-//
-//    }
-
-
-
     @Override
     public void onCreate(SQLiteDatabase db) {
 
@@ -121,56 +111,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-//    public PlaceOfInterest getPlaceFavorites(int id) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.query(Constants.TABLE_NAME_FAV, new String[]{
-//                        Constants.KEY_FAV_ID, Constants.KEY_FAV_ADDRESS, Constants.KEY_FAV_LATITUDE,
-//                        Constants.KEY_FAV_LONGITUDE, Constants.KEY_FAV_NAME,
-//                        Constants.KEY_FAV_DISTANCE,
-//                        Constants.KEY_FAV_IMAGE},
-//                Constants.KEY_FAV_ID + "=?",
-//                new String[]{String.valueOf(id)}, null, null, null, null);
-//
-//        if (cursor != null)
-//            cursor.moveToFirst();
-//
-//        PlaceOfInterest placeOfInterest = new PlaceOfInterest(id, address1, lat, lon, name, img, distance);
-//        placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_ID))));
-//        placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_ADDRESS)));
-//        placeOfInterest.setLatitude(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE))));
-//        placeOfInterest.setLongitude(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE))));
-//        placeOfInterest.setDistance(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE))));
-//        placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME)));
-//        placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE)));
-//
-//        return placeOfInterest;
-//
-//    }
-//
-
-    // Get All Locations
-
-
-
-
-    public int updateLocationsFavorites(PlaceOfInterest placeOfInterest) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(Constants.KEY_SEARCH_LOCATION_NAME, placeOfInterest.getName());
-        values.put(Constants.KEY_SEARCH_LOCATION_ADDRESS, placeOfInterest.getAddress());
-        values.put(Constants.KEY_SEARCH_LOCATION_LATITUDE, placeOfInterest.getLatitude());
-        values.put(Constants.KEY_SEARCH_LOCATION_LONGITUDE, placeOfInterest.getLongitude());
-        values.put(Constants.KEY_SEARCH_LOCATION_DISTANCE, placeOfInterest.getDistance());
-        values.put(Constants.KEY_SEARCH_LOCATION_IMAGE, placeOfInterest.getPhotoUrl());
-
-        //update row
-        getLocationsCounter(Constants.TABLE_NAME_SEARCH);
-
-        return db.update(Constants.TABLE_NAME_SEARCH, values, Constants.KEY_SEARCH_ID + "=?",
-                new String[]{String.valueOf(placeOfInterest.get_id())});
-    }
 
     // Delete PlaceOfInterest
     public long deleteSearchLocationTable(String tableName) {
@@ -181,7 +121,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public long deleteFavoriteshLocationTable(String tableName) {
+    public long deleteFavoritesLocationTable(String tableName) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 

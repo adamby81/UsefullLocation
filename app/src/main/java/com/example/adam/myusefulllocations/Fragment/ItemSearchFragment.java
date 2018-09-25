@@ -1,21 +1,15 @@
 package com.example.adam.myusefulllocations.Fragment;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -43,8 +37,6 @@ import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.SearchJsonAsyncTask;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
@@ -165,14 +157,16 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         } else if (item.getTitle() == "Add To Favorites") {
             Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
             c.moveToFirst();
-            String name = c.getString(c.getColumnIndex("name"));
-            String address = c.getString(c.getColumnIndex("address"));
-            float distance = c.getFloat(c.getColumnIndex("distance"));
-            String image = c.getString(c.getColumnIndex("image"));
-            PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,image, distance);
+            String name = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
+            String address = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_ADDRESS));
+            float distance = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE));
+            float latitude = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
+            float longitude = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
+            String image = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE));
+            PlaceOfInterest place = new PlaceOfInterest(address,latitude,longitude,name,image, distance);
             db.addPlaceFavorites(activity, place, Constants.TABLE_NAME_FAV); //Add to the downloaded list table
 
-            Toast.makeText(activity, name + " Was Added To Favorite Locations List.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, name + " Was Added To Favorite List.", Toast.LENGTH_SHORT).show();
         } else {
             return false;
         }
@@ -183,8 +177,8 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             super.onCreateContextMenu(menu, v, menuInfo);
-            menu.setHeaderTitle("Select The Action");
-            menu.add(0, v.getId(), 0, "Share Location");
+            menu.setHeaderTitle("Select Action");
+            menu.add(0, v.getId(), 0, "Share");
             menu.add(0, v.getId(), 0, "Add To Favorites");
 
     }
@@ -283,7 +277,6 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
                 float lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
                 float lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
                 String name = cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
-                //mapsFragment.passDataMyLocation(lat, lng, name);
 //
 //                    mPrefs = getActivity().getSharedPreferences(MY_PREFS, 0);
 //                    SharedPreferences.Editor editor = mPrefs.edit();
@@ -291,6 +284,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
 //                    editor.putFloat("place_lng", lng);
 //                    editor.putString("place_name", name);
                 dataPassListener.passDataLocationToMap(lat, lng, name);
+                Log.i("LV-SEARCH: ", "interface input: " + lat + lng + name);
             }
         });
 
@@ -318,36 +312,6 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
 
     }
-
-    // Get current location
-    private void getCurrentLocation(Context context) {
-        try {
-            // Ask for permissions if they have not been given
-            if ((ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-                Task location = fusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener((Activity) context, new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            Location mLocation = (Location) task.getResult();
-                            lat = (float) mLocation.getLatitude();
-                            lon = (float) mLocation.getLongitude();
-//                            Log.e(TAG, String.format("getCurrentLocation(%f, %f)", mLocation.getLatitude(), mLocation.getLongitude()));
-                        } else {
-                            Toast.makeText(getActivity(), "Failed to get current location", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                });
-            } else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "getCurrentLocation: " + e.getMessage());
-        }
-    }
-
 
     public void welcomePopup() {
 

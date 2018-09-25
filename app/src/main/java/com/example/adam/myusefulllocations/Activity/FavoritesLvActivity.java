@@ -28,7 +28,8 @@ public class FavoritesLvActivity extends AppCompatActivity {
     LocationsCursorAdapter locationsCursorAdapter;
     DatabaseHandler db;
     Cursor cursor;
-    Intent intent;
+    DataPassListener dataPassListener;
+
 
     Button addNewPlaceBtn;
 
@@ -58,8 +59,9 @@ public class FavoritesLvActivity extends AppCompatActivity {
         });
 
 
-        db = new DatabaseHandler(FavoritesLvActivity.this, Constants.DB_NAME, null, Constants.FAVORITES_DB_VERSION);
 
+        db = new DatabaseHandler(FavoritesLvActivity.this, Constants.DB_NAME, null, Constants.FAVORITES_DB_VERSION);
+//        dataPassListener = (DataPassListener) cursor ;
         locationsListView = findViewById(R.id.FAV_list_view_ID);
         cursor = db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV);
         cursor.moveToFirst();
@@ -72,7 +74,22 @@ public class FavoritesLvActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                cursor = (Cursor) parent.getAdapter().getItem(position);
+                float lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_FAV_LATITUDE));
+                float lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_FAV_LONGITUDE));
+                String name = cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_NAME));
 
+                Bundle bundle = new Bundle();
+
+                bundle.putFloat("lat", lat );
+                bundle.putFloat("lng", lng);
+                bundle.putString("name", name);
+
+                Intent intent = new Intent(FavoritesLvActivity.this, MainActivity.class);
+                //intent.putExtra(bundle);
+
+                startActivity(intent);
+//                dataPassListener.passDataLocationToMap(lat, lng, name);
             }
         });
 
@@ -182,8 +199,10 @@ public class FavoritesLvActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    DatabaseHandler databaseHandler = new DatabaseHandler(FavoritesLvActivity.this, Constants.TABLE_NAME_FAV, null, Constants.FAVORITES_DB_VERSION);
-                    databaseHandler.deleteFavoriteshLocationTable(Constants.TABLE_NAME_FAV);
+                    db = new DatabaseHandler(FavoritesLvActivity.this, Constants.TABLE_NAME_FAV, null, Constants.FAVORITES_DB_VERSION);
+                    db.deleteFavoritesLocationTable(Constants.TABLE_NAME_FAV);
+                    locationsCursorAdapter.swapCursor(db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV));
+
 
                     dialog.dismiss();
 

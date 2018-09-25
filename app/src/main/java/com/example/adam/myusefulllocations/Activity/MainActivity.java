@@ -183,9 +183,9 @@ public class MainActivity extends AppCompatActivity implements
             fragmentTransaction.commit();
 
             Bundle bundleMapsAndSearch = new Bundle();
-            bundleMapsAndSearch.putDouble("latitude", latitude);
-            bundleMapsAndSearch.putDouble("longitude", longitude);
-            bundleMapsAndSearch.putString("name", address);
+            bundleMapsAndSearch.putFloat("lat", latitude);
+            bundleMapsAndSearch.putFloat("lng", longitude);
+            bundleMapsAndSearch.putString("name", name);
 
             myMapFragment.setArguments(bundleMapsAndSearch);
             itemSearchFragment.setArguments(bundleMapsAndSearch);
@@ -194,19 +194,11 @@ public class MainActivity extends AppCompatActivity implements
 
         if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
 
-
-
         }else {
 
 
         }
 
-//        BottomNavigationView navigation = findViewById(R.id.navigation);
-//        navigation.setOnNavigationItemSelectedListener(this);
-
-     //   loadFragment(new ItemSearchFragment());
-
-            // רכיב טעינה
         receiver = new PowerConnectionReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction((Intent.ACTION_BATTERY_CHANGED));
@@ -244,14 +236,7 @@ public class MainActivity extends AppCompatActivity implements
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                     != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+             return;
             }
             startListening();
 
@@ -454,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements
                 public void onClick(View v) {
 
                     DatabaseHandler databaseHandler = new DatabaseHandler(MainActivity.this, Constants.TABLE_NAME_SEARCH, null, Constants.SEARCH_DB_VERSION);
-                    databaseHandler.deleteFavoriteshLocationTable(Constants.TABLE_NAME_SEARCH);
+                    databaseHandler.deleteFavoritesLocationTable(Constants.TABLE_NAME_SEARCH);
 
                     dialog.dismiss();
 
@@ -475,63 +460,6 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    // Json :
-
-    public void getLocationInfoJson () {
-
-        //String URL = "https://maps.googleapis.com/maps/api/place/details/json?placeid&fields=name,formatted_phone_number,photo,place_id,geometry,formatted_address&key=AIzaSyDQEqDOPsDKZKyAqYGBbewEVd-I3PY-SVM";
-
-//        OkHttpClient okHttpClient = new OkHttpClient();
-//        Request request = new Request.Builder().url(URL).build();
-//        okHttpClient.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Request request, IOException e) {
-//                e.printStackTrace();
-//
-//            }
-//
-//            @Override
-//            public void onResponse(Response response) throws IOException {
-//
-//                if (response.isRedirect()) {
-//
-//                    final String myResponse = response.body().string();
-//                    MainActivity.this.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            try {
-//
-//                                JSONObject jsonObject = new JSONObject(myResponse);
-//                                JSONObject jsonResults = jsonObject.getJSONObject("results");
-//
-//                                name = jsonResults.getString("name");
-//                                name = jsonResults.getString("formatted_address");
-//                                place_id = jsonResults.getString("place_id");
-//
-//                                JSONObject geometry = jsonResults.getJSONObject("geometry");
-//                                JSONObject location = geometry.getJSONObject("location");
-//                                placelat = location.getDouble("lat");
-//                                placelon =location.getDouble("lng");
-//
-//
-//
-//                            } catch (Exception e) {
-//
-//
-//                            }
-//
-//
-//                        }
-//                    });
-//
-//                }
-//            }
-//        });
-
-
-
-    }
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -565,7 +493,13 @@ public class MainActivity extends AppCompatActivity implements
             fragmentTransaction.commit();
             // If device is in landscape no need to replace fragments
         } else {
-            myMapFragment.setMarkerPlace(lat, lng, name);
+
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container_map, myMapFragment).addToBackStack(null);
+            fragmentTransaction.commit();
+
+
+//            myMapFragment.setMarkerPlace(this, lat, lng, name);
            // myMapFragment.passDataMyLocation(latitude, longitude ,name);
 //            Fragment fragment = new MapsFragment();
 
