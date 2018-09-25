@@ -3,11 +3,13 @@ package com.example.adam.myusefulllocations.Fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -16,7 +18,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -65,9 +69,8 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     float lon;
 
 
-
     public LocationsCursorAdapter locationsCursorAdapter;
-//    private String[] querySearchList;
+    //    private String[] querySearchList;
     private ListView listViewSearch;
     RadioButton isKm;
     RadioButton isMiles;
@@ -102,13 +105,9 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
 //    private CursorRecyclerViewAdapter adapter;
 
 
-
-
-
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
 
 
     /**
@@ -125,13 +124,14 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     public ItemSearchFragment newInstance(int columnCount) {
         ItemSearchFragment fragment = new ItemSearchFragment();
         // get current Location from MainActivity:
-            Bundle bundle =  getArguments();
-            float latitude = bundle.getFloat("latitude");
-            float longitude = bundle.getFloat("longitude");
+        Bundle bundle = getArguments();
+        float latitude = bundle.getFloat("latitude");
+        float longitude = bundle.getFloat("longitude");
         fragment.setArguments(bundle);
         return fragment;
     }
-//
+
+    //
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,12 +144,58 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         }
     }
 
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        // Share location details through google maps
+        if (item.getTitle() == "Share Location") {
+            try {
+                Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
+                c.moveToFirst();
+                String uri = "http://maps.google.com/maps?q=" + c.getString(c.getColumnIndex("lat"))
+                        + "," + c.getString(c.getColumnIndex("lon"));
+                startActivity(new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse(uri)));
+            } catch (Exception e) {
+                Log.e(TAG, "onContextItemSelected: " + e.getMessage());
+            }
+
+            // Add to favorites
+        } else if (item.getTitle() == "Add To Favorites") {
+            Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
+            c.moveToFirst();
+            String name = c.getString(c.getColumnIndex("name"));
+            String address = c.getString(c.getColumnIndex("address"));
+            float distance = c.getFloat(c.getColumnIndex("distance"));
+            String image = c.getString(c.getColumnIndex("image"));
+            PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,image, distance);
+            db.addPlaceFavorites(activity, place, Constants.TABLE_NAME_FAV); //Add to the downloaded list table
+
+            Toast.makeText(activity, name + " Was Added To Favorite Locations List.", Toast.LENGTH_SHORT).show();
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            super.onCreateContextMenu(menu, v, menuInfo);
+            menu.setHeaderTitle("Select The Action");
+            menu.add(0, v.getId(), 0, "Share Location");
+            menu.add(0, v.getId(), 0, "Add To Favorites");
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_lv_search, container, false);
-
-        db = new DatabaseHandler(getActivity(), Constants.TABLE_NAME_SEARCH, null, Constants.SEARCH_DB_VERSION);
+        activity = getActivity();
+        dataPassListener = (DataPassListener) activity;
+        db = new DatabaseHandler(getActivity(), Constants.DB_NAME, null, Constants.SEARCH_DB_VERSION);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -183,7 +229,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
 
                     if (!(textToSearch.length() <= 0)) {
 
-                        //db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
+                        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
                         searchJsonAsyncTask = new SearchJsonAsyncTask();
 
                         try {
@@ -192,6 +238,8 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
                             searchJsonAsyncTask.setSearchText(textToSearch);
                             searchJsonAsyncTask.currentLat = MainActivity.latitude;
                             searchJsonAsyncTask.currentLng = MainActivity.longitude;
+                            searchJsonAsyncTask.locationsCursorAdapter = locationsCursorAdapter;
+
                             searchJsonAsyncTask.execute();
                         } catch (Exception e) {
                             Log.e(TAG, "onClick: " + e.getMessage());
@@ -204,53 +252,53 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
                 }
             });
         }
-            searchNearby.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-                    NearbyAsyncTask nearbyAsyncTask = new NearbyAsyncTask();
-                    try {
-                        nearbyAsyncTask.setContext(activity);
-                        nearbyAsyncTask.setLat(lat);
-                        nearbyAsyncTask.setLon(lon);
-                        nearbyAsyncTask.locationsCursorAdapter = locationsCursorAdapter;
-                        nearbyAsyncTask.execute();
+        searchNearby.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
+                NearbyAsyncTask nearbyAsyncTask = new NearbyAsyncTask();
+                try {
+                    nearbyAsyncTask.setContext(activity);
+                    nearbyAsyncTask.setLat(lat);
+                    nearbyAsyncTask.setLon(lon);
+                    nearbyAsyncTask.locationsCursorAdapter = locationsCursorAdapter;
+                    nearbyAsyncTask.execute();
 
-                    } catch (Exception e) {
-                        Log.e(TAG, "onClick: " + e.getMessage());
-                    }
-
-
+                } catch (Exception e) {
+                    Log.e(TAG, "onClick: " + e.getMessage());
                 }
-            });
-
-            listViewSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            }
+        });
 
-                    fromSearchFrag = true;
-                    cursor = (Cursor) parent.getAdapter().getItem(position);
-                    float lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
-                    float lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
-                    String name = cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
-                    //mapsFragment.passDataMyLocation(lat, lng, name);
-
-                    mPrefs = getActivity().getSharedPreferences(MY_PREFS, 0);
-                    SharedPreferences.Editor editor = mPrefs.edit();
-                    editor.putFloat("place_lat", lat);
-                    editor.putFloat("place_lng", lng);
-                    editor.putString("place_name", name);
+        listViewSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                fromSearchFrag = true;
+                cursor = (Cursor) parent.getAdapter().getItem(position);
+                float lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
+                float lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
+                String name = cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
+                //mapsFragment.passDataMyLocation(lat, lng, name);
+//
+//                    mPrefs = getActivity().getSharedPreferences(MY_PREFS, 0);
+//                    SharedPreferences.Editor editor = mPrefs.edit();
+//                    editor.putFloat("place_lat", lat);
+//                    editor.putFloat("place_lng", lng);
+//                    editor.putString("place_name", name);
+                dataPassListener.passDataLocationToMap(lat, lng, name);
+            }
+        });
 
 
-                }
-            });
-
-                return view;
+        return view;
     }
+
+
     @Override
     public void onLocationChanged(Location location) {
         MainActivity.updateLocationInfo(location);
@@ -307,8 +355,8 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         dialogBuilder = new AlertDialog.Builder(getContext());
         View view = getLayoutInflater().inflate(R.layout.popup, null);
 
-       aboutUs = view.findViewById(R.id.aboutTextView_POP_ID);
-       startUsingBtn = view.findViewById(R.id.startUsingBtn_POP_ID);
+        aboutUs = view.findViewById(R.id.aboutTextView_POP_ID);
+        startUsingBtn = view.findViewById(R.id.startUsingBtn_POP_ID);
 
         dialogBuilder.setView(view);
         dialog = dialogBuilder.create();
@@ -322,7 +370,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
 
-                mPrefs = getActivity().getSharedPreferences(MY_PREFS,0);
+                mPrefs = getActivity().getSharedPreferences(MY_PREFS, 0);
                 SharedPreferences.Editor editor = mPrefs.edit();
                 editor.putBoolean("ifFirstTime", false);
 
@@ -330,7 +378,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
 
                     editor.putBoolean("isKM", true);
 
-                }else {
+                } else {
 
                     editor.putBoolean("isKM", false);
 
@@ -353,7 +401,6 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         });
 
 
-
     }
 
 
@@ -365,7 +412,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
             if (prefs.contains("ifFirstTime")) {
 
                 firstTime = prefs.getBoolean("ifFirstTime", true);
-            }else {
+            } else {
                 welcomePopup();
             }
             mListener = (OnListFragmentInteractionListener) context;

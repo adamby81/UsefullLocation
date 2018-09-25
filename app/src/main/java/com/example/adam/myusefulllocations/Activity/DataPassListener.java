@@ -2,7 +2,6 @@ package com.example.adam.myusefulllocations.Activity;
 
 public interface DataPassListener {
 
-    void passDataMyLocation (double lat, double lng, String name);
-//void currntLat (double cLat);
+    void passDataLocationToMap (float lat, float lng, String name);
 
 }

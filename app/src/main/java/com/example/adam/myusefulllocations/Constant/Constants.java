@@ -8,13 +8,12 @@ public class Constants {
     // טבלת מקומות - למועדפים
 
     public static final int FAVORITES_DB_VERSION = 1;
-    public static final String FAVORITES_DB_NAME = "favoritesDB.db";
     public static final String TABLE_NAME_FAV = "favoritesTable";
 
     // טבלת חיפוש אחרון
 
     public static final int SEARCH_DB_VERSION = 1;
-    public static final String SEARCH_DB_NAME = "searchDB.db";
+    public static final String DB_NAME = "searchDB.db";
     public static final String TABLE_NAME_SEARCH = "searchTable";
 
     // פריטים בטבלת מועדפים

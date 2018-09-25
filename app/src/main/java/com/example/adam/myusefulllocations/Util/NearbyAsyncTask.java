@@ -52,7 +52,7 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
         int titleProg = (R.string.searching);
         int messageProg = R.string.searchingMessage;
         progressDialog = ProgressDialog.show(context, Integer.toString(titleProg), Integer.toString(messageProg), true);
-        db = new DatabaseHandler(this.context, Constants.SEARCH_DB_NAME,null, Constants.SEARCH_DB_VERSION);
+        db = new DatabaseHandler(this.context, Constants.DB_NAME,null, Constants.SEARCH_DB_VERSION);
 
     }
 
@@ -99,7 +99,7 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
                                 address = jsonobject.getString("vicinity");
                                 lat = Float.valueOf(northeast.getString("lat"));
                                 lon = Float.valueOf(northeast.getString("lng"));
-//                                Log.e(TAG, "onPostExecute: " + lat + ", " + lon);
+
                                 distance = (float) distance(currentLat, currentLon, lat, lon);
                                 photos = jsonobject.getJSONArray("photos");
                                 for (int j = 0; j < photos.length(); j++) {
@@ -130,7 +130,7 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
 
     protected void onPostExecute(String response) {
         if (response != "doInBackground: No Places Found") {
-            locationsCursorAdapter.swapCursor(db.getAllLocations("locations"));
+            locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
         } else {
             Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
         }

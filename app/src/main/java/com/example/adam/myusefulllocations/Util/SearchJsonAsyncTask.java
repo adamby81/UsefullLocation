@@ -28,7 +28,7 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
     BufferedReader bufferedReader;
     public float currentLat;
     public float currentLng;
-    LocationsCursorAdapter locationsCursorAdapter;
+   public LocationsCursorAdapter locationsCursorAdapter;
     FusedLocationProviderClient fusedLocationProviderClient;
     private String searchText = "";
     public Context context;
@@ -61,14 +61,15 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
     protected void onPreExecute() {
         int titleProg = (R.string.searching);
         int messageProg = R.string.searchingMessage;
-        db = new DatabaseHandler(this.context, Constants.TABLE_NAME_SEARCH,null, Constants.SEARCH_DB_VERSION);
+        db = new DatabaseHandler(this.context, Constants.DB_NAME,null, Constants.SEARCH_DB_VERSION);
         progressDialog = ProgressDialog.show(context, Integer.toString(titleProg), Integer.toString(messageProg), true);
     }
 
     @Override
     protected void onPostExecute(String response) {
 
-            //locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+
+        locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
     }
 
@@ -129,7 +130,7 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
                         lat = Float.parseFloat(northeast.getString("lat"));
                         lon = Float.parseFloat(northeast.getString("lng"));
 
-                        distance = distance(currentLat, currentLng, lat, lon);
+                        distance = (float) distance(currentLat, currentLng, lat, lon);
 
                         photos = jsonobject.getJSONArray("photos");
                         for (int j = 0; j < photos.length(); j++) {
@@ -159,27 +160,21 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
         }
     }
 
-    private float distance(float myLat, float myLng, float placeLat, float placeLng) {
+    private double distance(double myLat, double myLng, double placeLat, double placeLng) {
 
-        float radiusMyLat = (float) (Math.PI * myLat / 180);
-        float radiusPlaceLat = (float) (Math.PI * placeLat / 180);
-        float delta = myLng - placeLng;
-        float radiusDelta = (float) (Math.PI * delta / 180);
-
-        float fixedDistance = (float) (Math.sin(radiusMyLat) * Math.sin(radiusPlaceLat)
-                        + Math.cos(radiusMyLat) * Math.cos(radiusPlaceLat)
-                        * Math.cos(radiusDelta));
-        if (fixedDistance > 1) {
-
-            fixedDistance = 1;
-
+        double radlat1 = Math.PI * myLat / 180;
+        double radlat2 = Math.PI * placeLat / 180;
+        double theta = myLng - placeLng;
+        double radtheta = Math.PI * theta / 180;
+        double dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
         }
-
-        fixedDistance = (float) Math.acos(fixedDistance);
-        fixedDistance = (float) (fixedDistance * 180 / Math.PI);
-        fixedDistance = (float) (fixedDistance * 60 * 1.1515);
-        fixedDistance = (float) 1.609334;
-        return fixedDistance;
+        dist = Math.acos(dist);
+        dist = dist * 180 / Math.PI;
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;
+        return dist;
 
 
     }

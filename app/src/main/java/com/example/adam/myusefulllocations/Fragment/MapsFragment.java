@@ -28,7 +28,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
+public class MapsFragment extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     private GoogleMap googleMap;
 
@@ -45,13 +45,48 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     float mDistance;
 
 
-
     private Context mContext;
     private LocationManager locationManager;
     private LocationListener locationListener;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            latitude = bundle.getFloat("lat", 0);
+            longitude = bundle.getFloat("lng", 0);
+            name = bundle.getString("name", null);
+
+        }
+        MainActivity.hideKeyboard(getActivity());
+
+
+        mMapView = (MapView) view.findViewById(R.id.mapView);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap mMap) {
+                googleMap = mMap;
+                mContext = getContext();
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                }
+                googleMap.setMyLocationEnabled(true);
+
+                // we will need to use ReceiveFragment.this in the permission requests!!
+
+                // For dropping a marker at a point on the Map
+//                final LatLng myCurrentLocation = new LatLng(latitude, longitude);
+//
+//                googleMap.addMarker(new MarkerOptions().position(myCurrentLocation).title(name));
+////
+////                // For zooming automatically to the location of the marker
+//                CameraPosition cameraPosition = new CameraPosition.Builder().target(myCurrentLocation).zoom(12).build();
+//                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                setMarkerPlace(latitude, longitude, name);
+            }
+        });
         super.onViewCreated(view, savedInstanceState);
 
 
@@ -62,92 +97,113 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_maps, container, false);
 
-        MainActivity.hideKeyboard(getActivity()); 
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            latitude = bundle.getFloat("lat", 0);
+            longitude = bundle.getFloat("lng", 0);
+            name = bundle.getString("name", null);
+
+        }
+        MainActivity.hideKeyboard(getActivity());
 
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap mMap) {
+                googleMap = mMap;
+                mContext = getContext();
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-       // Keyboard keyboard = new Keyboard(MapsFragment.this, container, )
+                }
+                googleMap.setMyLocationEnabled(true);
+
+                // we will need to use ReceiveFragment.this in the permission requests!!
+
+                // For dropping a marker at a point on the Map
+//                final LatLng myCurrentLocation = new LatLng(latitude, longitude);
+//
+//                googleMap.addMarker(new MarkerOptions().position(myCurrentLocation).title(name));
+////
+////                // For zooming automatically to the location of the marker
+//                CameraPosition cameraPosition = new CameraPosition.Builder().target(myCurrentLocation).zoom(12).build();
+//                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                setMarkerPlace(latitude, longitude, name);
+            }
+        });
+
+        // Keyboard keyboard = new Keyboard(MapsFragment.this, container, )
         mMapView.onResume(); // needed to get the map to display immediately
 
-        if (!ItemSearchFragment.fromSearchFrag) {
 
-            final LatLng myCurrentLocation = new LatLng(MainActivity.latitude, MainActivity.longitude );
-
-            try {
-                MapsInitializer.initialize(getActivity().getApplicationContext());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            mMapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap mMap) {
-                    googleMap = mMap;
-                    mContext = getContext();
-
-
-                    // we will need to use ReceiveFragment.this in the permission requests!!
-                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                    }
-                    googleMap.setMyLocationEnabled(true);
-                    // For dropping a marker at a point on the Map
-
-                    googleMap.addMarker(new MarkerOptions().position(myCurrentLocation).title("You Are Here!").snippet(name));
-//
-//                // For zooming automatically to the location of the marker
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(myCurrentLocation).zoom(12).build();
-                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-                }
-
-            });
-
-
-        }else {
-
-            prefs = getActivity().getSharedPreferences(ItemSearchFragment.MY_PREFS, Context.MODE_PRIVATE);
-            float lat = prefs.getFloat("place_lat", 0);
-            float lng = prefs.getFloat("place_lng", 0);
-            final LatLng placeLocation = new LatLng(lat, lng);
-
-
-            name = prefs.getString("place_name", null);
-
-
-            try {
-                MapsInitializer.initialize(getActivity().getApplicationContext());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            mMapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap mMap) {
-                    googleMap = mMap;
-                    mContext = getContext();
-
-
-                    // we will need to use ReceiveFragment.this in the permission requests!!
-                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                    }
-                    googleMap.setMyLocationEnabled(true);
-                    // For dropping a marker at a point on the Map
-
-                    googleMap.addMarker(new MarkerOptions().position(placeLocation).title("You Are Here!").snippet(name));
-//
-//                // For zooming automatically to the location of the marker
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(placeLocation).zoom(12).build();
-                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-                }
-
-            });
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+//        mMapView.getMapAsync(new OnMapReadyCallback() {
+//
+
+//        });
+
+
+//        }else {
+//
+//            prefs = getActivity().getSharedPreferences(ItemSearchFragment.MY_PREFS, Context.MODE_PRIVATE);
+//            float lat = prefs.getFloat("place_lat", 0);
+//            float lng = prefs.getFloat("place_lng", 0);
+//            final LatLng placeLocation = new LatLng(lat, lng);
+//
+//
+//            name = prefs.getString("place_name", null);
+//
+//
+//            try {
+//                MapsInitializer.initialize(getActivity().getApplicationContext());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            mMapView.getMapAsync(new OnMapReadyCallback() {
+//                @Override
+//                public void onMapReady(GoogleMap mMap) {
+//                    googleMap = mMap;
+//                    mContext = getContext();
+//
+//
+//                    // we will need to use ReceiveFragment.this in the permission requests!!
+//                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                    }
+//                    googleMap.setMyLocationEnabled(true);
+//                    // For dropping a marker at a point on the Map
+//
+//                    googleMap.addMarker(new MarkerOptions().position(placeLocation).title("You Are Here!").snippet(name));
+////
+////                // For zooming automatically to the location of the marker
+//                    CameraPosition cameraPosition = new CameraPosition.Builder().target(placeLocation).zoom(12).build();
+//                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//
+//                }
+//
+//            });
+//        }
         return rootView;
+
+    }
+
+
+    public void setMarkerPlace(float lat, float lng, String name) {
+
+
+        final LatLng myCurrentLocation = new LatLng(lat, lng);
+
+        googleMap.addMarker(new MarkerOptions().position(myCurrentLocation).title(name));
+//
+//                // For zooming automatically to the location of the marker
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(myCurrentLocation).zoom(12).build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
     }
 
@@ -156,7 +212,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         super.onAttach(context);
 
         mContext = getActivity();
-
 
 
     }
@@ -186,15 +241,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-
+    public void onMapReady(GoogleMap mMap) {
+        googleMap=mMap;
     }
 
 
-    String addressMarker;
-
-    @Override
-    public void onMapLongClick(LatLng latLng) {
+//    @Override
+//    public void onMapLongClick(LatLng latLng) {
 //
 //        Log.i("PlaceOfInterest Info: ", latLng.toString());
 //
@@ -280,8 +333,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 //
 //
 
-    }
-
+//    }
 
 
 }

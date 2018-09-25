@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            android:padding="15dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/name_row_search_ID"
@@ -55,25 +55,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:layout_width="194dp"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/address_Full_row_search_ID"
-               android:layout_alignRight="@+id/address_Full_row_search_ID"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="165dp"
-                android:orientation="horizontal"
-                tools:ignore="NotSibling">
+
 
                 <ImageView
                     android:id="@+id/imageView_row_search_ID"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_toLeftOf="@+id/address_Full_row_search_ID"
                     app:srcCompat="@drawable/no_image_available"
-                    tools:ignore="ObsoleteLayoutParam" />
+                    tools:ignore="ObsoleteLayoutParam"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toStartOf="@+id/address_Full_row_search_ID" />
 
-            </LinearLayout>
+
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

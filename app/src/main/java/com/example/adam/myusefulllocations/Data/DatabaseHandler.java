@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 //    public DatabaseHandler(Context context) {
-//        super(context, Constants.SEARCH_DB_NAME, null, Constants.DB_VERSION);
+//        super(context, Constants.DB_NAME, null, Constants.DB_VERSION);
 //
 //        this.ctx = context;
 //
@@ -111,32 +111,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-//    //Get a PlaceOfInterest
-//    public PlaceOfInterest getPlaceSearch(int id) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.query(Constants.TABLE_NAME_SEARCH, new String[]{
-//                        Constants.KEY_SEARCH_ID, Constants.KEY_SEARCH_LOCATION_ADDRESS, Constants.KEY_SEARCH_LOCATION_LATITUDE,
-//                        Constants.KEY_SEARCH_LOCATION_LONGITUDE, Constants.KEY_SEARCH_LOCATION_NAME,
-//                        Constants.KEY_SEARCH_LOCATION_DISTANCE,
-//                        Constants.KEY_SEARCH_LOCATION_IMAGE},
-//                Constants.KEY_SEARCH_ID + "=?",
-//                new String[]{String.valueOf(id)}, null, null, null, null);
-//
-//        if (cursor != null)
-//            cursor.moveToFirst();
-//
-//        PlaceOfInterest placeOfInterest = new PlaceOfInterest(id, address1, lat, lon, name, img, distance);
-//        placeOfInterest.set_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_ID))));
-//        placeOfInterest.setAddress(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_ADDRESS)));
-//        placeOfInterest.setLatitude(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE))));
-//        placeOfInterest.setLongitude(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE))));
-//        placeOfInterest.setDistance(Float.parseFloat(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE))));
-//        placeOfInterest.setName(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME)));
-//        placeOfInterest.setPhotoUrl(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE)));
-//
-//        return placeOfInterest;
-//
-//    }
+    //Get a PlaceOfInterest
+    public Cursor getPlaceSearch(String tableName, int id) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        return db.rawQuery("SELECT * FROM " + tableName + " WHERE _id=" + id, null);
+
+
+    }
 
 //    public PlaceOfInterest getPlaceFavorites(int id) {
 //        SQLiteDatabase db = this.getWritableDatabase();

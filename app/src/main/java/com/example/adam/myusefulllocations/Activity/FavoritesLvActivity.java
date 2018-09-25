@@ -58,7 +58,7 @@ public class FavoritesLvActivity extends AppCompatActivity {
         });
 
 
-        db = new DatabaseHandler(FavoritesLvActivity.this, Constants.FAVORITES_DB_NAME, null, Constants.FAVORITES_DB_VERSION);
+        db = new DatabaseHandler(FavoritesLvActivity.this, Constants.DB_NAME, null, Constants.FAVORITES_DB_VERSION);
 
         locationsListView = findViewById(R.id.FAV_list_view_ID);
         cursor = db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV);

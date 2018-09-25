@@ -321,8 +321,8 @@ public class MainActivity extends AppCompatActivity implements
                fragment = new MapsFragment();
 
                 Bundle bundleMaps = new Bundle();
-                bundleMaps.putDouble("latitude", latitude);
-                bundleMaps.putDouble("longitude", longitude);
+                bundleMaps.putFloat("lat", latitude);
+                bundleMaps.putFloat("lng", longitude);
                 bundleMaps.putString("name", address);
 
                 fragment.setArguments(bundleMaps);
@@ -551,11 +551,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void passDataMyLocation(double lat, double lng, String name) {
-
-        this.name=name;
-        latLng = new LatLng(lat, lng);
+    public void passDataLocationToMap(float lat, float lng, String name) {
          myMapFragment = new MapsFragment();
+        Bundle bundleMaps = new Bundle();
+        bundleMaps.putFloat("lat", lat);
+        bundleMaps.putFloat("lng", lng);
+        bundleMaps.putString("name", name);
+        myMapFragment.setArguments(bundleMaps);
         //Device is in Portrait
         if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -563,18 +565,11 @@ public class MainActivity extends AppCompatActivity implements
             fragmentTransaction.commit();
             // If device is in landscape no need to replace fragments
         } else {
-
+            myMapFragment.setMarkerPlace(lat, lng, name);
            // myMapFragment.passDataMyLocation(latitude, longitude ,name);
-            Fragment fragment = new MapsFragment();
-
-            Bundle bundleMaps = new Bundle();
-            bundleMaps.putDouble("latitude", lat);
-            bundleMaps.putDouble("longitude", lng);
-            bundleMaps.putString("name", name);
+//            Fragment fragment = new MapsFragment();
 
 
-
-            fragment.setArguments(bundleMaps);
         }
     }
 
