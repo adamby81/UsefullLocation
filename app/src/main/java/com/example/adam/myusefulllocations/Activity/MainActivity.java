@@ -295,8 +295,8 @@ public class MainActivity extends AppCompatActivity implements
                 fragment = new ItemSearchFragment();
 
                 Bundle bundleSearch = new Bundle();
-                bundleSearch.putDouble("latitude", latitude);
-                bundleSearch.putDouble("longitude", longitude);
+                bundleSearch.putFloat("latitude", latitude);
+                bundleSearch.putFloat("longitude", longitude);
 
                 fragment.setArguments(bundleSearch);
 
@@ -388,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements
                         editor.apply();
                         editor.commit();
 
+
                     }else{
 
                         if (isMiles.isChecked()){
@@ -438,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View v) {
 
-                    DatabaseHandler databaseHandler = new DatabaseHandler(MainActivity.this, Constants.TABLE_NAME_SEARCH, null, Constants.SEARCH_DB_VERSION);
+                    DatabaseHandler databaseHandler = new DatabaseHandler(MainActivity.this, Constants.DB_NAME, null, Constants.SEARCH_DB_VERSION);
                     databaseHandler.deleteFavoritesLocationTable(Constants.TABLE_NAME_SEARCH);
 
                     dialog.dismiss();
@@ -497,13 +498,6 @@ public class MainActivity extends AppCompatActivity implements
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container_map, myMapFragment).addToBackStack(null);
             fragmentTransaction.commit();
-
-
-//            myMapFragment.setMarkerPlace(this, lat, lng, name);
-           // myMapFragment.passDataMyLocation(latitude, longitude ,name);
-//            Fragment fragment = new MapsFragment();
-
-
         }
     }
 

@@ -31,7 +31,7 @@ import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.Global;
-import com.example.adam.myusefulllocations.Util.LocationsCursorAdapter;
+import com.example.adam.myusefulllocations.Util.CursorAdapterSearch;
 import com.example.adam.myusefulllocations.Util.NearbyAsyncTask;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.SearchJsonAsyncTask;
@@ -61,7 +61,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     float lon;
 
 
-    public LocationsCursorAdapter locationsCursorAdapter;
+    public CursorAdapterSearch cursorAdapterSearch;
     //    private String[] querySearchList;
     private ListView listViewSearch;
     RadioButton isKm;
@@ -90,6 +90,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
 
 
     private SearchJsonAsyncTask searchJsonAsyncTask;
+    private NearbyAsyncTask nearbyAsyncTask;
 
     private Button searchByText;
     private Button searchNearby;
@@ -202,15 +203,15 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         cursor = db.getAllLocations(Constants.TABLE_NAME_SEARCH);
         cursor.moveToFirst();
 
-        locationsCursorAdapter = new LocationsCursorAdapter(getContext(), cursor);
-        listViewSearch.setAdapter(locationsCursorAdapter);
+        cursorAdapterSearch = new CursorAdapterSearch(getContext(), cursor);
+        listViewSearch.setAdapter(cursorAdapterSearch);
 
-        locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
         registerForContextMenu(listViewSearch);
         Global global = new Global(getActivity());
 
         if (!global.isNetworkConnected()) {
-            Toast.makeText(activity, "App is in Offline Mode", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.off_line, Toast.LENGTH_SHORT).show();
 
             // Online Mode
         } else {
@@ -232,13 +233,13 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
                             searchJsonAsyncTask.setSearchText(textToSearch);
                             searchJsonAsyncTask.currentLat = MainActivity.latitude;
                             searchJsonAsyncTask.currentLng = MainActivity.longitude;
-                            searchJsonAsyncTask.locationsCursorAdapter = locationsCursorAdapter;
+                            searchJsonAsyncTask.cursorAdapterSearch = cursorAdapterSearch;
 
                             searchJsonAsyncTask.execute();
                         } catch (Exception e) {
                             Log.e(TAG, "onClick: " + e.getMessage());
                         }
-                        locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+                        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
                     }
 
@@ -250,18 +251,19 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
                 db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-                NearbyAsyncTask nearbyAsyncTask = new NearbyAsyncTask();
+                nearbyAsyncTask = new NearbyAsyncTask();
                 try {
-                    nearbyAsyncTask.setContext(activity);
-                    nearbyAsyncTask.setLat(lat);
-                    nearbyAsyncTask.setLon(lon);
-                    nearbyAsyncTask.locationsCursorAdapter = locationsCursorAdapter;
+                    nearbyAsyncTask.setContext(getActivity());
+                    nearbyAsyncTask.currentLat = MainActivity.latitude;
+                    nearbyAsyncTask.currentLng = MainActivity.longitude;
+                    nearbyAsyncTask.cursorAdapterSearch = cursorAdapterSearch;
                     nearbyAsyncTask.execute();
 
                 } catch (Exception e) {
                     Log.e(TAG, "onClick: " + e.getMessage());
                 }
 
+                cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
             }
         });

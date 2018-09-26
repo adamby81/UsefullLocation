@@ -111,8 +111,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
+    public void deletePlaceFromFav (long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
-    // Delete PlaceOfInterest
+         db.delete(Constants.TABLE_NAME_FAV, "_id=?", new String []{Integer.toString((int) id)});
+        db.close();
+
+    }
+
     public long deleteSearchLocationTable(String tableName) {
 
         SQLiteDatabase db = this.getWritableDatabase();

@@ -1,5 +1,6 @@
 package com.example.adam.myusefulllocations.Activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -17,18 +18,22 @@ import android.widget.Toast;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
+import com.example.adam.myusefulllocations.Fragment.MapsFragment;
 import com.example.adam.myusefulllocations.R;
-import com.example.adam.myusefulllocations.Util.LocationsCursorAdapter;
+import com.example.adam.myusefulllocations.Util.CursorAdapterFavorites;
 
 import static com.example.adam.myusefulllocations.Fragment.ItemSearchFragment.MY_PREFS;
 
 public class FavoritesLvActivity extends AppCompatActivity {
 
-    ListView locationsListView;
-    LocationsCursorAdapter locationsCursorAdapter;
+    ListView favoritesListView;
+    CursorAdapterFavorites cursorAdapterFavorites;
     DatabaseHandler db;
     Cursor cursor;
     DataPassListener dataPassListener;
+    Activity activity;
+    MapsFragment myMapFragment;
+
 
 
     Button addNewPlaceBtn;
@@ -61,35 +66,55 @@ public class FavoritesLvActivity extends AppCompatActivity {
 
 
         db = new DatabaseHandler(FavoritesLvActivity.this, Constants.DB_NAME, null, Constants.FAVORITES_DB_VERSION);
-//        dataPassListener = (DataPassListener) cursor ;
-        locationsListView = findViewById(R.id.FAV_list_view_ID);
+//        activity = this;
+//        dataPassListener = (DataPassListener) activity ;
+
+        favoritesListView = findViewById(R.id.FAV_list_view_ID);
         cursor = db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV);
         cursor.moveToFirst();
 
-        locationsCursorAdapter = new LocationsCursorAdapter(this, cursor);
-        locationsListView.setAdapter(locationsCursorAdapter);
-        registerForContextMenu(locationsListView);
+        cursorAdapterFavorites = new CursorAdapterFavorites(this, cursor);
+        favoritesListView.setAdapter(cursorAdapterFavorites);
+        registerForContextMenu(favoritesListView);
 
-        locationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        favoritesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, final long id) {
+                dialogBuilder = new android.support.v7.app.AlertDialog.Builder(FavoritesLvActivity.this);
+                 view = getLayoutInflater().inflate(R.layout.confermation_popup_delete_one_fav, null);
 
-                cursor = (Cursor) parent.getAdapter().getItem(position);
-                float lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_FAV_LATITUDE));
-                float lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_FAV_LONGITUDE));
-                String name = cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_NAME));
+                Button delete = view.findViewById(R.id.deleteBtn_Dialog_DEL_One_Fav_ID);
+                Button cancel = view.findViewById(R.id.cancelBtn_Dialog_DEL_One_Fav_ID);
 
-                Bundle bundle = new Bundle();
+                dialogBuilder.setView(view);
+                dialog = dialogBuilder.create();
+                dialog.show();
 
-                bundle.putFloat("lat", lat );
-                bundle.putFloat("lng", lng);
-                bundle.putString("name", name);
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                Intent intent = new Intent(FavoritesLvActivity.this, MainActivity.class);
-                //intent.putExtra(bundle);
+                        db.deletePlaceFromFav(id);
+                        cursorAdapterFavorites.swapCursor(db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV));
 
-                startActivity(intent);
-//                dataPassListener.passDataLocationToMap(lat, lng, name);
+                        dialog.dismiss();
+//                        Intent intent = new Intent(FavoritesLvActivity.this, FavoritesLvActivity.class);
+//                        startActivity(intent);
+
+                    }
+                });
+
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        dialog.dismiss();
+
+
+
+                    }
+                });
+
             }
         });
 
@@ -131,7 +156,7 @@ public class FavoritesLvActivity extends AppCompatActivity {
 
             mPrefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
 
-            boolean isKM = mPrefs.getBoolean("isKm", true);
+            boolean isKM = mPrefs.getBoolean("isKM", true);
             if (isKM) {
                 isKm.isChecked();
             }else{
@@ -150,6 +175,8 @@ public class FavoritesLvActivity extends AppCompatActivity {
                         editor.putBoolean("isKM", true);
                         editor.apply();
                         editor.commit();
+                        cursorAdapterFavorites.swapCursor(db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV));
+
 
                     }else{
 
@@ -159,6 +186,8 @@ public class FavoritesLvActivity extends AppCompatActivity {
                             editor.putBoolean("isKM", false);
                             editor.apply();
                             editor.commit();
+                            cursorAdapterFavorites.swapCursor(db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV));
+
 
                         }else{
 
@@ -186,7 +215,7 @@ public class FavoritesLvActivity extends AppCompatActivity {
         if (id == R.id.action_delete){
 
             dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
-            View view = getLayoutInflater().inflate(R.layout.confermation_popup_delete, null);
+            View view = getLayoutInflater().inflate(R.layout.confermation_popup_delete_all, null);
 
             dialogBuilder.setView(view);
             dialog = dialogBuilder.create();
@@ -199,9 +228,9 @@ public class FavoritesLvActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    db = new DatabaseHandler(FavoritesLvActivity.this, Constants.TABLE_NAME_FAV, null, Constants.FAVORITES_DB_VERSION);
+                    db = new DatabaseHandler(FavoritesLvActivity.this, Constants.DB_NAME, null, Constants.FAVORITES_DB_VERSION);
                     db.deleteFavoritesLocationTable(Constants.TABLE_NAME_FAV);
-                    locationsCursorAdapter.swapCursor(db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV));
+                    cursorAdapterFavorites.swapCursor(db.getAllLocationsFavorites(Constants.TABLE_NAME_FAV));
 
 
                     dialog.dismiss();

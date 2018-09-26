@@ -28,7 +28,7 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
     BufferedReader bufferedReader;
     public float currentLat;
     public float currentLng;
-   public LocationsCursorAdapter locationsCursorAdapter;
+   public CursorAdapterSearch cursorAdapterSearch;
     FusedLocationProviderClient fusedLocationProviderClient;
     private String searchText = "";
     public Context context;
@@ -69,7 +69,7 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String response) {
 
 
-        locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
     }
 

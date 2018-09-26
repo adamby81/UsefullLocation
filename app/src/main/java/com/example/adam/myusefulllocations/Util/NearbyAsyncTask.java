@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
@@ -27,8 +26,8 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
     public float lat;
     private Context context;
     private DatabaseHandler db;
-    private float currentLon, currentLat;
-    public LocationsCursorAdapter locationsCursorAdapter;
+    public float currentLng, currentLat;
+    public CursorAdapterSearch cursorAdapterSearch;
     private final String API_KEY = "AIzaSyCmEYpUa4JvvgEefYJnzTtISDhJzpES84M";
 
     public Context getContext() {
@@ -40,7 +39,7 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
     }
 
     public void setLon(float lon) {
-        this.currentLon = lon;
+        this.currentLng = lon;
     }
 
     public void setContext(Context context) {
@@ -52,15 +51,16 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
         int titleProg = (R.string.searching);
         int messageProg = R.string.searchingMessage;
         progressDialog = ProgressDialog.show(context, Integer.toString(titleProg), Integer.toString(messageProg), true);
+
         db = new DatabaseHandler(this.context, Constants.DB_NAME,null, Constants.SEARCH_DB_VERSION);
 
     }
 
     protected String doInBackground(Void... urls) {
-//        Log.e(TAG, "doInBackground: " + this.currentLat + "," + this.currentLon);
+//        Log.e(TAG, "doInBackground: " + this.currentLat + "," + this.currentLng);
         try {
-            URL url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + this.currentLat + "," + this.currentLon +
-                    "&radius=1000&key=" + API_KEY); //API request url
+            URL url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + this.currentLat + "," + this.currentLng +
+                    "&radius=5000&key=" + API_KEY); //API request url
 //            Log.e(TAG, "doInBackground: request is=> " + url);
             HttpsURLConnection myConnection
                     = (HttpsURLConnection) url.openConnection(); //Make the request
@@ -84,7 +84,7 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
 //                    Log.d(TAG, "onPostExecute: " + stringBuilder);
                     try {
                         JSONObject json = new JSONObject(stringBuilder.toString()); // Make a JSON object out of the String response
-                        JSONArray jArray = json.getJSONArray("results");
+                        JSONArray jArray = json.getJSONArray("candidates");
                         if (jArray.length() >= 0) {
                             return "No Places Found";
                         } else {
@@ -100,7 +100,7 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
                                 lat = Float.valueOf(northeast.getString("lat"));
                                 lon = Float.valueOf(northeast.getString("lng"));
 
-                                distance = (float) distance(currentLat, currentLon, lat, lon);
+                                distance = (float) distance(currentLat, currentLng, lat, lon);
                                 photos = jsonobject.getJSONArray("photos");
                                 for (int j = 0; j < photos.length(); j++) {
                                     jsonobject = photos.getJSONObject(j);
@@ -129,11 +129,8 @@ public class NearbyAsyncTask extends AsyncTask<Void, Void, String> {
     }
 
     protected void onPostExecute(String response) {
-        if (response != "doInBackground: No Places Found") {
-            locationsCursorAdapter.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
-        } else {
-            Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
-        }
+            cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+
     }
 
     private double distance(float lat1, float lon1, float lat2, float lon2) {

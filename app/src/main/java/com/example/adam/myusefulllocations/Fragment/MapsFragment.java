@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,45 +39,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     public LatLng myCurrentLocation;
     public String titleName;
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//
-//        Bundle bundle = this.getArguments();
-//        if (bundle != null) {
-//            latitude = bundle.getFloat("lat", 0);
-//            longitude = bundle.getFloat("lng", 0);
-//            name = bundle.getString("name", null);
-//
-//        }
-//        MainActivity.hideKeyboard(getActivity());
-//
-//
-//        mMapView = (MapView) view.findViewById(R.id.mapView);
-//        mMapView.onCreate(savedInstanceState);
-//        mMapView.getMapAsync(new OnMapReadyCallback() {
-//            @Override
-//            public void onMapReady(GoogleMap mMap) {
-//                googleMap = mMap;
-//                mContext = getContext();
-//                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-//                }
-//                googleMap.setMyLocationEnabled(true);
-//                setMarkerPlace(latitude, longitude, name);
-//
-//                googleMap.addMarker(new MarkerOptions().position(myCurrentLocation).title(titleName));
-//
-//                CameraPosition cameraPosition = new CameraPosition.Builder().target(myCurrentLocation).zoom(12).build();
-//                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-//
-//            }
-//        });
-//        super.onViewCreated(view, savedInstanceState);
-//
-
-    }
-//
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
