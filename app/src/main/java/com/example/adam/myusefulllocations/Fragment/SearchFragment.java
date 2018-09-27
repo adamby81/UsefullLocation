@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import com.example.adam.myusefulllocations.Util.AsyncTaskNearby;
 import com.example.adam.myusefulllocations.Util.AsyncTaskSearch;
 import com.example.adam.myusefulllocations.Util.CursorAdapterSearch;
 import com.example.adam.myusefulllocations.Util.Global;
+import com.example.adam.myusefulllocations.Util.ImageNearbyAdapter;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -58,9 +60,7 @@ public class SearchFragment extends Fragment implements LocationListener {
     public boolean firstTime;
     Activity activity;
 
-    public String addToFav;
-    public String share;
-
+    GridView gridView;
     public static String type;
 
     public CursorAdapterSearch cursorAdapterSearch;
@@ -82,7 +82,7 @@ public class SearchFragment extends Fragment implements LocationListener {
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     DataPassListener dataPassListener;
-    // popup
+    // popup_welcome
 
     private TextView aboutUs;
     private Button startUsingBtn;
@@ -110,6 +110,39 @@ public class SearchFragment extends Fragment implements LocationListener {
 
     public SearchFragment() {
     }
+
+
+    public void setTypeNearby (){
+
+//        dialogBuilder = new AlertDialog.Builder(getContext());
+//        View view = getLayoutInflater().inflate(R.layout.popup_nearby_type, null);
+//
+//        gridView = view.findViewById(R.id.grid_view_container_ID);
+//        gridView.setAdapter(new ImageNearbyAdapter(getContext()));
+////
+//        dialogBuilder.setView(view);
+//        dialog = dialogBuilder.create();
+//        dialog.show();
+//
+//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                Toast.makeText(getContext(), "you click on image number: " + position, Toast.LENGTH_LONG).show();
+//
+//
+//
+//            }
+//        });
+//
+//
+//
+//
+//        dialog.dismiss();
+
+
+    }
+
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
@@ -257,22 +290,83 @@ public class SearchFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
 
-                db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-                asyncTaskNearby = new AsyncTaskNearby();
-                try {
-                    asyncTaskNearby.setContext(getActivity());
-                    asyncTaskNearby.currentLat = MainActivity.latitude;
-                    asyncTaskNearby.currentLng = MainActivity.longitude;
-                    asyncTaskNearby.cursorAdapterSearch = cursorAdapterSearch;
-                    asyncTaskNearby.execute();
 
-                } catch (Exception e) {
-                    Log.e(TAG, "onClick: " + e.getMessage());
-                }
 
-                MainActivity.hideKeyboard(getActivity());
+                // Open a dialog with types of places - returns "type" to the json by static val
 
-                cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+                dialogBuilder = new AlertDialog.Builder(getContext());
+                View view = getLayoutInflater().inflate(R.layout.popup_nearby_type, null);
+
+                gridView = view.findViewById(R.id.grid_view_container_ID);
+                gridView.setAdapter(new ImageNearbyAdapter(getContext()));
+//
+                dialogBuilder.setView(view);
+                dialog = dialogBuilder.create();
+                dialog.show();
+
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        Toast.makeText(getContext(), "you click on image number: " + position, Toast.LENGTH_LONG).show();
+                        switch (position) {
+
+                            case 0:
+                                type = "gym";
+                                break;
+                            case 1:
+                                type = "bank";
+                                break;
+                            case 2:
+                                type = "gas_station";
+                                break;
+                            case 3:
+                                type = "hospital";
+                                break;
+                            case 4:
+                                type = "pharmacy";
+                                break;
+                            case 5:
+                                type = "supermarket";
+                                break;
+                            case 6:
+                                type = "restaurant";
+                                break;
+                            case 7:
+                                type = "shopping_mall";
+                                break;
+                            case 8:
+                                type = "movie_theater";
+                                break;
+                        }
+
+
+                        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
+                        asyncTaskNearby = new AsyncTaskNearby();
+                        try {
+                            asyncTaskNearby.setContext(getActivity());
+                            asyncTaskNearby.currentLat = MainActivity.latitude;
+                            asyncTaskNearby.currentLng = MainActivity.longitude;
+                            asyncTaskNearby.cursorAdapterSearch = cursorAdapterSearch;
+                            asyncTaskNearby.execute();
+
+                        } catch (Exception e) {
+                            Log.e(TAG, "onClick: " + e.getMessage());
+                        }
+
+                        MainActivity.hideKeyboard(getActivity());
+                        dialog.dismiss();
+
+                        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+
+
+                    }
+                });
+
+
+
+
+
 
             }
         });
@@ -304,6 +398,8 @@ public class SearchFragment extends Fragment implements LocationListener {
     }
 
 
+
+
     @Override
     public void onLocationChanged(Location location) {
         MainActivity.updateLocationInfo(location);
@@ -328,7 +424,7 @@ public class SearchFragment extends Fragment implements LocationListener {
 
 
         dialogBuilder = new AlertDialog.Builder(getContext());
-        View view = getLayoutInflater().inflate(R.layout.popup, null);
+        View view = getLayoutInflater().inflate(R.layout.popup_welcome, null);
 
         aboutUs = view.findViewById(R.id.aboutTextView_POP_ID);
         startUsingBtn = view.findViewById(R.id.startUsingBtn_POP_ID);

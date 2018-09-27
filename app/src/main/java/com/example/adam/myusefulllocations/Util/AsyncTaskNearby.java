@@ -63,8 +63,8 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
 //        Log.e(TAG, "doInBackground: " + this.currentLat + "," + this.currentLng);
         try {
             URL url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + this.currentLat + "," + this.currentLng +
-                    "&radius=1000&type=" + SearchFragment.type + "&key=" + API_KEY); //API request url
-//            Log.e(TAG, "doInBackground: request is=> " + url);
+                    "&radius=10000&type=" + SearchFragment.type + "&key=" + API_KEY); //API request url
+            Log.i(TAG, "TYPE RECEIVED: " + SearchFragment.type);
             HttpsURLConnection myConnection
                     = (HttpsURLConnection) url.openConnection(); //Make the request
             myConnection.setRequestMethod("GET"); //Connection method for the HTTP request
