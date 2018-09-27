@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -62,6 +61,8 @@ public class SearchFragment extends Fragment implements LocationListener {
 
     GridView gridView;
     public static String type;
+    public String placeNameToast;
+
 
     public CursorAdapterSearch cursorAdapterSearch;
     //    private String[] querySearchList;
@@ -112,40 +113,6 @@ public class SearchFragment extends Fragment implements LocationListener {
     }
 
 
-    public void setTypeNearby (){
-
-//        dialogBuilder = new AlertDialog.Builder(getContext());
-//        View view = getLayoutInflater().inflate(R.layout.popup_nearby_type, null);
-//
-//        gridView = view.findViewById(R.id.grid_view_container_ID);
-//        gridView.setAdapter(new ImageNearbyAdapter(getContext()));
-////
-//        dialogBuilder.setView(view);
-//        dialog = dialogBuilder.create();
-//        dialog.show();
-//
-//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                Toast.makeText(getContext(), "you click on image number: " + position, Toast.LENGTH_LONG).show();
-//
-//
-//
-//            }
-//        });
-//
-//
-//
-//
-//        dialog.dismiss();
-
-
-    }
-
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public SearchFragment newInstance(int columnCount) {
         SearchFragment fragment = new SearchFragment();
         // get current Location from MainActivity:
@@ -178,27 +145,31 @@ public class SearchFragment extends Fragment implements LocationListener {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         // Share location details through google maps
         if (item.getTitle() == "Share") {
-            try {
-                Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
-                c.moveToFirst();
-                String uri = "http://maps.google.com/maps?q=" + c.getString(c.getColumnIndex("lat"))
-                        + "," + c.getString(c.getColumnIndex("lon"));
-                startActivity(new Intent(android.content.Intent.ACTION_VIEW,
-                        Uri.parse(uri)));
-            } catch (Exception e) {
-                Log.e(TAG, "onContextItemSelected: " + e.getMessage());
-            }
 
-            // Add to favorites
+            Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
+            c.moveToFirst();
+            String name = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
+            float latitude = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
+            float longitude = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
+
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_SUBJECT, name);
+            share.putExtra(Intent.EXTRA_TEXT,"https://www.google.com/maps/search/?api=1&query="+latitude+","+longitude);
+
+            startActivity(Intent.createChooser(share,"Share Via"));
+
         } else if (item.getTitle() == "Add To Favorites") {
             Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
             c.moveToFirst();
+
             String name = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
             String address = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_ADDRESS));
             float distance = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE));
             float latitude = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
             float longitude = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
             String image = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE));
+
             PlaceOfInterest place = new PlaceOfInterest(address,latitude,longitude,name,image, distance);
             db.addPlaceFavorites(activity, place, Constants.TABLE_NAME_FAV); //Add to the downloaded list table
 
@@ -274,7 +245,7 @@ public class SearchFragment extends Fragment implements LocationListener {
 
                             asyncTaskSearch.execute();
                         } catch (Exception e) {
-                            Log.e(TAG, "onClick: " + e.getMessage());
+
                         }
                         cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
@@ -290,16 +261,16 @@ public class SearchFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
 
+                MainActivity.hideKeyboard(getActivity());
 
 
-                // Open a dialog with types of places - returns "type" to the json by static val
 
                 dialogBuilder = new AlertDialog.Builder(getContext());
                 View view = getLayoutInflater().inflate(R.layout.popup_nearby_type, null);
 
                 gridView = view.findViewById(R.id.grid_view_container_ID);
                 gridView.setAdapter(new ImageNearbyAdapter(getContext()));
-//
+
                 dialogBuilder.setView(view);
                 dialog = dialogBuilder.create();
                 dialog.show();
@@ -308,37 +279,46 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                        Toast.makeText(getContext(), "you click on image number: " + position, Toast.LENGTH_LONG).show();
                         switch (position) {
 
                             case 0:
                                 type = "gym";
+                                placeNameToast = "GYMS";
                                 break;
                             case 1:
                                 type = "bank";
+                                placeNameToast = "BANKS";
                                 break;
                             case 2:
                                 type = "gas_station";
+                                placeNameToast = "GAS STATIONS";
                                 break;
                             case 3:
                                 type = "hospital";
+                                placeNameToast = "HOSPITALS";
                                 break;
                             case 4:
                                 type = "pharmacy";
+                                placeNameToast = "PHARMACY";
                                 break;
                             case 5:
                                 type = "supermarket";
+                                placeNameToast = "SUPERMARKET";
                                 break;
                             case 6:
                                 type = "restaurant";
+                                placeNameToast = "RESTAURANT";
                                 break;
                             case 7:
                                 type = "shopping_mall";
+                                placeNameToast = "SHOPPING MALLS";
                                 break;
                             case 8:
                                 type = "movie_theater";
+                                placeNameToast = "MOVIE THEATERS";
                                 break;
                         }
+                        Toast.makeText(getContext(), "You Chose to look for: " + placeNameToast, Toast.LENGTH_LONG).show();
 
 
                         db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
@@ -363,16 +343,10 @@ public class SearchFragment extends Fragment implements LocationListener {
                     }
                 });
 
-
-
-
-
-
             }
         });
 
         listViewSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -382,23 +356,14 @@ public class SearchFragment extends Fragment implements LocationListener {
                 float lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
                 float lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
                 String name = cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
-//
-//                    mPrefs = getActivity().getSharedPreferences(MY_PREFS, 0);
-//                    SharedPreferences.Editor editor = mPrefs.edit();
-//                    editor.putFloat("place_lat", lat);
-//                    editor.putFloat("place_lng", lng);
-//                    editor.putString("place_name", name);
+
                 dataPassListener.passDataLocationToMap(lat, lng, name);
-                Log.i("LV-SEARCH: ", "interface input: " + lat + lng + name);
             }
         });
 
 
         return view;
     }
-
-
-
 
     @Override
     public void onLocationChanged(Location location) {
@@ -421,7 +386,6 @@ public class SearchFragment extends Fragment implements LocationListener {
     }
 
     public void welcomePopup() {
-
 
         dialogBuilder = new AlertDialog.Builder(getContext());
         View view = getLayoutInflater().inflate(R.layout.popup_welcome, null);
@@ -470,8 +434,6 @@ public class SearchFragment extends Fragment implements LocationListener {
 
             }
         });
-
-
     }
 
 

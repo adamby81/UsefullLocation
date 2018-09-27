@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
     DatabaseHandler db;
     CursorAdapterSearch cursorAdapterSearch;
 
-
+    public static boolean fromFavChecker;
 
     public static int popOnceChecker = -1;
     PowerConnectionReceiver receiver;
@@ -258,6 +258,38 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean loadFragment (Fragment fragment) {
 
+        if (fromFavChecker) {
+
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                float lat = extras.getFloat("lat");
+                float lng = extras.getFloat("lng");
+                String name = extras.getString("name");
+
+                MapsFragment fragmentMap = new MapsFragment();
+
+                Bundle bundleMaps = new Bundle();
+
+                bundleMaps.putFloat("lat", lat);
+                bundleMaps.putFloat("lng", lng);
+                bundleMaps.putString("name", name);
+
+                fragmentMap.setArguments(bundleMaps);
+
+                fromFavChecker = false;
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container_main, fragmentMap)
+                        .commit();
+
+
+                return true;
+            }
+
+
+        }else{
+
         if (fragment != null) {
 
             getSupportFragmentManager()
@@ -268,31 +300,9 @@ public class MainActivity extends AppCompatActivity implements
 
             return true;
         }
+    }
         return false;
     }
-
-    public boolean loadNearbyFragment (Fragment fragment) {
-
-        if (fragment != null) {
-
-            if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container_main, fragment).addToBackStack(null);
-                fragmentTransaction.commit();
-                // If device is in landscape no need to replace fragments
-            } else {
-
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container_search, fragment).addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-
-
-            return true;
-        }
-        return false;
-    }
-
 
     @SuppressLint("ResourceType")
     @Override
@@ -328,7 +338,6 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.navigation_favorites_ID:
 
                 loadFavoritesActivity(item);
-//                fragment = new FavoritesFragment();
                 break;
 
         }

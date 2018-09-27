@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +45,43 @@ public class FavoritesLvActivity extends AppCompatActivity {
     RadioButton isMiles;
     public SharedPreferences mPrefs;
 
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        if (item.getTitle() == "Share") {
+
+            Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_FAV, (int) info.id);
+            c.moveToFirst();
+
+            String name = c.getString(c.getColumnIndex(Constants.KEY_FAV_NAME));
+            float latitude = c.getFloat(c.getColumnIndex(Constants.KEY_FAV_LATITUDE));
+            float longitude = c.getFloat(c.getColumnIndex(Constants.KEY_FAV_LONGITUDE));
+
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_SUBJECT, name);
+            share.putExtra(Intent.EXTRA_TEXT,"https://www.google.com/maps/search/?api=1&query="+latitude+","+longitude);
+
+            startActivity(Intent.createChooser(share,"Share Via"));
+
+        }  else {
+            return false;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Select an Action");
+
+        menu.add(0, v.getId(), 0, "Share");
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
