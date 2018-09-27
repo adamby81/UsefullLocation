@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
-import com.example.adam.myusefulllocations.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 
 import org.json.JSONArray;
@@ -21,7 +20,7 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
+public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
@@ -59,10 +58,11 @@ public class SearchJsonAsyncTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPreExecute() {
-        int titleProg = (R.string.searching);
-        int messageProg = R.string.searchingMessage;
+        String titleProg = "Searching";
+        String messageProg = "Searching... Please Wait...";
+
         db = new DatabaseHandler(this.context, Constants.DB_NAME,null, Constants.SEARCH_DB_VERSION);
-        progressDialog = ProgressDialog.show(context, Integer.toString(titleProg), Integer.toString(messageProg), true);
+        progressDialog = ProgressDialog.show(context, titleProg, messageProg, true);
     }
 
     @Override

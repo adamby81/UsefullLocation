@@ -33,7 +33,7 @@
             <Button
                 android:id="@+id/deleteBtn_Dialog_DEL_ID"
                 android:background="@color/colorPrimary"
-                android:text="@string/ok"
+                android:text="@string/delete"
                 android:layout_marginTop="19dp"
                 android:layout_alignBottom="@+id/cancelBtn_Dialog_DEL_ID"
                 android:layout_alignParentRight="true"

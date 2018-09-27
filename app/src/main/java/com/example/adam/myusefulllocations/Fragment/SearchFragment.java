@@ -30,11 +30,11 @@ import com.example.adam.myusefulllocations.Activity.MainActivity;
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
 import com.example.adam.myusefulllocations.R;
-import com.example.adam.myusefulllocations.Util.Global;
+import com.example.adam.myusefulllocations.Util.AsyncTaskNearby;
+import com.example.adam.myusefulllocations.Util.AsyncTaskSearch;
 import com.example.adam.myusefulllocations.Util.CursorAdapterSearch;
-import com.example.adam.myusefulllocations.Util.NearbyAsyncTask;
+import com.example.adam.myusefulllocations.Util.Global;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
-import com.example.adam.myusefulllocations.Util.SearchJsonAsyncTask;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
@@ -46,7 +46,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class ItemSearchFragment extends Fragment implements LocationListener {
+public class SearchFragment extends Fragment implements LocationListener {
 
     // TODO: Customize parameter argument names
     private static final String TAG = "SearchFragment";
@@ -57,18 +57,17 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     public SharedPreferences mPrefs;
     public boolean firstTime;
     Activity activity;
-    float lat;
-    float lon;
 
+    public String addToFav;
+    public String share;
+
+    public static String type;
 
     public CursorAdapterSearch cursorAdapterSearch;
     //    private String[] querySearchList;
     private ListView listViewSearch;
     RadioButton isKm;
     RadioButton isMiles;
-
-    MapsFragment mapsFragment;
-
 
     private List<PlaceOfInterest> placeOfInterestList;
 //    private List<PlaceOfInterest> listPlaceOfInterests;
@@ -89,8 +88,8 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     private Button startUsingBtn;
 
 
-    private SearchJsonAsyncTask searchJsonAsyncTask;
-    private NearbyAsyncTask nearbyAsyncTask;
+    private AsyncTaskSearch asyncTaskSearch;
+    private AsyncTaskNearby asyncTaskNearby;
 
     private Button searchByText;
     private Button searchNearby;
@@ -109,13 +108,13 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
      */
 
 
-    public ItemSearchFragment() {
+    public SearchFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public ItemSearchFragment newInstance(int columnCount) {
-        ItemSearchFragment fragment = new ItemSearchFragment();
+    public SearchFragment newInstance(int columnCount) {
+        SearchFragment fragment = new SearchFragment();
         // get current Location from MainActivity:
         Bundle bundle = getArguments();
         float latitude = bundle.getFloat("latitude");
@@ -138,11 +137,14 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     }
 
 
+
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         // Share location details through google maps
-        if (item.getTitle() == "Share Location") {
+        if (item.getTitle() == "Share") {
             try {
                 Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
                 c.moveToFirst();
@@ -167,7 +169,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
             PlaceOfInterest place = new PlaceOfInterest(address,latitude,longitude,name,image, distance);
             db.addPlaceFavorites(activity, place, Constants.TABLE_NAME_FAV); //Add to the downloaded list table
 
-            Toast.makeText(activity, name + " Was Added To Favorite List.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Place added to your favorites", Toast.LENGTH_SHORT).show();
         } else {
             return false;
         }
@@ -178,8 +180,10 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             super.onCreateContextMenu(menu, v, menuInfo);
-            menu.setHeaderTitle("Select Action");
+            menu.setHeaderTitle("Select an Action");
+
             menu.add(0, v.getId(), 0, "Share");
+
             menu.add(0, v.getId(), 0, "Add To Favorites");
 
     }
@@ -225,21 +229,23 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
                     if (!(textToSearch.length() <= 0)) {
 
                         db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-                        searchJsonAsyncTask = new SearchJsonAsyncTask();
+                        asyncTaskSearch = new AsyncTaskSearch();
 
                         try {
 
-                            searchJsonAsyncTask.setContext(getActivity());
-                            searchJsonAsyncTask.setSearchText(textToSearch);
-                            searchJsonAsyncTask.currentLat = MainActivity.latitude;
-                            searchJsonAsyncTask.currentLng = MainActivity.longitude;
-                            searchJsonAsyncTask.cursorAdapterSearch = cursorAdapterSearch;
+                            asyncTaskSearch.setContext(getActivity());
+                            asyncTaskSearch.setSearchText(textToSearch);
+                            asyncTaskSearch.currentLat = MainActivity.latitude;
+                            asyncTaskSearch.currentLng = MainActivity.longitude;
+                            asyncTaskSearch.cursorAdapterSearch = cursorAdapterSearch;
 
-                            searchJsonAsyncTask.execute();
+                            asyncTaskSearch.execute();
                         } catch (Exception e) {
                             Log.e(TAG, "onClick: " + e.getMessage());
                         }
                         cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+
+                        MainActivity.hideKeyboard(getActivity());
 
                     }
 
@@ -250,18 +256,21 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
         searchNearby.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-                nearbyAsyncTask = new NearbyAsyncTask();
+                asyncTaskNearby = new AsyncTaskNearby();
                 try {
-                    nearbyAsyncTask.setContext(getActivity());
-                    nearbyAsyncTask.currentLat = MainActivity.latitude;
-                    nearbyAsyncTask.currentLng = MainActivity.longitude;
-                    nearbyAsyncTask.cursorAdapterSearch = cursorAdapterSearch;
-                    nearbyAsyncTask.execute();
+                    asyncTaskNearby.setContext(getActivity());
+                    asyncTaskNearby.currentLat = MainActivity.latitude;
+                    asyncTaskNearby.currentLng = MainActivity.longitude;
+                    asyncTaskNearby.cursorAdapterSearch = cursorAdapterSearch;
+                    asyncTaskNearby.execute();
 
                 } catch (Exception e) {
                     Log.e(TAG, "onClick: " + e.getMessage());
                 }
+
+                MainActivity.hideKeyboard(getActivity());
 
                 cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
@@ -405,7 +414,7 @@ public class ItemSearchFragment extends Fragment implements LocationListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(ItemSearchFragment item);
+        void onListFragmentInteraction(SearchFragment item);
 
         // TODO: Update argument type and name
         void onListFragmentInteraction(PlaceOfInterest item);

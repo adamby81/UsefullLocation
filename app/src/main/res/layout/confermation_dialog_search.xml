@@ -33,13 +33,15 @@
             <Button
                 android:id="@+id/deleteBtn_search_ID"
                 android:background="@color/colorPrimary"
-                android:text="@string/ok"
+                android:text="@string/delete"
+                android:layout_below="@+id/Sure_dialog_text_ID"
                 android:layout_marginTop="19dp"
                 android:layout_alignBottom="@+id/cancelBtn_search_ID"
                 android:layout_alignParentRight="true"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

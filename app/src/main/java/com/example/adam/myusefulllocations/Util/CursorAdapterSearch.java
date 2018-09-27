@@ -52,7 +52,7 @@ public class CursorAdapterSearch extends CursorAdapter {
         else {
             float distance = Float.valueOf(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE)));
             distance *= 0.62137;
-            tvLocationDistance.setText(Float.toString(distance) .concat( "m"));
+            tvLocationDistance.setText(Float.toString(distance) .concat(" ml"));
         }
         //Use Picasso to get picture into the image view
         Picasso.get().load(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE))).into(ivLocationPhoto);

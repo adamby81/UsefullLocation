@@ -24,7 +24,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,26 +35,29 @@ import android.widget.Toast;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
-import com.example.adam.myusefulllocations.Fragment.ItemSearchFragment;
 import com.example.adam.myusefulllocations.Fragment.MapsFragment;
+import com.example.adam.myusefulllocations.Fragment.SearchFragment;
 import com.example.adam.myusefulllocations.R;
+import com.example.adam.myusefulllocations.Util.CursorAdapterSearch;
 import com.example.adam.myusefulllocations.Util.Global;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
-import static com.example.adam.myusefulllocations.Fragment.ItemSearchFragment.MY_PREFS;
+import static com.example.adam.myusefulllocations.Fragment.SearchFragment.MY_PREFS;
 
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener
-        , DataPassListener, ItemSearchFragment.OnListFragmentInteractionListener {
+        , DataPassListener, SearchFragment.OnListFragmentInteractionListener {
 
     FragmentTransaction fragmentTransaction;
     FrameLayout frameLayoutSearch, frameLayoutMap;
     GoogleMap mMap;
     MapsFragment myMapFragment;
-    ItemSearchFragment itemSearchFragment;
+    SearchFragment searchFragment;
+    private final String API_KEY = "AIzaSyCmEYpUa4JvvgEefYJnzTtISDhJzpES84M";
+
 
     public static String address;
     public static float latitude;
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements
     RadioButton isKm;
     RadioButton isMiles;
     public SharedPreferences mPrefs;
+
+    DatabaseHandler db;
+    CursorAdapterSearch cursorAdapterSearch;
 
 
 
@@ -105,27 +110,11 @@ public class MainActivity extends AppCompatActivity implements
             latitude = (float) location.getLatitude();
             longitude = (float) location.getLongitude();
 
-            Log.e("location: ", "updateLocationInfo: " + latitude + " AND " + location.getLatitude());
-
-
-
-//            currLocationEditor.putLong("Latitude", latitude );
-//            currLocationEditor.putLong("Longitude", longitude );
-//            currLocationEditor.putLong("Altitude", altitude );
-//            currLocationEditor.putString("name", name);
-
-            // מיקום בפועל
-            // TextView addView = findViewById(R.id.addressView_ID);
-
-            // addView.setText(name);
     }
 
     @Override
     protected void onDestroy() {
-
-
         unregisterReceiver(receiver);
-
 
         super.onDestroy();
     }
@@ -161,11 +150,11 @@ public class MainActivity extends AppCompatActivity implements
         }
         // fragments handeling - landScape
 
-        ItemSearchFragment itemSearchFragment = new ItemSearchFragment();
+        SearchFragment searchFragment = new SearchFragment();
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
 
-            fragmentTransaction.add(R.id.fragment_container_main, itemSearchFragment);
+            fragmentTransaction.add(R.id.fragment_container_main, searchFragment);
             fragmentTransaction.commit();
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(this);
@@ -178,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements
             frameLayoutSearch.removeAllViews();
 
             myMapFragment = new MapsFragment();
-            fragmentTransaction.add(R.id.fragment_container_search, itemSearchFragment);
+            fragmentTransaction.add(R.id.fragment_container_search, searchFragment);
             fragmentTransaction.add(R.id.fragment_container_map, myMapFragment);
             fragmentTransaction.commit();
 
@@ -188,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements
             bundleMapsAndSearch.putString("name", name);
 
             myMapFragment.setArguments(bundleMapsAndSearch);
-            itemSearchFragment.setArguments(bundleMapsAndSearch);
+            searchFragment.setArguments(bundleMapsAndSearch);
 
         }
 
@@ -282,6 +271,28 @@ public class MainActivity extends AppCompatActivity implements
         return false;
     }
 
+    public boolean loadNearbyFragment (Fragment fragment) {
+
+        if (fragment != null) {
+
+            if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container_main, fragment).addToBackStack(null);
+                fragmentTransaction.commit();
+                // If device is in landscape no need to replace fragments
+            } else {
+
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container_search, fragment).addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+
+
+            return true;
+        }
+        return false;
+    }
+
 
     @SuppressLint("ResourceType")
     @Override
@@ -292,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
 
             case R.id.navigation_search_ID:
-                fragment = new ItemSearchFragment();
+                fragment = new SearchFragment();
 
                 Bundle bundleSearch = new Bundle();
                 bundleSearch.putFloat("latitude", latitude);
@@ -330,12 +341,6 @@ public class MainActivity extends AppCompatActivity implements
         Intent intent = new Intent(MainActivity.this, FavoritesLvActivity.class);
         startActivity(intent);
     }
-
-       // מיקום נוכחי
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -387,6 +392,8 @@ public class MainActivity extends AppCompatActivity implements
                         editor.putBoolean("isKM", true);
                         editor.apply();
                         editor.commit();
+                        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+
 
 
                     }else{
@@ -397,6 +404,8 @@ public class MainActivity extends AppCompatActivity implements
                             editor.putBoolean("isKM", false);
                             editor.apply();
                             editor.commit();
+                            cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+
 
                         }else{
 
@@ -439,9 +448,12 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View v) {
 
-                    DatabaseHandler databaseHandler = new DatabaseHandler(MainActivity.this, Constants.DB_NAME, null, Constants.SEARCH_DB_VERSION);
-                    databaseHandler.deleteFavoritesLocationTable(Constants.TABLE_NAME_SEARCH);
+                    db = new DatabaseHandler(MainActivity.this, Constants.DB_NAME, null, Constants.SEARCH_DB_VERSION);
+                    db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
+                    //cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
+                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(intent);
                     dialog.dismiss();
 
                 }
@@ -475,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public void onListFragmentInteraction(ItemSearchFragment item) {
+    public void onListFragmentInteraction(SearchFragment item) {
 
     }
 
@@ -505,6 +517,4 @@ public class MainActivity extends AppCompatActivity implements
     public void onListFragmentInteraction(PlaceOfInterest item) {
 
     }
-
-
 }

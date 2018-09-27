@@ -22,7 +22,7 @@ import com.example.adam.myusefulllocations.Fragment.MapsFragment;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.CursorAdapterFavorites;
 
-import static com.example.adam.myusefulllocations.Fragment.ItemSearchFragment.MY_PREFS;
+import static com.example.adam.myusefulllocations.Fragment.SearchFragment.MY_PREFS;
 
 public class FavoritesLvActivity extends AppCompatActivity {
 

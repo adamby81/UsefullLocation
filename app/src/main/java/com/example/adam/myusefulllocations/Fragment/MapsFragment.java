@@ -3,7 +3,6 @@ package com.example.adam.myusefulllocations.Fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.adam.myusefulllocations.Activity.MainActivity;
-import com.example.adam.myusefulllocations.Data.DatabaseHandler;
 import com.example.adam.myusefulllocations.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,9 +30,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public float longitude;
     public String name;
 
-    private SharedPreferences prefs;
-    private DatabaseHandler db;
-
     private Context mContext;
 
     public LatLng myCurrentLocation;
@@ -49,6 +44,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             latitude = bundle.getFloat("lat", 0);
             longitude = bundle.getFloat("lng", 0);
             name = bundle.getString("name", null);
+
+        }else {
+
+            latitude = MainActivity.latitude;
+            longitude = MainActivity.longitude;
 
         }
         MainActivity.hideKeyboard(getActivity());
@@ -66,6 +66,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 }
                 googleMap.setMyLocationEnabled(true);
 //                setMarkerPlace(getContext(), latitude, longitude, name);
+
 
                 myCurrentLocation = new LatLng(latitude, longitude);
                 titleName = name;
@@ -87,21 +88,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
 
         return rootView;
-
-    }
-
-
-    public void setMarkerPlace(Context context, float lat, float lng, String name) {
-
-//        mContext = context;
-//        myCurrentLocation = new LatLng(lat, lng);
-//        titleName = name;
-
-//
-//        googleMap.addMarker(new MarkerOptions().position(myCurrentLocation).title(titleName));
-//
-//        CameraPosition cameraPosition = new CameraPosition.Builder().target(myCurrentLocation).zoom(12).build();
-//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
     }
 

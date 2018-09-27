@@ -24,7 +24,7 @@
     <string name="longitude">Longitude:</string>
     <string name="altitude">Altitude:</string>
     <string name="cancel">CANCEL</string>
-    <string name="ok">DELETE</string>
+    <string name="delete">DELETE</string>
     <string name="sure_text">You Are About to Delete All Of your Last Search Results, Are You Sure ?</string>
     <string name="sure_text_delete">You Are About to Delete All Of your Favorites Saved Locations, Are You Sure ?</string>
     <string name="tab1_TEXT_SEARCH">SEARCH BY TEXT</string>
@@ -53,5 +53,15 @@
     <string name="place_name_delete_one_fav">Place Name:</string>
     <string name="are_you_sure_delete_one_fav">ARE YOU SURE ?</string>
     <string name="off_line">Your app is running in Offline Mode</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="share">Share</string>
+    <string name="add_to_fav">Add To Favorites</string>
+    <string name="km"> km</string>
+    <string name="miles"> ml</string>
+    <string name="place_added">Place was added to favorites</string>
+    <string name="no_places_found_json">No Places Found</string>
+    <string name="select_action">Select an action</string>
 
 </resources>
