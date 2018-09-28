@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -21,7 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,9 +37,6 @@ import com.example.adam.myusefulllocations.Util.Global;
 import com.example.adam.myusefulllocations.Util.ImageNearbyAdapter;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -58,21 +55,19 @@ public class SearchFragment extends Fragment implements LocationListener {
     public SharedPreferences mPrefs;
     public boolean firstTime;
     Activity activity;
+    Location mLocation;
 
     GridView gridView;
     public static String type;
     public String placeNameToast;
 
+    LocationManager locationManager;
 
     public CursorAdapterSearch cursorAdapterSearch;
     //    private String[] querySearchList;
     private ListView listViewSearch;
-    RadioButton isKm;
-    RadioButton isMiles;
-
-    private List<PlaceOfInterest> placeOfInterestList;
-//    private List<PlaceOfInterest> listPlaceOfInterests;
-
+//    RadioButton isKmSettings;
+//    RadioButton isMilesSettings;
     private DatabaseHandler db;
 
     private EditText search;
@@ -95,9 +90,6 @@ public class SearchFragment extends Fragment implements LocationListener {
     private Button searchByText;
     private Button searchNearby;
 
-//    private CursorRecyclerViewAdapter adapter;
-
-
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
@@ -117,18 +109,21 @@ public class SearchFragment extends Fragment implements LocationListener {
         SearchFragment fragment = new SearchFragment();
         // get current Location from MainActivity:
         Bundle bundle = getArguments();
-        float latitude = bundle.getFloat("latitude");
-        float longitude = bundle.getFloat("longitude");
+        float latitude = bundle.getFloat("lat");
+        float longitude = bundle.getFloat("lng");
         fragment.setArguments(bundle);
         return fragment;
     }
 
-    //
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         fromSearchFrag = false;
+
+//        mLocation.getLatitude();
+//        mLocation.getLongitude();
+//        MainActivity.updateLocationInfo(mLocation);
 
 
         if (getArguments() != null) {
@@ -192,6 +187,7 @@ public class SearchFragment extends Fragment implements LocationListener {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
@@ -200,7 +196,12 @@ public class SearchFragment extends Fragment implements LocationListener {
         dataPassListener = (DataPassListener) activity;
         db = new DatabaseHandler(getActivity(), Constants.DB_NAME, null, Constants.SEARCH_DB_VERSION);
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+//        if (ContextCompat.checkSelfPermission(getContext(),
+//                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+//
+//            locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+//        }
 
 
         listViewSearch = view.findViewById(R.id.search_lv_holder_ID);
@@ -390,16 +391,21 @@ public class SearchFragment extends Fragment implements LocationListener {
         dialogBuilder = new AlertDialog.Builder(getContext());
         View view = getLayoutInflater().inflate(R.layout.popup_welcome, null);
 
-        aboutUs = view.findViewById(R.id.aboutTextView_POP_ID);
+//        aboutUs = view.findViewById(R.id.aboutTextView_POP_ID);
         startUsingBtn = view.findViewById(R.id.startUsingBtn_POP_ID);
+
+//        aboutUs.setText(R.string.about_us1_welcome_View_ID);
 
         dialogBuilder.setView(view);
         dialog = dialogBuilder.create();
         dialog.show();
 
-        isKm = view.findViewById(R.id.km_RB_ID);
-        isMiles = view.findViewById(R.id.miles_RB_ID);
+        MainActivity.isKmSettings = view.findViewById(R.id.km_RB_ID);
+        MainActivity.isMilesSettings = view.findViewById(R.id.miles_RB_ID);
 
+//        mLocation.getLatitude();
+//        mLocation.getLongitude();
+//        MainActivity.updateLocationInfo(mLocation);
 
         startUsingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -409,7 +415,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                 SharedPreferences.Editor editor = mPrefs.edit();
                 editor.putBoolean("ifFirstTime", false);
 
-                if (isKm.isChecked()) {
+                if (MainActivity.isKmSettings.isChecked()) {
 
                     editor.putBoolean("isKM", true);
 
@@ -429,6 +435,8 @@ public class SearchFragment extends Fragment implements LocationListener {
                     }
                 }, 1000); // = 1 second
 
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
                 dialog.dismiss();
 
 

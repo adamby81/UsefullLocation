@@ -4,12 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:layout_editor_absoluteY="81dp"
+    android:padding="22dp"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-
-
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -24,7 +22,7 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/title_popup_welcome"
-            android:textSize="16sp"
+            android:textSize="36dp"
             android:textStyle="italic" />
         <TextView
             android:id="@+id/aboutTextView_POP_ID"
@@ -33,29 +31,75 @@
             android:layout_below="@+id/titleTextView_POP_ID"
             android:layout_marginTop="15dp"
             android:gravity="center"
-            android:text="@string/about_us_View_ID"
-            android:textSize="16sp"
-            android:textStyle="italic" />
+            android:text="@string/about_us1_welcome_View_ID"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/explain_title_View_welcome_POP_ID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/aboutTextView_POP_ID"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="@string/about_us2_explain_title_View_ID"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/explain_search_View_welcome_POP_ID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/explain_title_View_welcome_POP_ID"
+                android:gravity="start"
+                android:padding="2dp"
+                android:text="@string/about_us3_explain_search_View_ID"
+                android:textSize="16sp"
+                android:textStyle="italic" />
+            <TextView
+                android:id="@+id/explain_save_View_welcome_POP_ID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/explain_search_View_welcome_POP_ID"
+                android:gravity="start"
+                android:padding="2dp"
+                android:layout_alignParentRight="true"
+                android:text="@string/about_us4_explain_save_View_ID"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                android:layout_alignParentEnd="true" />
+            <TextView
+                android:id="@+id/explain_functions_View_welcome_POP_ID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/explain_save_View_welcome_POP_ID"
+                android:gravity="start"
+                android:layout_alignParentRight="true"
+                android:padding="2dp"
+                android:text="@string/about_us5_explain_functions_View_ID"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                android:layout_alignParentEnd="true" />
+
+
+
         <TextView
             android:id="@+id/title_settings_POP_ID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/aboutTextView_POP_ID"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:gravity="center"
+            android:layout_below="@+id/explain_functions_View_welcome_POP_ID"
+            android:gravity="start"
+            android:padding="8dp"
             android:text="@string/mile_km_title"
             android:textSize="16sp"
-            android:textStyle="italic" />
+            android:textStyle="bold" />
 
 
             <RadioGroup
                 android:id="@+id/miles_km_GR_ID"
                 android:layout_below="@+id/title_settings_POP_ID"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="40dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp">
@@ -83,7 +127,6 @@
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:text="@string/startusing"
-                android:layout_marginBottom="15dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_below="@+id/miles_km_GR_ID"

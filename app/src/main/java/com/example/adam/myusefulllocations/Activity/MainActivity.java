@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
 
+            startListening();
             fragmentTransaction.add(R.id.fragment_container_main, searchFragment);
             fragmentTransaction.commit();
             BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements
 
         }else {
 
+            startListening();
             frameLayoutSearch = findViewById(R.id.fragment_container_search);
             frameLayoutMap = findViewById(R.id.fragment_container_map);
             frameLayoutMap.removeAllViews();
@@ -240,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean loadFragment (Fragment fragment) {
 
         if (fragment != null) {
+
 
             getSupportFragmentManager()
                     .beginTransaction()
