@@ -41,13 +41,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp">
             <RadioButton
-                android:id="@+id/km_RB_ID"
+                android:id="@+id/km_RB_settings_ID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/by_km_RADIO_BTN" />
             <RadioButton
-                android:id="@+id/miles_RB_ID"
+                android:id="@+id/miles_RB_settings_ID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -57,7 +57,7 @@
         </RadioGroup>
 
         <Button
-            android:id="@+id/saveBtn_POP_ID"
+            android:id="@+id/saveBtn_POP_settings_ID"
             android:layout_marginTop="15dp"
             android:gravity="center"
             android:textStyle="bold"

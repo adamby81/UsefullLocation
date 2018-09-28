@@ -23,6 +23,8 @@ import com.example.adam.myusefulllocations.Fragment.MapsFragment;
 import com.example.adam.myusefulllocations.R;
 import com.example.adam.myusefulllocations.Util.CursorAdapterFavorites;
 
+import static com.example.adam.myusefulllocations.Activity.MainActivity.isKmSettings;
+import static com.example.adam.myusefulllocations.Activity.MainActivity.isMilesSettings;
 import static com.example.adam.myusefulllocations.Fragment.SearchFragment.MY_PREFS;
 
 public class FavoritesLvActivity extends AppCompatActivity {
@@ -183,30 +185,35 @@ public class FavoritesLvActivity extends AppCompatActivity {
             dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
             View view = getLayoutInflater().inflate(R.layout.settings_popup, null);
 
-            Button save = view.findViewById(R.id.saveBtn_POP_ID);
+            Button save = view.findViewById(R.id.saveBtn_POP_settings_ID);
 
             dialogBuilder.setView(view);
             dialog = dialogBuilder.create();
             dialog.show();
 
-            isKm = view.findViewById(R.id.km_RB_ID);
-            isMiles = view.findViewById(R.id.miles_RB_ID);
+            isKmSettings = view.findViewById(R.id.km_RB_settings_ID);
+            isMilesSettings = view.findViewById(R.id.miles_RB_settings_ID);
 
             mPrefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
 
             boolean isKM = mPrefs.getBoolean("isKM", true);
             if (isKM) {
-                isKm.isChecked();
-            }else{
+                isKmSettings.setChecked(true);
+                isMilesSettings.setChecked(false);
+                isKmSettings.isChecked();
 
-                isMiles.isChecked();
+            }else{
+                isKmSettings.setChecked(false);
+                isMilesSettings.setChecked(true);
+                isMilesSettings.isChecked();
             }
+
 
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    if (isKm.isChecked()){
+                    if (isKmSettings.isChecked()){
 
                         mPrefs = getSharedPreferences(MY_PREFS,0);
                         SharedPreferences.Editor editor = mPrefs.edit();
@@ -218,7 +225,7 @@ public class FavoritesLvActivity extends AppCompatActivity {
 
                     }else{
 
-                        if (isMiles.isChecked()){
+                        if (isMilesSettings.isChecked()){
                             mPrefs = getSharedPreferences(MY_PREFS,0);
                             SharedPreferences.Editor editor = mPrefs.edit();
                             editor.putBoolean("isKM", false);

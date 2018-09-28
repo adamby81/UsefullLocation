@@ -42,7 +42,6 @@ import com.example.adam.myusefulllocations.Util.CursorAdapterSearch;
 import com.example.adam.myusefulllocations.Util.Global;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
 import static com.example.adam.myusefulllocations.Fragment.SearchFragment.MY_PREFS;
@@ -53,11 +52,7 @@ public class MainActivity extends AppCompatActivity implements
 
     FragmentTransaction fragmentTransaction;
     FrameLayout frameLayoutSearch, frameLayoutMap;
-    GoogleMap mMap;
     MapsFragment myMapFragment;
-    SearchFragment searchFragment;
-    private final String API_KEY = "AIzaSyCmEYpUa4JvvgEefYJnzTtISDhJzpES84M";
-
 
     public static String address;
     public static float latitude;
@@ -65,14 +60,12 @@ public class MainActivity extends AppCompatActivity implements
 
     private android.support.v7.app.AlertDialog.Builder dialogBuilder;
     private android.support.v7.app.AlertDialog dialog;
-    RadioButton isKm;
-    RadioButton isMiles;
-    public SharedPreferences mPrefs;
+    public static RadioButton isKmSettings;
+    public static RadioButton isMilesSettings;
+    public static SharedPreferences mPrefs;
 
     DatabaseHandler db;
     CursorAdapterSearch cursorAdapterSearch;
-
-    public static boolean fromFavChecker;
 
     public static int popOnceChecker = -1;
     PowerConnectionReceiver receiver;
@@ -101,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
             locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
         }
 
     }
@@ -109,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements
     public static void updateLocationInfo(Location location) {
             latitude = (float) location.getLatitude();
             longitude = (float) location.getLongitude();
-
     }
 
     @Override
@@ -119,15 +110,10 @@ public class MainActivity extends AppCompatActivity implements
         super.onDestroy();
     }
 
-
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
     }
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements
             AlertDialog alert = alertDialogBuilder.create();
             alert.show();
         }
-        // fragments handeling - landScape
 
         SearchFragment searchFragment = new SearchFragment();
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -185,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements
 
         }else {
 
-
         }
 
         receiver = new PowerConnectionReceiver();
@@ -196,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
-            //v-1 testing changes on git
+
             @Override
             public void onLocationChanged(Location location) {
 
@@ -251,44 +235,9 @@ public class MainActivity extends AppCompatActivity implements
             }
 
         }
-
-
-
-    }
+ }
 
     private boolean loadFragment (Fragment fragment) {
-
-        if (fromFavChecker) {
-
-            Bundle extras = getIntent().getExtras();
-            if (extras != null) {
-                float lat = extras.getFloat("lat");
-                float lng = extras.getFloat("lng");
-                String name = extras.getString("name");
-
-                MapsFragment fragmentMap = new MapsFragment();
-
-                Bundle bundleMaps = new Bundle();
-
-                bundleMaps.putFloat("lat", lat);
-                bundleMaps.putFloat("lng", lng);
-                bundleMaps.putString("name", name);
-
-                fragmentMap.setArguments(bundleMaps);
-
-                fromFavChecker = false;
-
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container_main, fragmentMap)
-                        .commit();
-
-
-                return true;
-            }
-
-
-        }else{
 
         if (fragment != null) {
 
@@ -296,11 +245,9 @@ public class MainActivity extends AppCompatActivity implements
                     .beginTransaction()
                     .replace(R.id.fragment_container_main, fragment)
                     .commit();
-
-
             return true;
         }
-    }
+
         return false;
     }
 
@@ -353,67 +300,64 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
 
             dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
             View view = getLayoutInflater().inflate(R.layout.settings_popup, null);
 
-            Button save = view.findViewById(R.id.saveBtn_POP_ID);
+            Button save = view.findViewById(R.id.saveBtn_POP_settings_ID);
 
             dialogBuilder.setView(view);
             dialog = dialogBuilder.create();
             dialog.show();
 
-            isKm = view.findViewById(R.id.km_RB_ID);
-            isMiles = view.findViewById(R.id.miles_RB_ID);
+
+            isKmSettings = view.findViewById(R.id.km_RB_settings_ID);
+            isMilesSettings = view.findViewById(R.id.miles_RB_settings_ID);
 
             mPrefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
 
-            boolean isKM = mPrefs.getBoolean("isKm", true);
+            boolean isKM = mPrefs.getBoolean("isKM", true);
             if (isKM) {
-                isKm.isChecked();
-            }else{
+                isKmSettings.setChecked(true);
+                isMilesSettings.setChecked(false);
+                isKmSettings.isChecked();
 
-                isMiles.isChecked();
+            }else{
+                isKmSettings.setChecked(false);
+                isMilesSettings.setChecked(true);
+                isMilesSettings.isChecked();
             }
 
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //mPrefs = getSharedPreferences(MY_PREFS,0);
 
-                    if (isKm.isChecked()){
+                    if (isKmSettings.isChecked()){
 
-                        mPrefs = getSharedPreferences(MY_PREFS,0);
                         SharedPreferences.Editor editor = mPrefs.edit();
                         editor.putBoolean("isKM", true);
                         editor.apply();
                         editor.commit();
-                        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
-
 
 
                     }else{
 
-                        if (isMiles.isChecked()){
-                            mPrefs = getSharedPreferences(MY_PREFS,0);
+                        if (isMilesSettings.isChecked()){
                             SharedPreferences.Editor editor = mPrefs.edit();
                             editor.putBoolean("isKM", false);
                             editor.apply();
                             editor.commit();
-                            cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
 
                         }else{
@@ -438,7 +382,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
             });
 
-
         }
 
         if (id == R.id.action_delete){
@@ -459,7 +402,6 @@ public class MainActivity extends AppCompatActivity implements
 
                     db = new DatabaseHandler(MainActivity.this, Constants.DB_NAME, null, Constants.SEARCH_DB_VERSION);
                     db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-                    //cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
 
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -475,13 +417,10 @@ public class MainActivity extends AppCompatActivity implements
                 }
             });
 
-
         }
-
 
         return super.onOptionsItemSelected(item);
     }
-
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -502,18 +441,23 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void passDataLocationToMap(float lat, float lng, String name) {
+
          myMapFragment = new MapsFragment();
+
         Bundle bundleMaps = new Bundle();
+
         bundleMaps.putFloat("lat", lat);
         bundleMaps.putFloat("lng", lng);
         bundleMaps.putString("name", name);
+
         myMapFragment.setArguments(bundleMaps);
-        //Device is in Portrait
+
         if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container_main, myMapFragment).addToBackStack(null);
             fragmentTransaction.commit();
-            // If device is in landscape no need to replace fragments
+
         } else {
 
             fragmentTransaction = getSupportFragmentManager().beginTransaction();

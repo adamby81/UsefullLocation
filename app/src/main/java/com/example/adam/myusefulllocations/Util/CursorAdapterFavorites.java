@@ -16,10 +16,10 @@ import com.squareup.picasso.Picasso;
 
 public class CursorAdapterFavorites extends CursorAdapter {
 
-    private TextView tvLocationName;
-    private TextView tvLocationAddress;
-    private TextView tvLocationDistance;
-    private ImageView ivLocationPhoto;
+    private TextView placeName;
+    private TextView placeAddress;
+    private TextView placeDistance;
+    private ImageView placeImage;
     private String MY_PREFS = "MyPrefsFile";
 
 
@@ -35,27 +35,27 @@ public class CursorAdapterFavorites extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final SharedPreferences sharedpreferences = context.getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        tvLocationName = view.findViewById(R.id.name_row_search_ID);
-        tvLocationAddress = view.findViewById(R.id.address_Full_row_search_ID);
-        tvLocationDistance = view.findViewById(R.id.distance_row_search_ID);
-        ivLocationPhoto = view.findViewById(R.id.imageView_row_search_ID);
+        placeName = view.findViewById(R.id.name_row_search_ID);
+        placeAddress = view.findViewById(R.id.address_Full_row_search_ID);
+        placeDistance = view.findViewById(R.id.distance_row_search_ID);
+        placeImage = view.findViewById(R.id.imageView_row_search_ID);
 
 
-        tvLocationName.setText(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_NAME)));
-        tvLocationAddress.setText(cursor.getString(cursor.getColumnIndex((Constants.KEY_FAV_ADDRESS))));
+        placeName.setText(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_NAME)));
+        placeAddress.setText(cursor.getString(cursor.getColumnIndex((Constants.KEY_FAV_ADDRESS))));
         boolean isKm = sharedpreferences.getBoolean("isKM", true);
         // User selected Kilometers
         if (isKm) {
-            tvLocationDistance.setText(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_DISTANCE)).concat(" km"));
+            placeDistance.setText(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_DISTANCE)).concat(" km"));
         }
         // User selected Miles (need to convert)
         else {
             float distance = Float.valueOf(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_DISTANCE)));
             distance *= 0.62137;
-            tvLocationDistance.setText(Float.toString(distance) .concat( "m"));
+            placeDistance.setText(Float.toString(distance) .concat( " ml"));
         }
         //Use Picasso to get picture into the image view
-        Picasso.get().load(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_IMAGE))).into(ivLocationPhoto);
+        Picasso.get().load(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_IMAGE))).into(placeImage);
         this.notifyDataSetChanged();
 
 
