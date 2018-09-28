@@ -183,7 +183,7 @@ public class FavoritesLvActivity extends AppCompatActivity {
 
 
             dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
-            View view = getLayoutInflater().inflate(R.layout.settings_popup, null);
+            View view = getLayoutInflater().inflate(R.layout.popup_settings, null);
 
             Button save = view.findViewById(R.id.saveBtn_POP_settings_ID);
 

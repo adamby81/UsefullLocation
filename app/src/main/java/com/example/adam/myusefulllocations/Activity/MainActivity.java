@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -62,6 +63,16 @@ public class MainActivity extends AppCompatActivity implements
     private android.support.v7.app.AlertDialog dialog;
     public static RadioButton isKmSettings;
     public static RadioButton isMilesSettings;
+    public static RadioButton radius1000;
+    public static RadioButton radius2000;
+    public static RadioButton radius5000;
+    public static RadioButton radius10000;
+    public EditText radiusChoose;
+
+
+    public static String nearbyRadius;
+
+
     public static SharedPreferences mPrefs;
 
     DatabaseHandler db;
@@ -307,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements
         return true;
     }
 
+    @SuppressLint("CutPasteId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -315,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
             dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
-            View view = getLayoutInflater().inflate(R.layout.settings_popup, null);
+            View view = getLayoutInflater().inflate(R.layout.popup_settings, null);
 
             Button save = view.findViewById(R.id.saveBtn_POP_settings_ID);
 
@@ -329,7 +341,59 @@ public class MainActivity extends AppCompatActivity implements
 
             mPrefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
 
+            SharedPreferences.Editor editor = mPrefs.edit();
+
+            radius1000 = view.findViewById(R.id.radius1000_GR_ID);
+            radius2000 = view.findViewById(R.id.radius1000_GR_ID);
+            radius5000 = view.findViewById(R.id.radius1000_GR_ID);
+            radius10000 = view.findViewById(R.id.radius1000_GR_ID);
+            radiusChoose = view.findViewById(R.id.radius_choose_settings_ID);
+
+            if (radius1000.isChecked()){
+                nearbyRadius = "1000";
+                radius2000.setChecked(false);
+                radius5000.setChecked(false);
+                radius10000.setChecked(false);
+
+            }
+            if (radius2000.isChecked()){
+                nearbyRadius = "2000";
+                radius1000.setChecked(false);
+                radius5000.setChecked(false);
+                radius10000.setChecked(false);
+
+            }
+            if (radius5000.isChecked()){
+                nearbyRadius = "5000";
+                radius2000.setChecked(false);
+                radius1000.setChecked(false);
+                radius10000.setChecked(false);
+
+            }
+            if (radius10000.isChecked()){
+                nearbyRadius = "10000";
+                radius2000.setChecked(false);
+                radius5000.setChecked(false);
+                radius1000.setChecked(false);
+
+            }
+//            if (radiusChoose.getText() != null){
+//                nearbyRadius = Integer.parseInt(radiusChoose.getText().toString());
+//                radius2000.setChecked(false);
+//                radius5000.setChecked(false);
+//                radius1000.setChecked(false);
+//                radius10000.setChecked(false);
+//
+//            }
+
+            editor.putString("radius", nearbyRadius);
+            editor.apply();
+            editor.commit();
+
+
+
             boolean isKM = mPrefs.getBoolean("isKM", true);
+
             if (isKM) {
                 isKmSettings.setChecked(true);
                 isMilesSettings.setChecked(false);
@@ -344,7 +408,6 @@ public class MainActivity extends AppCompatActivity implements
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //mPrefs = getSharedPreferences(MY_PREFS,0);
 
                     if (isKmSettings.isChecked()){
 
@@ -369,7 +432,6 @@ public class MainActivity extends AppCompatActivity implements
                                     Toast.LENGTH_LONG).show();
                         }
                     }
-
 
 
                     new Handler().postDelayed(new Runnable() {

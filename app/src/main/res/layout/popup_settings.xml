@@ -15,9 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
-
         <TextView
             android:id="@+id/title_settings_POP_ID"
             android:layout_width="match_parent"
@@ -56,6 +53,66 @@
 
         </RadioGroup>
 
+        <TextView
+            android:id="@+id/title_settings_radius_POP_ID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:layout_below="@+id/miles_km_GR_ID"
+            android:text="@string/radius_title"
+            android:textSize="16sp"
+            android:textStyle="italic" />
+
+
+        <RadioGroup
+            android:id="@+id/radius_GR_ID"
+            android:layout_below="@+id/title_settings_radius_POP_ID"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp">
+
+            <RadioButton
+                android:id="@+id/radius1000_GR_ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/radius1_RADIO_BTN" />
+            <RadioButton
+                android:id="@+id/radius2000_GR_ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/radius2_RADIO_BTN" />
+
+            <RadioButton
+                android:id="@+id/radius5000_GR_ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/radius5_RADIO_BTN" />
+            <RadioButton
+                android:id="@+id/radius10000_GR_ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/radius10_RADIO_BTN" />
+            <EditText
+                android:id="@+id/radius_choose_settings_ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/set_radius_ET_HINT"
+                android:textSize="12sp" />
+        </RadioGroup>
+
+
         <Button
             android:id="@+id/saveBtn_POP_settings_ID"
             android:layout_marginTop="15dp"
@@ -66,7 +123,7 @@
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_below="@+id/miles_km_GR_ID"
+            android:layout_below="@+id/radius_GR_ID"
             android:layout_width="match_parent"
             android:textColor="@android:color/white"
             android:background="@color/colorPrimary"

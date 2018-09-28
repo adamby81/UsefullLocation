@@ -3,7 +3,6 @@ package com.example.adam.myusefulllocations.Util;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
@@ -23,8 +22,7 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
 
     private static final String TAG = "AsyncTaskNearby";
     private ProgressDialog progressDialog;
-    public float lon;
-    public float lat;
+
     private Context context;
     private DatabaseHandler db;
     public float currentLng, currentLat;
@@ -34,14 +32,6 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
 
     public Context getContext() {
         return context;
-    }
-
-    public void setLat(float lat) {
-        this.currentLat = lat;
-    }
-
-    public void setLon(float lon) {
-        this.currentLng = lon;
     }
 
     public void setContext(Context context) {
@@ -58,16 +48,16 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
         db = new DatabaseHandler(this.context, Constants.DB_NAME,null, Constants.SEARCH_DB_VERSION);
 
     }
-
+            //TODO - FINISH THE RADIUS CHOOSER!!
     protected String doInBackground(Void... urls) {
-//        Log.e(TAG, "doInBackground: " + this.currentLat + "," + this.currentLng);
+
         try {
             URL url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + this.currentLat + "," + this.currentLng +
-                    "&radius=10000&type=" + SearchFragment.type + "&key=" + API_KEY); //API request url
-            Log.i(TAG, "TYPE RECEIVED: " + SearchFragment.type);
+                    "&radius=5000&type=" + SearchFragment.type + "&key=" + API_KEY);
             HttpsURLConnection myConnection
-                    = (HttpsURLConnection) url.openConnection(); //Make the request
-            myConnection.setRequestMethod("GET"); //Connection method for the HTTP request
+                    = (HttpsURLConnection) url.openConnection();
+
+            myConnection.setRequestMethod("GET");
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
                 StringBuilder stringBuilder = new StringBuilder(); //Build the response
@@ -81,25 +71,30 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
                 JSONObject jsonobject, geometry, viewport, northeast;
                 JSONArray photos;
                 if (stringBuilder == null) {
-                    Log.e(TAG, "doInBackground: no results!");
+
+
                 } else {
+
                     progressDialog.dismiss();
-//                    Log.d(TAG, "onPostExecute: " + stringBuilder);
+
                     try {
-                        JSONObject json = new JSONObject(stringBuilder.toString()); // Make a JSON object out of the String response
+                        JSONObject json = new JSONObject(stringBuilder.toString());
                         JSONArray jArray = json.getJSONArray("results");
+
                         if (jArray.length() <= 0) {
                             return String.valueOf(R.string.no_places_found_json);
                         } else {
-                            // Get the array of results inside the JSON ignore the rest of the information
-//                            Log.e(TAG, "onPostExecute: " + jArray.toString());
-                            for (int i = 0; i < jArray.length(); ) { //Iterate through the array of results
+
+                            for (int i = 0; i < jArray.length(); ) {
+
                                 jsonobject = jArray.getJSONObject(i);
                                 geometry = jsonobject.getJSONObject("geometry");
                                 viewport = geometry.getJSONObject("viewport");
                                 northeast = viewport.getJSONObject("northeast");
+
                                 name = jsonobject.getString("name");
                                 address = jsonobject.getString("vicinity");
+
                                 lat = Float.valueOf(northeast.getString("lat"));
                                 lon = Float.valueOf(northeast.getString("lng"));
 
@@ -111,22 +106,21 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
                                 }
                                 img += "&type=" + SearchFragment.type + "&key=" + API_KEY;
                                 PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,img, distance);
-                                db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH); //Add to the downloaded list table
+                                db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH);
                                 i++;
-                                //Add to the downloaded list table
                             }
                         }
                     } catch (Exception e) {
-                        Log.e("My App", "Could not parse malformed JSON: \"" + e.getMessage() + "\"");
+
                     }
                 }
                 return stringBuilder.toString();
             } finally {
-                myConnection.disconnect(); //Close the HTTP connection
+                myConnection.disconnect();
             }
 
         } catch (Exception e) {
-            Log.e("ERROR", e.getMessage(), e);
+
             return null;
         }
     }

@@ -75,9 +75,9 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
 
 
     protected String doInBackground(Void... urls) {
-//    Log.e(TAG, "doInBackground: " + this.getApiRequestUrl());
+
         try {
-//            URL url = new URL("https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=" + this.getApiRequestUrl() + "&inputtype=textquery&fields=geometry,photos,formatted_address,name&key=" + API_KEY);
+
             URL url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + this.getSearchText() + "&key=" + API_KEY);
             HttpsURLConnection myConnection
                     = (HttpsURLConnection) url.openConnection(); //Make the request
@@ -90,16 +90,10 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuilder.append(line).append("\n");
                     count = count +1;
-                    //Log.i("String Builder: ", "Count: " + count +  stringBuilder.append(line).append("\n"));
-
-
-
                 }
                 Log.i("String Builder: ", "Count TOTAL: " + count);
 
-
                 bufferedReader.close();
-
 
                 String name, address, img = "", prefix = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
                 float lon;
@@ -115,7 +109,6 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                 try {
                     JSONObject json = new JSONObject(stringBuilder.toString()); // Make a JSON object out of the String response
                     JSONArray jArray = json.getJSONArray("results"); // Get the array of results inside the JSON ignore the rest of the information
-     Log.i( "IN THE JSON: ","onPostExecute: " + jArray.length());
                     for (int i = 0; i < jArray.length(); i++) { //Iterate through the array of results
                         jsonobject = jArray.getJSONObject(i);
 
@@ -141,13 +134,10 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                         PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,img, distance);
                         db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH); //Add to the downloaded list table
 
-                        Log.i("Row Count - JSON: ", " Row Num: " + i);
-
-
                     }
-                    Log.i("JSON LENGTH: ", Integer.toString(jsonLen));
+
                 } catch (Exception e) {
-                    Log.e("My App", "Could not parse malformed JSON: \"" + e.getMessage() + "\"");
+
                 }
                 return stringBuilder.toString();
             } finally {
@@ -155,7 +145,7 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
 
             }
         } catch (Exception e) {
-            Log.e("ERROR", e.getMessage(), e);
+
             return null;
         }
     }
@@ -176,38 +166,5 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
         dist = dist * 1.609344;
         return dist;
 
-
     }
-
-//    private void getCurrentLocation(Context context) {
-//        try {
-//            // Ask for permissions if they have not been given
-//            if ((ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-//                Task location = fusedLocationProviderClient.getLastLocation();
-//                location.addOnCompleteListener((Activity) context, new OnCompleteListener() {
-//                    @Override
-//                    public void onComplete(@NonNull Task task) {
-//                        if (task.isSuccessful() && task.getResult() != null) {
-//                            mLocation = (Location) task.getResult();
-//                            lat = (float) mLocation.getLatitude();
-//                            lon = (float) mLocation.getLongitude();
-////                            Log.e(TAG, String.format("getCurrentLocation(%f, %f)", mLocation.getLatitude(), mLocation.getLongitude()));
-//                        } else {
-//                            Toast.makeText(getContext(), "Failed to get current location", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                });
-//            } else {
-//                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-//                        Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-//            }
-//        } catch (Exception e) {
-//            Log.e(TAG, "getCurrentLocation: " + e.getMessage());
-//        }
-//    }
-
-
-
-
 }
