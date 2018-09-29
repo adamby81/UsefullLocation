@@ -93,12 +93,20 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
 
                 bufferedReader.close();
 
-                String name, address, img = "", prefix = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
-                float lon;
+                String name;
+                String address;
+                String img = "";
+                String prefix = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
+
+                float lng;
                 float lat;
                 int jsonLen = 0;
                 float distance;
-                JSONObject jsonobject, geometry, viewport, northeast;
+
+                JSONObject jsonobject;
+                JSONObject geometry;
+                JSONObject viewport;
+                JSONObject northeast;
                 JSONArray photos;
 
 
@@ -107,6 +115,7 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                 try {
                     JSONObject json = new JSONObject(stringBuilder.toString());
                     JSONArray jArray = json.getJSONArray("results");
+
                     for (int i = 0; i < jArray.length(); i++) {
                         jsonobject = jArray.getJSONObject(i);
 
@@ -119,17 +128,18 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                         address = jsonobject.getString("formatted_address");
 
                         lat = Float.parseFloat(northeast.getString("lat"));
-                        lon = Float.parseFloat(northeast.getString("lng"));
+                        lng = Float.parseFloat(northeast.getString("lng"));
 
-                        distance = (float) distance(currentLat, currentLng, lat, lon);
+                        distance = (float) distance(currentLat, currentLng, lat, lng);
 
                         photos = jsonobject.getJSONArray("photos");
+
                         for (int j = 0; j < photos.length(); j++) {
                             jsonobject = photos.getJSONObject(j);
                             img = prefix + "&photoreference=" + jsonobject.getString("photo_reference");
                         }
                         img += "&key=" + API_KEY;
-                        PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,img, distance);
+                        PlaceOfInterest place = new PlaceOfInterest(address,lat,lng,name,img, distance);
                         db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH);
 
                     }

@@ -606,20 +606,11 @@ public class SearchFragment extends Fragment implements LocationListener {
         } catch (Exception e) {
         }
 
+        MainActivity.hideKeyboard(getActivity());
+        dialog.dismiss();
 
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MainActivity.hideKeyboard(getActivity());
-                dialog.dismiss();
-
-                cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
-
-            }
-        }, 1200); // = 1 second
-
-
+        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+        
     }
     @Override
     public void onLocationChanged(Location location) {

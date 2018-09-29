@@ -44,17 +44,17 @@ public class CursorAdapterFavorites extends CursorAdapter {
         placeName.setText(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_NAME)));
         placeAddress.setText(cursor.getString(cursor.getColumnIndex((Constants.KEY_FAV_ADDRESS))));
         boolean isKm = sharedpreferences.getBoolean("isKM", true);
-        // User selected Kilometers
+
         if (isKm) {
             placeDistance.setText(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_DISTANCE)).concat(" km"));
         }
-        // User selected Miles (need to convert)
+
         else {
             float distance = Float.valueOf(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_DISTANCE)));
             distance *= 0.62137;
             placeDistance.setText(Float.toString(distance) .concat( " ml"));
         }
-        //Use Picasso to get picture into the image view
+
         Picasso.get().load(cursor.getString(cursor.getColumnIndex(Constants.KEY_FAV_IMAGE))).into(placeImage);
         this.notifyDataSetChanged();
 

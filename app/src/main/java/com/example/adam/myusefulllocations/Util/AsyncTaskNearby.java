@@ -66,10 +66,20 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
                     stringBuilder.append(line).append("\n");
                 }
                 bufferedReader.close();
-                String name, address, img = "", prefix = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
-                Float lon, lat, distance;
-                JSONObject jsonobject, geometry, viewport, northeast;
+                String name;
+                String address;
+                String img = "";
+                String prefix = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
+
+                float lng;
+                float lat;
+                float distance;
+                JSONObject jsonobject;
+                JSONObject geometry;
+                JSONObject viewport;
+                JSONObject northeast;
                 JSONArray photos;
+
                 if (stringBuilder == null) {
 
 
@@ -96,16 +106,17 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
                                 address = jsonobject.getString("vicinity");
 
                                 lat = Float.valueOf(northeast.getString("lat"));
-                                lon = Float.valueOf(northeast.getString("lng"));
+                                lng = Float.valueOf(northeast.getString("lng"));
 
-                                distance = (float) distance(currentLat, currentLng, lat, lon);
+                                distance = (float) distance(currentLat, currentLng, lat, lng);
                                 photos = jsonobject.getJSONArray("photos");
+
                                 for (int j = 0; j < photos.length(); j++) {
                                     jsonobject = photos.getJSONObject(j);
                                     img = prefix + "&photoreference=" + jsonobject.getString("photo_reference");
                                 }
                                 img += "&type=" + SearchFragment.type + "&key=" + API_KEY;
-                                PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,img, distance);
+                                PlaceOfInterest place = new PlaceOfInterest(address,lat,lng,name,img, distance);
                                 db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH);
                                 i++;
                             }
