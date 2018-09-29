@@ -9,6 +9,7 @@
         android:id="@+id/grid_view_container_ID"
         android:columnWidth="100dp"
         android:verticalSpacing="10dp"
+        android:horizontalSpacing="@dimen/activity_horizontal_margin"
         android:stretchMode="columnWidth"
         android:gravity="center"
         android:numColumns="auto_fit"

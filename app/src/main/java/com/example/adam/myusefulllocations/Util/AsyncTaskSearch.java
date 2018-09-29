@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
@@ -80,18 +79,17 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
 
             URL url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + this.getSearchText() + "&key=" + API_KEY);
             HttpsURLConnection myConnection
-                    = (HttpsURLConnection) url.openConnection(); //Make the request
-            myConnection.setRequestMethod("GET"); //Connection method for the HTTP request
+                    = (HttpsURLConnection) url.openConnection();
+            myConnection.setRequestMethod("GET");
             try {
                 bufferedReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
-                StringBuilder stringBuilder = new StringBuilder(); //Build the response
+                StringBuilder stringBuilder = new StringBuilder();
                 String line;
                 int count = 0;
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuilder.append(line).append("\n");
                     count = count +1;
                 }
-                Log.i("String Builder: ", "Count TOTAL: " + count);
 
                 bufferedReader.close();
 
@@ -107,9 +105,9 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                 progressDialog.dismiss();
 
                 try {
-                    JSONObject json = new JSONObject(stringBuilder.toString()); // Make a JSON object out of the String response
-                    JSONArray jArray = json.getJSONArray("results"); // Get the array of results inside the JSON ignore the rest of the information
-                    for (int i = 0; i < jArray.length(); i++) { //Iterate through the array of results
+                    JSONObject json = new JSONObject(stringBuilder.toString());
+                    JSONArray jArray = json.getJSONArray("results");
+                    for (int i = 0; i < jArray.length(); i++) {
                         jsonobject = jArray.getJSONObject(i);
 
                         jsonLen = jsonLen++;
@@ -132,7 +130,7 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                         }
                         img += "&key=" + API_KEY;
                         PlaceOfInterest place = new PlaceOfInterest(address,lat,lon,name,img, distance);
-                        db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH); //Add to the downloaded list table
+                        db.addPlaceSearch(context, place, Constants.TABLE_NAME_SEARCH);
 
                     }
 
@@ -141,7 +139,7 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                 }
                 return stringBuilder.toString();
             } finally {
-                myConnection.disconnect(); //Close the HTTP connection
+                myConnection.disconnect();
 
             }
         } catch (Exception e) {
@@ -152,19 +150,25 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
 
     private double distance(double myLat, double myLng, double placeLat, double placeLng) {
 
-        double radlat1 = Math.PI * myLat / 180;
-        double radlat2 = Math.PI * placeLat / 180;
-        double theta = myLng - placeLng;
-        double radtheta = Math.PI * theta / 180;
-        double dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-        if (dist > 1) {
-            dist = 1;
+        double radiusLat1 = Math.PI * myLat / 180;
+        double radiusLat2 = Math.PI * placeLat / 180;
+
+        double delta = myLng - placeLng;
+
+        double radiusDelta = Math.PI * delta / 180;
+        double distance = Math.sin(radiusLat1) * Math.sin(radiusLat2) + Math.cos(radiusLat1) * Math.cos(radiusLat2) * Math.cos(radiusDelta);
+
+        if (distance > 1) {
+            distance = 1;
         }
-        dist = Math.acos(dist);
-        dist = dist * 180 / Math.PI;
-        dist = dist * 60 * 1.1515;
-        dist = dist * 1.609344;
-        return dist;
+
+        distance = Math.acos(distance);
+
+        distance = distance * 180 / Math.PI;
+        distance = distance * 60 * 1.1515;
+        distance = distance * 1.609344;
+
+        return distance;
 
     }
 }

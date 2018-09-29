@@ -74,5 +74,27 @@
     <string name="radius5_RADIO_BTN">5 km / ml</string>
     <string name="radius10_RADIO_BTN">10 km / ml</string>
     <string name="set_radius_ET_HINT">Enter Nearby Radius</string>
+    <string name="title_nearby_selection">CATEGORIES</string>
+    <string name="atm">ATM</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="gym">GYM</string>
+    <string name="hospital">Hospital</string>
+    <string name="pharmacy">Pharmacy</string>
+    <string name="supermarket">Supermarket</string>
+    <string name="gas">GAS</string>
+    <string name="mall">Mall</string>
+    <string name="movie">Movie</string>
+    <string name="coffie">Coffie Shop</string>
+    <string name="cafe">Cafe</string>
+    <string name="bank">Bank</string>
+    <string name="beauty_salon">Beauty Salon</string>
+    <string name="bus_station">Bus Station</string>
+    <string name="bar">Bar</string>
+    <string name="campground">Camping</string>
+    <string name="police">Police</string>
+    <string name="parking">Parking</string>
+    <string name="zoo">Zoo</string>
+    <string name="fire_station">Fire Station</string>
+    <string name="synagogue">Synagogue</string>
 
 </resources>

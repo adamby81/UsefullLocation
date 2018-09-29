@@ -53,14 +53,14 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
 
         try {
             URL url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + this.currentLat + "," + this.currentLng +
-                    "&radius=5000&type=" + SearchFragment.type + "&key=" + API_KEY);
+                    "&radius=10000&type=" + SearchFragment.type + "&key=" + API_KEY);
             HttpsURLConnection myConnection
                     = (HttpsURLConnection) url.openConnection();
 
             myConnection.setRequestMethod("GET");
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
-                StringBuilder stringBuilder = new StringBuilder(); //Build the response
+                StringBuilder stringBuilder = new StringBuilder();
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuilder.append(line).append("\n");
@@ -130,21 +130,27 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
 
     }
 
-    private double distance(float lat1, float lon1, float lat2, float lon2) {
-        double radlat1 = Math.PI * lat1 / 180;
-        double radlat2 = Math.PI * lat2 / 180;
-        double theta = lon1 - lon2;
-        double radtheta = Math.PI * theta / 180;
-        double dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-        if (dist > 1) {
-            dist = 1;
+    private double distance(double myLat, double myLng, double placeLat, double placeLng) {
+
+        double radiusLat1 = Math.PI * myLat / 180;
+        double radiusLat2 = Math.PI * placeLat / 180;
+
+        double delta = myLng - placeLng;
+
+        double radiusDelta = Math.PI * delta / 180;
+        double distance = Math.sin(radiusLat1) * Math.sin(radiusLat2) + Math.cos(radiusLat1) * Math.cos(radiusLat2) * Math.cos(radiusDelta);
+
+        if (distance > 1) {
+            distance = 1;
         }
-        dist = Math.acos(dist);
-        dist = dist * 180 / Math.PI;
-        dist = dist * 60 * 1.1515;
-        dist = dist * 1.609344;
-        return dist;
+
+        distance = Math.acos(distance);
+
+        distance = distance * 180 / Math.PI;
+        distance = distance * 60 * 1.1515;
+        distance = distance * 1.609344;
+
+        return distance;
+
     }
-
 }
-

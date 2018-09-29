@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.support.v7.widget.CardView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -34,7 +34,6 @@ import com.example.adam.myusefulllocations.Util.AsyncTaskNearby;
 import com.example.adam.myusefulllocations.Util.AsyncTaskSearch;
 import com.example.adam.myusefulllocations.Util.CursorAdapterSearch;
 import com.example.adam.myusefulllocations.Util.Global;
-import com.example.adam.myusefulllocations.Util.ImageNearbyAdapter;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 
@@ -263,86 +262,308 @@ public class SearchFragment extends Fragment implements LocationListener {
             public void onClick(View v) {
 
                 MainActivity.hideKeyboard(getActivity());
-
-
+                // GRID LAYOUT TESTING:
 
                 dialogBuilder = new AlertDialog.Builder(getContext());
-                View view = getLayoutInflater().inflate(R.layout.popup_nearby_type, null);
+                View view = getLayoutInflater().inflate(R.layout.popup_nearby_grid_layout_test, null);
 
-                gridView = view.findViewById(R.id.grid_view_container_ID);
-                gridView.setAdapter(new ImageNearbyAdapter(getContext()));
+                CardView vAtmOnClick;
+                CardView vRestaurantOnClick;
+                CardView vGymOnClick;
+                CardView vHospitalOnClick;
+                CardView vPharmacyOnClick;
+                CardView vSupermarketOnClick;
+                CardView vGasOnClick;
+                CardView vMallOnClick;
+                CardView vMovieOnClick;
+                CardView vCafeOnClick;
+
+                CardView vBankOnClick;
+                CardView vBeautySalonOnClick;
+                CardView vBusStationOnClick;
+                CardView vBarOnClick;
+                CardView vCampgroundOnClick;
+                CardView vPoliceOnClick;
+                CardView vParkingOnClick;
+                CardView vZooOnClick;
+                CardView vFireStationOnClick;
+                CardView vSynagogueOnClick;
+
+
+                vAtmOnClick = view.findViewById(R.id.pop_nearby_cv_atm_ID);
+                vRestaurantOnClick = view.findViewById(R.id.pop_nearby_cv_restaurant_ID);
+                vGymOnClick = view.findViewById(R.id.pop_nearby_cv_gym_ID);
+                vHospitalOnClick = view.findViewById(R.id.pop_nearby_cv_hospital_ID);
+                vPharmacyOnClick = view.findViewById(R.id.pop_nearby_cv_pharmacy_ID);
+                vSupermarketOnClick = view.findViewById(R.id.pop_nearby_cv_supermarket_ID);
+                vGasOnClick = view.findViewById(R.id.pop_nearby_cv_gas_ID);
+                vMallOnClick = view.findViewById(R.id.pop_nearby_cv_mall_ID);
+                vMovieOnClick = view.findViewById(R.id.pop_nearby_cv_movie_ID);
+                vCafeOnClick = view.findViewById(R.id.pop_nearby_cv_cafe_ID);
+                vBankOnClick = view.findViewById(R.id.pop_nearby_cv_bank_ID);
+                vBeautySalonOnClick = view.findViewById(R.id.pop_nearby_cv_beauty_salon_ID);
+                vBusStationOnClick = view.findViewById(R.id.pop_nearby_cv_bus_station_ID);
+                vBarOnClick = view.findViewById(R.id.pop_nearby_cv_bar_ID);
+                vCampgroundOnClick = view.findViewById(R.id.pop_nearby_cv_campground_ID);
+                vPoliceOnClick = view.findViewById(R.id.pop_nearby_cv_police_ID);
+                vParkingOnClick = view.findViewById(R.id.pop_nearby_cv_parking_ID);
+                vZooOnClick = view.findViewById(R.id.pop_nearby_cv_zoo_ID);
+                vFireStationOnClick = view.findViewById(R.id.pop_nearby_cv_fire_station_ID);
+                vSynagogueOnClick = view.findViewById(R.id.pop_nearby_cv_synagogue_ID);
+
+
+
 
                 dialogBuilder.setView(view);
                 dialog = dialogBuilder.create();
                 dialog.show();
 
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                vAtmOnClick.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                        switch (position) {
-
-                            case 0:
-                                type = "gym";
-                                placeNameToast = "GYMS";
-                                break;
-                            case 1:
-                                type = "bank";
-                                placeNameToast = "BANKS";
-                                break;
-                            case 2:
-                                type = "gas_station";
-                                placeNameToast = "GAS STATIONS";
-                                break;
-                            case 3:
-                                type = "hospital";
-                                placeNameToast = "HOSPITALS";
-                                break;
-                            case 4:
-                                type = "pharmacy";
-                                placeNameToast = "PHARMACY";
-                                break;
-                            case 5:
-                                type = "supermarket";
-                                placeNameToast = "SUPERMARKET";
-                                break;
-                            case 6:
-                                type = "restaurant";
-                                placeNameToast = "RESTAURANT";
-                                break;
-                            case 7:
-                                type = "shopping_mall";
-                                placeNameToast = "SHOPPING MALLS";
-                                break;
-                            case 8:
-                                type = "movie_theater";
-                                placeNameToast = "MOVIE THEATERS";
-                                break;
-                        }
-                        Toast.makeText(getContext(), "You Chose to look for: " + placeNameToast, Toast.LENGTH_LONG).show();
-
-
-                        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-                        asyncTaskNearby = new AsyncTaskNearby();
-                        try {
-                            asyncTaskNearby.setContext(getActivity());
-                            asyncTaskNearby.currentLat = MainActivity.latitude;
-                            asyncTaskNearby.currentLng = MainActivity.longitude;
-                            asyncTaskNearby.cursorAdapterSearch = cursorAdapterSearch;
-                            asyncTaskNearby.execute();
-
-                        } catch (Exception e) {
-                            Log.e(TAG, "onClick: " + e.getMessage());
-                        }
-
-                        MainActivity.hideKeyboard(getActivity());
-                        dialog.dismiss();
-
-                        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
-
-
+                    public void onClick(View v) {
+                        type = "atm";
+                        placeNameToast = "ATM";
+                        startSearch();
                     }
                 });
+                vRestaurantOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "restaurant";
+                        placeNameToast = "Restaurant";
+                        startSearch();
+                    }
+                });
+                vGymOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "gym";
+                        placeNameToast = "Gym";
+                        startSearch();
+                    }
+                });
+                vHospitalOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "hospital";
+                        placeNameToast = "Hospital";
+                        startSearch();
+                    }
+                });
+                vPharmacyOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "pharmacy";
+                        placeNameToast = "Pharmacy";
+                        startSearch();
+                    }
+                });
+                vSupermarketOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "supermarket";
+                        placeNameToast = "Supermarket";
+                        startSearch();
+                    }
+                });
+                vGasOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "gas_station";
+                        placeNameToast = "Gas Station";
+                        startSearch();
+                    }
+                });
+                vMallOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "shopping_mall";
+                        placeNameToast = "Shopping Mall";
+                        startSearch();
+                    }
+                });
+                vMovieOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "movie_theater";
+                        placeNameToast = "Movie Theater";
+                        startSearch();
+                    }
+                });
+                vCafeOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "cafe";
+                        placeNameToast = "Cafe";
+                        startSearch();
+                    }
+                });
+
+                vBankOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "bank";
+                        placeNameToast = "Bank";
+                        startSearch();
+                    }
+                });
+                vBeautySalonOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "beauty_salon";
+                        placeNameToast = "Beauty Salon";
+                        startSearch();
+                    }
+                });
+                vBusStationOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "bus_station";
+                        placeNameToast = "Bus Station";
+                        startSearch();
+                    }
+                });
+                vBarOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "bar";
+                        placeNameToast = "Bar";
+                        startSearch();
+                    }
+                });
+                vCampgroundOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "campground";
+                        placeNameToast = "Campground";
+                        startSearch();
+                    }
+                });
+                vPoliceOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "police";
+                        placeNameToast = "Police";
+                        startSearch();
+                    }
+                });
+                vParkingOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "parking";
+                        placeNameToast = "Parking";
+                        startSearch();
+                    }
+                });
+                vZooOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "zoo";
+                        placeNameToast = "Zoo";
+                        startSearch();
+                    }
+                });
+                vFireStationOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "fire_station";
+                        placeNameToast = "Fire Station";
+                        startSearch();
+                    }
+                });
+                vSynagogueOnClick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        type = "synagogue";
+                        placeNameToast = "Synagogue";
+                        startSearch();
+                    }
+                });
+
+
+
+
+
+                // GRID VIEW  - WORKING - CODE EXAMPLE
+//
+//
+//                dialogBuilder = new AlertDialog.Builder(getContext());
+//                View view = getLayoutInflater().inflate(R.layout.popup_nearby_type, null);
+//
+//                gridView = view.findViewById(R.id.grid_view_container_ID);
+//                gridView.setAdapter(new ImageNearbyAdapter(getContext()));
+//
+//                dialogBuilder.setView(view);
+//                dialog = dialogBuilder.create();
+//                dialog.show();
+//
+//                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                        switch (position) {
+//
+//                            case 0:
+//                                type = "gym";
+//                                placeNameToast = "GYMS";
+//                                break;
+//                            case 1:
+//                                type = "atm";
+//                                placeNameToast = "BANKS";
+//                                break;
+//                            case 2:
+//                                type = "gas_station";
+//                                placeNameToast = "GAS STATIONS";
+//                                break;
+//                            case 3:
+//                                type = "hospital";
+//                                placeNameToast = "HOSPITALS";
+//                                break;
+//                            case 4:
+//                                type = "pharmacy";
+//                                placeNameToast = "PHARMACY";
+//                                break;
+//                            case 5:
+//                                type = "supermarket";
+//                                placeNameToast = "SUPERMARKET";
+//                                break;
+//                            case 6:
+//                                type = "restaurant";
+//                                placeNameToast = "RESTAURANT";
+//                                break;
+//                            case 7:
+//                                type = "shopping_mall";
+//                                placeNameToast = "SHOPPING MALLS";
+//                                break;
+//                            case 8:
+//                                type = "movie_theater";
+//                                placeNameToast = "MOVIE THEATERS";
+//                                break;
+//                        }
+//                        Toast.makeText(getContext(), "You Chose to look for: " + placeNameToast, Toast.LENGTH_LONG).show();
+//
+//
+//                        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
+//                        asyncTaskNearby = new AsyncTaskNearby();
+//                        try {
+//                            asyncTaskNearby.setContext(getActivity());
+//                            asyncTaskNearby.currentLat = MainActivity.latitude;
+//                            asyncTaskNearby.currentLng = MainActivity.longitude;
+//                            asyncTaskNearby.cursorAdapterSearch = cursorAdapterSearch;
+//                            asyncTaskNearby.execute();
+//
+//                        } catch (Exception e) {
+//                            Log.e(TAG, "onClick: " + e.getMessage());
+//                        }
+//
+//                        MainActivity.hideKeyboard(getActivity());
+//                        dialog.dismiss();
+//
+//                        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+//
+//
+//                    }
+//                });
 
             }
         });
@@ -366,6 +587,40 @@ public class SearchFragment extends Fragment implements LocationListener {
         return view;
     }
 
+    public void startSearch() {
+
+
+
+        Toast.makeText(getContext(), "You Chose to look for: " + placeNameToast, Toast.LENGTH_LONG).show();
+
+
+        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
+        asyncTaskNearby = new AsyncTaskNearby();
+        try {
+            asyncTaskNearby.setContext(getActivity());
+            asyncTaskNearby.currentLat = MainActivity.latitude;
+            asyncTaskNearby.currentLng = MainActivity.longitude;
+            asyncTaskNearby.cursorAdapterSearch = cursorAdapterSearch;
+            asyncTaskNearby.execute();
+
+        } catch (Exception e) {
+        }
+
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.hideKeyboard(getActivity());
+                dialog.dismiss();
+
+                cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
+
+            }
+        }, 1200); // = 1 second
+
+
+    }
     @Override
     public void onLocationChanged(Location location) {
         MainActivity.updateLocationInfo(location);
@@ -391,10 +646,8 @@ public class SearchFragment extends Fragment implements LocationListener {
         dialogBuilder = new AlertDialog.Builder(getContext());
         View view = getLayoutInflater().inflate(R.layout.popup_welcome, null);
 
-//        aboutUs = view.findViewById(R.id.aboutTextView_POP_ID);
         startUsingBtn = view.findViewById(R.id.startUsingBtn_POP_ID);
 
-//        aboutUs.setText(R.string.about_us1_welcome_View_ID);
 
         dialogBuilder.setView(view);
         dialog = dialogBuilder.create();
@@ -402,10 +655,6 @@ public class SearchFragment extends Fragment implements LocationListener {
 
         MainActivity.isKmSettings = view.findViewById(R.id.km_RB_ID);
         MainActivity.isMilesSettings = view.findViewById(R.id.miles_RB_ID);
-
-//        mLocation.getLatitude();
-//        mLocation.getLongitude();
-//        MainActivity.updateLocationInfo(mLocation);
 
         startUsingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
