@@ -35,6 +35,7 @@ public class CursorAdapterSearch extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final SharedPreferences sharedpreferences = context.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
         placeName = view.findViewById(R.id.name_row_search_ID);
         placeAddress = view.findViewById(R.id.address_Full_row_search_ID);
         placeDistance = view.findViewById(R.id.distance_row_search_ID);
@@ -52,7 +53,7 @@ public class CursorAdapterSearch extends CursorAdapter {
         else {
             float distance = Float.valueOf(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE)));
             distance *= 0.62137;
-            placeDistance.setText(Float.toString(distance) .concat(" ml"));
+            placeDistance.setText(Float.toString(distance).concat(" ml"));
         }
 
         Picasso.get().load(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE))).into(placeImage);

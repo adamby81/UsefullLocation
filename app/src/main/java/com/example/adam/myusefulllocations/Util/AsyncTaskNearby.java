@@ -40,8 +40,8 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
 
     protected void onPreExecute() {
 
-        String titleProg = "Searching";
-        String messageProg = "Searching... Please Wait...";
+        String titleProg = getContext().getString(R.string.searching);
+        String messageProg = getContext().getString(R.string.searchingMessage);
 
         progressDialog = ProgressDialog.show(context, titleProg, messageProg, true);
 

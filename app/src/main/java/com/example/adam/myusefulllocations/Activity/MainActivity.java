@@ -24,7 +24,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -111,9 +110,9 @@ public class MainActivity extends AppCompatActivity implements
         } else {
 
             AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setTitle("No GPS Service Identified");
-            alertDialogBuilder.setMessage("Nearby Search and other features will Not Work Properly !! ");
-            alertDialogBuilder.setPositiveButton("I Understand", new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setTitle(getString(R.string.no_gps_connection));
+            alertDialogBuilder.setMessage(getString(R.string.no_gps_connection_worning));
+            alertDialogBuilder.setPositiveButton(getString(R.string.understand), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 }
@@ -150,9 +149,9 @@ public class MainActivity extends AppCompatActivity implements
         if (!global.isNetworkConnected()) {
 
             AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setTitle("No Internet Connection Identified");
-            alertDialogBuilder.setMessage("App will work in Offline mode");
-            alertDialogBuilder.setPositiveButton("I Understand", new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setTitle(getString(R.string.no_connection));
+            alertDialogBuilder.setMessage(getString(R.string.no_connection_message_offline));
+            alertDialogBuilder.setPositiveButton(getString(R.string.understand), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 }
@@ -414,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements
 
                         }
                     }, 1000); // = 1 second
-                    Log.i("TAG", "nearby radius: " + nearbyRadius);
+                  //  Log.i("TAG", "nearby radius: " + nearbyRadius);
 
                     dialog.dismiss();
                 }

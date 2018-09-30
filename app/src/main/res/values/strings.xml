@@ -49,7 +49,7 @@
     <string name="about_us4_explain_save_View_ID">2. Save places to a favorites list</string>
     <string name="about_us5_explain_functions_View_ID">3. Share place with a friend, navigate to a chosen location, view place on the map, manage the list </string>
     <string name="searching">Searching</string>
-    <string name="searchingMessage">Searching... Please Wait</string>
+    <string name="searchingMessage">Searching... Please Wait...</string>
     <string name="save">SAVE</string>
     <string name="settings_popup">No Changes Where Set</string>
     <string name="action_delete">Delete All List</string>
@@ -66,7 +66,7 @@
     <string name="miles"> ml</string>
     <string name="place_added">Place was added to favorites</string>
     <string name="no_places_found_json">No Places Found</string>
-    <string name="select_action">Select an action</string>
+    <string name="select_action">Select an Action</string>
     <string name="title_popup_nearby_bank">Banks</string>
     <string name="radius_title">Choose the Radius for Searching Nearby:</string>
     <string name="radius1_RADIO_BTN">1 km / ml</string>
@@ -96,5 +96,12 @@
     <string name="zoo">Zoo</string>
     <string name="fire_station">Fire Station</string>
     <string name="synagogue">Synagogue</string>
+    <string name="no_connection">No Internet Connection Identified</string>
+    <string name="no_connection_message_offline">App will work in Offline mode</string>
+    <string name="understand">I Understand</string>
+    <string name="no_gps_connection">No GPS Service Identified</string>
+    <string name="no_gps_connection_worning">Nearby Search and other features will Not Work Properly !!</string>
+    <string name="nearby_chsen_type">You Chose to look for:</string>
+    <string name="place_added_to_fav">Place added to your favorites</string>
 
 </resources>

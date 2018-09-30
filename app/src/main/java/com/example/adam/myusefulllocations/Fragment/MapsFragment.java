@@ -65,7 +65,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                 }
                 googleMap.setMyLocationEnabled(true);
-//                setMarkerPlace(getContext(), latitude, longitude, name);
 
 
                 myCurrentLocation = new LatLng(latitude, longitude);
@@ -78,7 +77,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        mMapView.onResume(); // needed to get the map to display immediately
+        mMapView.onResume();
 
 
         try {

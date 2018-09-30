@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Util.PlaceOfInterest;
@@ -51,15 +50,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_SEARCH);
         db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_FAV);
 
-
         onCreate(db);
     }
-
-
-
-    /**
-     * CRUD OPERATIOND: Create, Read, Update, Delete Methods
-     */
 
     public void addPlaceSearch(Context mContext, PlaceOfInterest placeOfInterest, String tableName) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -72,12 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(Constants.KEY_SEARCH_LOCATION_IMAGE, placeOfInterest.getPhotoUrl());
         values.put(Constants.KEY_SEARCH_LOCATION_DISTANCE, placeOfInterest.getDistance());
 
-
-        // Insert the row
-
         db.insert(tableName, null, values);
-
-        Log.d("Saved", "New PlaceOfInterest was Added to DB");
 
     }
 
@@ -92,22 +79,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(Constants.KEY_FAV_IMAGE, placeOfInterest.getPhotoUrl());
         values.put(Constants.KEY_FAV_DISTANCE, placeOfInterest.getDistance());
 
-
-        // Insert the row
-
         db.insert(tableName, null, values);
 
-        Log.d("Saved", "New PlaceOfInterest was Added to DB");
 
     }
 
-    //Get a PlaceOfInterest
     public Cursor getPlaceSearch(String tableName, int id) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         return db.rawQuery("SELECT * FROM " + tableName + " WHERE _id=" + id, null);
-
 
     }
 

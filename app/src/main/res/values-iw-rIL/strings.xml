@@ -86,4 +86,17 @@
     <string name="zoo">גן חיות</string>
     <string name="fire_station">כיבוי אש</string>
     <string name="synagogue">בית כנסת</string>
+    <string name="no_gps_connection">אין חיבור ג\'י פי אס</string>
+    <string name="no_gps_connection_worning">חיפוש ע\"י מיקום ואפשרויות נוספות עלולות ליצור בעיות!!</string>
+    <string name="nearby_chsen_type">בחרת לחפש:</string>
+    <string name="place_added_to_fav">מיקום זה נוסף לרשימת המועדפים</string>
+    <string name="understand">הבנתי</string>
+    <string name="no_connection_message_offline">האפליקציה במצב לא מקוון</string>
+    <string name="no_connection">אין חיבור אינטרנט</string>
+    <string name="coffie">בית קפה</string>
+    <string name="radius_title">הכנס רדיוס לחיפוש מקומות קרובים:</string>
+    <string name="radius1_RADIO_BTN">1 ק\"מ \\ מייל</string>
+    <string name="radius2_RADIO_BTN">2 ק\"מ \\ מייל</string>
+    <string name="radius5_RADIO_BTN">5 ק\"מ \\ מייל</string>
+    <string name="radius10_RADIO_BTN">10 ק\"מ \\ מייל</string>
 </resources>

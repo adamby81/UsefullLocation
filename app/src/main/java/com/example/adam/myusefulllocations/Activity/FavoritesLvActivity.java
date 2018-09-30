@@ -77,7 +77,7 @@ public class FavoritesLvActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favorites_lv);
+        setContentView(R.layout.activity_favorites);
 
         addNewPlaceBtn = findViewById(R.id.FAV_add_Btn_lv_ID);
         addNewPlaceBtn.setOnClickListener(new View.OnClickListener() {

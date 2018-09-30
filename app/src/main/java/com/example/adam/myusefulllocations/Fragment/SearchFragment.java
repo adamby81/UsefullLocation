@@ -43,8 +43,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
  */
 public class SearchFragment extends Fragment implements LocationListener {
 
-    // TODO: Customize parameter argument names
-    private static final String TAG = "SearchFragment";
     public static boolean fromSearchFrag;
 
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -125,7 +123,7 @@ public class SearchFragment extends Fragment implements LocationListener {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        if (item.getTitle() == "Share") {
+        if (item.getTitle() == getString(R.string.share)) {
 
             Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
             c.moveToFirst();
@@ -140,7 +138,7 @@ public class SearchFragment extends Fragment implements LocationListener {
 
             startActivity(Intent.createChooser(share,"Share Via"));
 
-        } else if (item.getTitle() == "Add To Favorites") {
+        } else if (item.getTitle() == getString(R.string.add_to_fav)) {
             Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
             c.moveToFirst();
 
@@ -154,7 +152,7 @@ public class SearchFragment extends Fragment implements LocationListener {
             PlaceOfInterest place = new PlaceOfInterest(address,latitude,longitude,name,image, distance);
             db.addPlaceFavorites(activity, place, Constants.TABLE_NAME_FAV);
 
-            Toast.makeText(activity, "Place added to your favorites", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.place_added_to_fav), Toast.LENGTH_SHORT).show();
         } else {
             return false;
         }
@@ -165,11 +163,11 @@ public class SearchFragment extends Fragment implements LocationListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             super.onCreateContextMenu(menu, v, menuInfo);
-            menu.setHeaderTitle("Select an Action");
+            menu.setHeaderTitle(getString(R.string.select_action));
 
-            menu.add(0, v.getId(), 0, "Share");
+            menu.add(0, v.getId(), 0, getString(R.string.share));
 
-            menu.add(0, v.getId(), 0, "Add To Favorites");
+            menu.add(0, v.getId(), 0, getString(R.string.add_to_fav));
 
     }
 
@@ -177,7 +175,7 @@ public class SearchFragment extends Fragment implements LocationListener {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_lv_search, container, false);
+        final View view = inflater.inflate(R.layout.fragment_search, container, false);
         activity = getActivity();
         dataPassListener = (DataPassListener) activity;
         db = new DatabaseHandler(getActivity(), Constants.DB_NAME, null, Constants.SEARCH_DB_VERSION);
@@ -482,7 +480,7 @@ public class SearchFragment extends Fragment implements LocationListener {
 
 
 
-        Toast.makeText(getContext(), "You Chose to look for: " + placeNameToast, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), getString(R.string.nearby_chsen_type) + placeNameToast, Toast.LENGTH_LONG).show();
 
 
         db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
