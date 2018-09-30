@@ -50,10 +50,10 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
     }
             //TODO - FINISH THE RADIUS CHOOSER!!
     protected String doInBackground(Void... urls) {
-
+        
         try {
             URL url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + this.currentLat + "," + this.currentLng +
-                    "&radius=10000&type=" + SearchFragment.type + "&key=" + API_KEY);
+                    "&radius=3000&type=" + SearchFragment.type + "&key=" + API_KEY);
             HttpsURLConnection myConnection
                     = (HttpsURLConnection) url.openConnection();
 

@@ -61,6 +61,7 @@ public class FavoritesLvActivity extends AppCompatActivity {
         }  else {
             return false;
         }
+
         return true;
     }
 
@@ -70,6 +71,7 @@ public class FavoritesLvActivity extends AppCompatActivity {
         menu.setHeaderTitle("Select an Action");
 
         menu.add(0, v.getId(), 0, "Share");
+
     }
 
     @Override

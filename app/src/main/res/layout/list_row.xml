@@ -31,7 +31,7 @@
 
             <TextView
                 android:id="@+id/address_title_row_search_ID"
-                android:layout_width="170dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:layout_below="@+id/name_row_search_ID"
@@ -40,7 +40,7 @@
 
             <TextView
                 android:id="@+id/address_Full_row_search_ID"
-                android:layout_width="170dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/address_title_row_search_ID"
                 android:paddingTop="5dp"
@@ -48,7 +48,7 @@
                 android:textSize="14sp" />
             <TextView
                 android:id="@+id/distance_row_search_ID"
-                android:layout_width="170dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
                 android:layout_below="@+id/address_Full_row_search_ID"

@@ -69,13 +69,13 @@
 
         <RadioGroup
             android:id="@+id/radius_GR_ID"
-            android:layout_below="@+id/title_settings_radius_POP_ID"
             android:layout_width="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_settings_radius_POP_ID"
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="40dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp">
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="20dp">
 
             <RadioButton
                 android:id="@+id/radius1000_GR_ID"
@@ -83,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/radius1_RADIO_BTN" />
+
             <RadioButton
                 android:id="@+id/radius2000_GR_ID"
                 android:layout_width="wrap_content"
@@ -96,12 +97,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/radius5_RADIO_BTN" />
+
             <RadioButton
                 android:id="@+id/radius10000_GR_ID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/radius10_RADIO_BTN" />
+
             <EditText
                 android:id="@+id/radius_choose_settings_ID"
                 android:layout_width="wrap_content"
@@ -109,6 +112,7 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="@string/set_radius_ET_HINT"
+                android:inputType="numberDecimal"
                 android:textSize="12sp" />
         </RadioGroup>
 

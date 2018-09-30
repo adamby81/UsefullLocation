@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.adam.myusefulllocations.Constant.Constants;
@@ -68,9 +70,10 @@ public class MainActivity extends AppCompatActivity implements
     public static RadioButton radius5000;
     public static RadioButton radius10000;
     public EditText radiusChoose;
+    public RadioGroup radiusGrup;
 
 
-    public static String nearbyRadius;
+    public static double nearbyRadius;
 
 
     public static SharedPreferences mPrefs;
@@ -84,14 +87,14 @@ public class MainActivity extends AppCompatActivity implements
     public LatLng latLng;
 
     public static LocationManager locationManager;
-       public static LocationListener locationListener;
+    public static LocationListener locationListener;
     private String name;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
             startListening();
 
@@ -99,19 +102,30 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public void startListening () {
+    public void startListening() {
 
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        }
+        } else {
 
+            AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setTitle("No GPS Service Identified");
+            alertDialogBuilder.setMessage("Nearby Search and other features will Not Work Properly !! ");
+            alertDialogBuilder.setPositiveButton("I Understand", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
+        }
     }
 
     public static void updateLocationInfo(Location location) {
-            latitude = (float) location.getLatitude();
-            longitude = (float) location.getLongitude();
+        latitude = (float) location.getLatitude();
+        longitude = (float) location.getLongitude();
     }
 
     @Override
@@ -157,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(this);
 
-        }else {
+        } else {
 
             startListening();
             frameLayoutSearch = findViewById(R.id.fragment_container_search);
@@ -182,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
 
-        }else {
+        } else {
 
         }
 
@@ -223,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                     != PackageManager.PERMISSION_GRANTED) {
-             return;
+                return;
             }
             startListening();
 
@@ -231,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements
         } else {
 
             if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this, new String[]
                         {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -240,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements
 
                 locationManager.requestLocationUpdates(LocationManager
                         .GPS_PROVIDER, 0, 0, locationListener);
-                Location location  = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (location != null) {
 
                     updateLocationInfo(location);
@@ -249,9 +263,9 @@ public class MainActivity extends AppCompatActivity implements
             }
 
         }
- }
+    }
 
-    private boolean loadFragment (Fragment fragment) {
+    private boolean loadFragment(Fragment fragment) {
 
         if (fragment != null) {
 
@@ -286,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.navigation_map_ID:
-               fragment = new MapsFragment();
+                fragment = new MapsFragment();
 
                 Bundle bundleMaps = new Bundle();
                 bundleMaps.putFloat("lat", latitude);
@@ -304,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
-            return loadFragment(fragment);
+        return loadFragment(fragment);
     }
 
     public void loadFavoritesActivity(MenuItem item) {
@@ -349,48 +363,7 @@ public class MainActivity extends AppCompatActivity implements
             radius5000 = view.findViewById(R.id.radius1000_GR_ID);
             radius10000 = view.findViewById(R.id.radius1000_GR_ID);
             radiusChoose = view.findViewById(R.id.radius_choose_settings_ID);
-
-            if (radius1000.isChecked()){
-                nearbyRadius = "1000";
-                radius2000.setChecked(false);
-                radius5000.setChecked(false);
-                radius10000.setChecked(false);
-
-            }
-            if (radius2000.isChecked()){
-                nearbyRadius = "2000";
-                radius1000.setChecked(false);
-                radius5000.setChecked(false);
-                radius10000.setChecked(false);
-
-            }
-            if (radius5000.isChecked()){
-                nearbyRadius = "5000";
-                radius2000.setChecked(false);
-                radius1000.setChecked(false);
-                radius10000.setChecked(false);
-
-            }
-            if (radius10000.isChecked()){
-                nearbyRadius = "10000";
-                radius2000.setChecked(false);
-                radius5000.setChecked(false);
-                radius1000.setChecked(false);
-
-            }
-//            if (radiusChoose.getText() != null){
-//                nearbyRadius = Integer.parseInt(radiusChoose.getText().toString());
-//                radius2000.setChecked(false);
-//                radius5000.setChecked(false);
-//                radius1000.setChecked(false);
-//                radius10000.setChecked(false);
-//
-//            }
-
-            editor.putString("radius", nearbyRadius);
-            editor.apply();
-            editor.commit();
-
+            radiusGrup = view.findViewById(R.id.radius_GR_ID);
 
 
             boolean isKM = mPrefs.getBoolean("isKM", true);
@@ -406,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements
                 isMilesSettings.isChecked();
             }
 
+
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -414,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements
 
                         SharedPreferences.Editor editor = mPrefs.edit();
                         editor.putBoolean("isKM", true);
+                        //nearbyRadius=2000;
                         editor.apply();
                         editor.commit();
 
@@ -433,14 +408,13 @@ public class MainActivity extends AppCompatActivity implements
                                     Toast.LENGTH_LONG).show();
                         }
                     }
-
-
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
 
                         }
                     }, 1000); // = 1 second
+                    Log.i("TAG", "nearby radius: " + nearbyRadius);
 
                     dialog.dismiss();
                 }
@@ -518,12 +492,14 @@ public class MainActivity extends AppCompatActivity implements
 
         if (!(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
 
+            startListening();
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container_main, myMapFragment).addToBackStack(null);
             fragmentTransaction.commit();
 
         } else {
 
+            startListening();
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container_map, myMapFragment).addToBackStack(null);
             fragmentTransaction.commit();

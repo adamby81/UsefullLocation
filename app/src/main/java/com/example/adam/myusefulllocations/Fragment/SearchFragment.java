@@ -20,9 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.adam.myusefulllocations.Activity.DataPassListener;
@@ -56,17 +54,13 @@ public class SearchFragment extends Fragment implements LocationListener {
     Activity activity;
     Location mLocation;
 
-    GridView gridView;
     public static String type;
     public String placeNameToast;
 
     LocationManager locationManager;
 
     public CursorAdapterSearch cursorAdapterSearch;
-    //    private String[] querySearchList;
     private ListView listViewSearch;
-//    RadioButton isKmSettings;
-//    RadioButton isMilesSettings;
     private DatabaseHandler db;
 
     private EditText search;
@@ -77,9 +71,7 @@ public class SearchFragment extends Fragment implements LocationListener {
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     DataPassListener dataPassListener;
-    // popup_welcome
 
-    private TextView aboutUs;
     private Button startUsingBtn;
 
 
@@ -120,11 +112,6 @@ public class SearchFragment extends Fragment implements LocationListener {
 
         fromSearchFrag = false;
 
-//        mLocation.getLatitude();
-//        mLocation.getLongitude();
-//        MainActivity.updateLocationInfo(mLocation);
-
-
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -137,7 +124,7 @@ public class SearchFragment extends Fragment implements LocationListener {
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        // Share location details through google maps
+
         if (item.getTitle() == "Share") {
 
             Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
@@ -165,7 +152,7 @@ public class SearchFragment extends Fragment implements LocationListener {
             String image = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE));
 
             PlaceOfInterest place = new PlaceOfInterest(address,latitude,longitude,name,image, distance);
-            db.addPlaceFavorites(activity, place, Constants.TABLE_NAME_FAV); //Add to the downloaded list table
+            db.addPlaceFavorites(activity, place, Constants.TABLE_NAME_FAV);
 
             Toast.makeText(activity, "Place added to your favorites", Toast.LENGTH_SHORT).show();
         } else {
@@ -195,14 +182,6 @@ public class SearchFragment extends Fragment implements LocationListener {
         dataPassListener = (DataPassListener) activity;
         db = new DatabaseHandler(getActivity(), Constants.DB_NAME, null, Constants.SEARCH_DB_VERSION);
 
-//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
-//        if (ContextCompat.checkSelfPermission(getContext(),
-//                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-//
-//            locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-//        }
-
-
         listViewSearch = view.findViewById(R.id.search_lv_holder_ID);
         searchByText = view.findViewById(R.id.search_lv_by_Text_ID);
         searchNearby = view.findViewById(R.id.search_lv_nearby_ID);
@@ -221,13 +200,12 @@ public class SearchFragment extends Fragment implements LocationListener {
         if (!global.isNetworkConnected()) {
             Toast.makeText(activity, R.string.off_line, Toast.LENGTH_SHORT).show();
 
-            // Online Mode
         } else {
 
             searchByText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // get current location function placed here
+
                     String textToSearch = search.getText().toString().trim().replace(" ", "%20");
 
                     if (!(textToSearch.length() <= 0)) {
@@ -262,10 +240,9 @@ public class SearchFragment extends Fragment implements LocationListener {
             public void onClick(View v) {
 
                 MainActivity.hideKeyboard(getActivity());
-                // GRID LAYOUT TESTING:
 
                 dialogBuilder = new AlertDialog.Builder(getContext());
-                View view = getLayoutInflater().inflate(R.layout.popup_nearby_grid_layout_test, null);
+                View view = getLayoutInflater().inflate(R.layout.popup_nearby, null);
 
                 CardView vAtmOnClick;
                 CardView vRestaurantOnClick;
@@ -479,92 +456,6 @@ public class SearchFragment extends Fragment implements LocationListener {
                         startSearch();
                     }
                 });
-
-
-
-
-
-                // GRID VIEW  - WORKING - CODE EXAMPLE
-//
-//
-//                dialogBuilder = new AlertDialog.Builder(getContext());
-//                View view = getLayoutInflater().inflate(R.layout.popup_nearby_type, null);
-//
-//                gridView = view.findViewById(R.id.grid_view_container_ID);
-//                gridView.setAdapter(new ImageNearbyAdapter(getContext()));
-//
-//                dialogBuilder.setView(view);
-//                dialog = dialogBuilder.create();
-//                dialog.show();
-//
-//                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                        switch (position) {
-//
-//                            case 0:
-//                                type = "gym";
-//                                placeNameToast = "GYMS";
-//                                break;
-//                            case 1:
-//                                type = "atm";
-//                                placeNameToast = "BANKS";
-//                                break;
-//                            case 2:
-//                                type = "gas_station";
-//                                placeNameToast = "GAS STATIONS";
-//                                break;
-//                            case 3:
-//                                type = "hospital";
-//                                placeNameToast = "HOSPITALS";
-//                                break;
-//                            case 4:
-//                                type = "pharmacy";
-//                                placeNameToast = "PHARMACY";
-//                                break;
-//                            case 5:
-//                                type = "supermarket";
-//                                placeNameToast = "SUPERMARKET";
-//                                break;
-//                            case 6:
-//                                type = "restaurant";
-//                                placeNameToast = "RESTAURANT";
-//                                break;
-//                            case 7:
-//                                type = "shopping_mall";
-//                                placeNameToast = "SHOPPING MALLS";
-//                                break;
-//                            case 8:
-//                                type = "movie_theater";
-//                                placeNameToast = "MOVIE THEATERS";
-//                                break;
-//                        }
-//                        Toast.makeText(getContext(), "You Chose to look for: " + placeNameToast, Toast.LENGTH_LONG).show();
-//
-//
-//                        db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
-//                        asyncTaskNearby = new AsyncTaskNearby();
-//                        try {
-//                            asyncTaskNearby.setContext(getActivity());
-//                            asyncTaskNearby.currentLat = MainActivity.latitude;
-//                            asyncTaskNearby.currentLng = MainActivity.longitude;
-//                            asyncTaskNearby.cursorAdapterSearch = cursorAdapterSearch;
-//                            asyncTaskNearby.execute();
-//
-//                        } catch (Exception e) {
-//                            Log.e(TAG, "onClick: " + e.getMessage());
-//                        }
-//
-//                        MainActivity.hideKeyboard(getActivity());
-//                        dialog.dismiss();
-//
-//                        cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
-//
-//
-//                    }
-//                });
-
             }
         });
 
@@ -610,7 +501,7 @@ public class SearchFragment extends Fragment implements LocationListener {
         dialog.dismiss();
 
         cursorAdapterSearch.swapCursor(db.getAllLocations(Constants.TABLE_NAME_SEARCH));
-        
+
     }
     @Override
     public void onLocationChanged(Location location) {

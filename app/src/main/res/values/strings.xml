@@ -4,7 +4,7 @@
     <string name="title_map">Map</string>
     <string name="title_favorites">Favorites</string>
     <string name="title_home">Home</string>
-    <string name="action_settings">Set KM or MILES</string>
+    <string name="action_settings">Settings</string>
     <string name="title_my_location">My Location</string>
     <string name="title_activity_maps_fragment">Map</string>
     <string name="usbCharge_Toast">USB Charger Plugged in</string>
@@ -53,7 +53,7 @@
     <string name="save">SAVE</string>
     <string name="settings_popup">No Changes Where Set</string>
     <string name="action_delete">Delete All List</string>
-    <string name="sure_text_delete_one_fav">You about to delete the following location from yout Favorites Location List !!</string>
+    <string name="sure_text_delete_one_fav">You about to delete this Place from your Favorites Location List !!</string>
     <string name="place_name_delete_one_fav">Place Name:</string>
     <string name="are_you_sure_delete_one_fav">ARE YOU SURE ?</string>
     <string name="off_line">Your app is running in Offline Mode</string>
