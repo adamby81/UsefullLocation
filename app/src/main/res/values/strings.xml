@@ -69,11 +69,11 @@
     <string name="select_action">Select an Action</string>
     <string name="title_popup_nearby_bank">Banks</string>
     <string name="radius_title">Choose the Radius for Searching Nearby:</string>
-    <string name="radius1_RADIO_BTN">1 km / ml</string>
-    <string name="radius2_RADIO_BTN">2 km / ml</string>
-    <string name="radius5_RADIO_BTN">5 km / ml</string>
-    <string name="radius10_RADIO_BTN">10 km / ml</string>
-    <string name="set_radius_ET_HINT">Enter Nearby Radius</string>
+    <string name="radius1_RADIO_BTN">1000</string>
+    <string name="radius2_RADIO_BTN">2000</string>
+    <string name="radius5_RADIO_BTN">5000</string>
+    <string name="radius10_RADIO_BTN">10000</string>
+    <string name="set_radius_ET_HINT">2000 = 2 ml</string>
     <string name="title_nearby_selection">CATEGORIES</string>
     <string name="atm">ATM</string>
     <string name="restaurant">Restaurant</string>
@@ -103,5 +103,6 @@
     <string name="no_gps_connection_worning">Nearby Search and other features will Not Work Properly !!</string>
     <string name="nearby_chsen_type">You Chose to look for:</string>
     <string name="place_added_to_fav">Place added to your favorites</string>
+    <string name="navigate">Navigate</string>
 
 </resources>

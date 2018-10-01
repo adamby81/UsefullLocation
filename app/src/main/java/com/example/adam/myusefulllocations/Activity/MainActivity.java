@@ -29,7 +29,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -47,6 +46,8 @@ import com.example.adam.myusefulllocations.Util.PowerConnectionReceiver;
 import com.google.android.gms.maps.model.LatLng;
 
 import static com.example.adam.myusefulllocations.Fragment.SearchFragment.MY_PREFS;
+import static com.example.adam.myusefulllocations.R.id.radius_GR_ID;
+import static com.example.adam.myusefulllocations.R.layout.popup_settings;
 
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener
@@ -68,11 +69,11 @@ public class MainActivity extends AppCompatActivity implements
     public static RadioButton radius2000;
     public static RadioButton radius5000;
     public static RadioButton radius10000;
-    public EditText radiusChoose;
-    public RadioGroup radiusGrup;
+    public static RadioGroup radiusGroup;
+    public static RadioButton radiusChoice;
 
 
-    public static double nearbyRadius;
+    public static String nearbyRadius;
 
 
     public static SharedPreferences mPrefs;
@@ -322,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void loadFavoritesActivity(MenuItem item) {
 
-        Intent intent = new Intent(MainActivity.this, FavoritesLvActivity.class);
+        Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
         startActivity(intent);
     }
 
@@ -341,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
             dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
-            View view = getLayoutInflater().inflate(R.layout.popup_settings, null);
+            final View view = getLayoutInflater().inflate(popup_settings, null);
 
             Button save = view.findViewById(R.id.saveBtn_POP_settings_ID);
 
@@ -355,14 +356,12 @@ public class MainActivity extends AppCompatActivity implements
 
             mPrefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
 
-            SharedPreferences.Editor editor = mPrefs.edit();
 
             radius1000 = view.findViewById(R.id.radius1000_GR_ID);
-            radius2000 = view.findViewById(R.id.radius1000_GR_ID);
-            radius5000 = view.findViewById(R.id.radius1000_GR_ID);
-            radius10000 = view.findViewById(R.id.radius1000_GR_ID);
-            radiusChoose = view.findViewById(R.id.radius_choose_settings_ID);
-            radiusGrup = view.findViewById(R.id.radius_GR_ID);
+            radius2000 = view.findViewById(R.id.radius2000_GR_ID);
+            radius5000 = view.findViewById(R.id.radius5000_GR_ID);
+            radius10000 = view.findViewById(R.id.radius10000_GR_ID);
+            radiusGroup = view.findViewById(radius_GR_ID);
 
 
             boolean isKM = mPrefs.getBoolean("isKM", true);
@@ -378,6 +377,36 @@ public class MainActivity extends AppCompatActivity implements
                 isMilesSettings.isChecked();
             }
 
+            String radiusPrefs = mPrefs.getString("radius", "2000");
+
+            switch (radiusPrefs) {
+                case "1000":
+                    radius1000.setChecked(true);
+                    radius2000.setChecked(false);
+                    radius5000.setChecked(false);
+                    radius10000.setChecked(false);
+                    break;
+                case "2000":
+                    radius1000.setChecked(false);
+                    radius2000.setChecked(true);
+                    radius5000.setChecked(false);
+                    radius10000.setChecked(false);
+                    break;
+                case "5000":
+                    radius1000.setChecked(false);
+                    radius2000.setChecked(false);
+                    radius5000.setChecked(true);
+                    radius10000.setChecked(false);
+                    break;
+                case "10000":
+                    radius1000.setChecked(false);
+                    radius2000.setChecked(false);
+                    radius5000.setChecked(false);
+                    radius10000.setChecked(true);
+                    break;
+
+            }
+
 
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -387,7 +416,6 @@ public class MainActivity extends AppCompatActivity implements
 
                         SharedPreferences.Editor editor = mPrefs.edit();
                         editor.putBoolean("isKM", true);
-                        //nearbyRadius=2000;
                         editor.apply();
                         editor.commit();
 
@@ -413,7 +441,6 @@ public class MainActivity extends AppCompatActivity implements
 
                         }
                     }, 1000); // = 1 second
-                  //  Log.i("TAG", "nearby radius: " + nearbyRadius);
 
                     dialog.dismiss();
                 }
@@ -508,5 +535,43 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onListFragmentInteraction(PlaceOfInterest item) {
 
+    }
+
+    public void onRadiusChooseClick(View view) {
+
+        int checked = radiusGroup.getCheckedRadioButtonId();
+
+        radiusChoice = findViewById(checked);
+
+        mPrefs = getSharedPreferences(MY_PREFS, 0);
+        SharedPreferences.Editor editor = mPrefs.edit();
+
+        switch(checked) {
+            case R.id.radius1000_GR_ID:
+                    nearbyRadius = "1000";
+                    editor.putString("radius", "1000");
+                editor.apply();
+                editor.commit();
+                break;
+            case R.id.radius2000_GR_ID:
+                    nearbyRadius = "2000";
+                editor.putString("radius", "2000");
+                editor.apply();
+                editor.commit();
+                    break;
+            case R.id.radius5000_GR_ID:
+                    nearbyRadius = "5000";
+                editor.putString("radius", "5000");
+                editor.apply();
+                editor.commit();
+                break;
+            case R.id.radius10000_GR_ID:
+                    nearbyRadius = "10000";
+                editor.putString("radius", "10000");
+                editor.apply();
+                editor.commit();
+
+                break;
+        }
     }
 }

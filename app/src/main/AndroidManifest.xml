@@ -54,7 +54,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".Activity.FavoritesLvActivity" />
+        <activity android:name=".Activity.FavoritesActivity" />
     </application>
 
 </manifest>

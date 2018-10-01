@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.example.adam.myusefulllocations.Activity.MainActivity;
 import com.example.adam.myusefulllocations.Constant.Constants;
 import com.example.adam.myusefulllocations.Data.DatabaseHandler;
 import com.example.adam.myusefulllocations.Fragment.SearchFragment;
@@ -48,12 +49,14 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
         db = new DatabaseHandler(this.context, Constants.DB_NAME,null, Constants.SEARCH_DB_VERSION);
 
     }
-            //TODO - FINISH THE RADIUS CHOOSER!!
+
+
+    //TODO - FINISH THE RADIUS CHOOSER!!
     protected String doInBackground(Void... urls) {
 
         try {
             URL url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + this.currentLat + "," + this.currentLng +
-                    "&radius=3000&type=" + SearchFragment.type + "&key=" + API_KEY);
+                    "&radius="+ MainActivity.nearbyRadius+"&type=" + SearchFragment.type + "&key=" + API_KEY);
             HttpsURLConnection myConnection
                     = (HttpsURLConnection) url.openConnection();
 
@@ -128,6 +131,7 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
                 return stringBuilder.toString();
             } finally {
                 myConnection.disconnect();
+                //Log.i("nearby", "nearby async task - radius - " + MainActivity.nearbyRadius);
             }
 
         } catch (Exception e) {

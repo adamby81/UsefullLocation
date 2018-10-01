@@ -297,7 +297,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "atm";
-                        placeNameToast = "ATM";
+                        placeNameToast = getString(R.string.atm);
                         startSearch();
                     }
                 });
@@ -305,7 +305,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "restaurant";
-                        placeNameToast = "Restaurant";
+                        placeNameToast = getString(R.string.restaurant);
                         startSearch();
                     }
                 });
@@ -313,7 +313,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "gym";
-                        placeNameToast = "Gym";
+                        placeNameToast = getString(R.string.gym);
                         startSearch();
                     }
                 });
@@ -321,7 +321,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "hospital";
-                        placeNameToast = "Hospital";
+                        placeNameToast = getString(R.string.hospital);
                         startSearch();
                     }
                 });
@@ -329,7 +329,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "pharmacy";
-                        placeNameToast = "Pharmacy";
+                        placeNameToast = getString(R.string.pharmacy);
                         startSearch();
                     }
                 });
@@ -337,7 +337,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "supermarket";
-                        placeNameToast = "Supermarket";
+                        placeNameToast = getString(R.string.supermarket);
                         startSearch();
                     }
                 });
@@ -345,7 +345,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "gas_station";
-                        placeNameToast = "Gas Station";
+                        placeNameToast = getString(R.string.gas);
                         startSearch();
                     }
                 });
@@ -353,7 +353,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "shopping_mall";
-                        placeNameToast = "Shopping Mall";
+                        placeNameToast = getString(R.string.mall);
                         startSearch();
                     }
                 });
@@ -361,7 +361,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "movie_theater";
-                        placeNameToast = "Movie Theater";
+                        placeNameToast = getString(R.string.movie);
                         startSearch();
                     }
                 });
@@ -369,7 +369,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "cafe";
-                        placeNameToast = "Cafe";
+                        placeNameToast = getString(R.string.cafe);
                         startSearch();
                     }
                 });
@@ -378,7 +378,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "bank";
-                        placeNameToast = "Bank";
+                        placeNameToast = getString(R.string.bank);
                         startSearch();
                     }
                 });
@@ -386,7 +386,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "beauty_salon";
-                        placeNameToast = "Beauty Salon";
+                        placeNameToast = getString(R.string.beauty_salon);
                         startSearch();
                     }
                 });
@@ -394,7 +394,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "bus_station";
-                        placeNameToast = "Bus Station";
+                        placeNameToast = getString(R.string.bus_station);
                         startSearch();
                     }
                 });
@@ -402,7 +402,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "bar";
-                        placeNameToast = "Bar";
+                        placeNameToast = getString(R.string.bar);
                         startSearch();
                     }
                 });
@@ -410,7 +410,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "campground";
-                        placeNameToast = "Campground";
+                        placeNameToast = getString(R.string.campground);
                         startSearch();
                     }
                 });
@@ -418,7 +418,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "police";
-                        placeNameToast = "Police";
+                        placeNameToast = getString(R.string.police);
                         startSearch();
                     }
                 });
@@ -426,7 +426,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "parking";
-                        placeNameToast = "Parking";
+                        placeNameToast = getString(R.string.parking);
                         startSearch();
                     }
                 });
@@ -434,7 +434,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "zoo";
-                        placeNameToast = "Zoo";
+                        placeNameToast = getString(R.string.zoo);
                         startSearch();
                     }
                 });
@@ -442,7 +442,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "fire_station";
-                        placeNameToast = "Fire Station";
+                        placeNameToast = getString(R.string.fire_station);
                         startSearch();
                     }
                 });
@@ -450,7 +450,7 @@ public class SearchFragment extends Fragment implements LocationListener {
                     @Override
                     public void onClick(View v) {
                         type = "synagogue";
-                        placeNameToast = "Synagogue";
+                        placeNameToast = getString(R.string.synagogue);
                         startSearch();
                     }
                 });
@@ -543,6 +543,8 @@ public class SearchFragment extends Fragment implements LocationListener {
                 mPrefs = getActivity().getSharedPreferences(MY_PREFS, 0);
                 SharedPreferences.Editor editor = mPrefs.edit();
                 editor.putBoolean("ifFirstTime", false);
+                editor.putString("radius", "2000");
+                MainActivity.nearbyRadius = "2000";
 
                 if (MainActivity.isKmSettings.isChecked()) {
 

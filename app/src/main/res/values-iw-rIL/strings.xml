@@ -19,7 +19,7 @@
     <string name="title_activity_maps">מפה</string>
     <string name="title_activity_maps_bbbb">מפה</string>
     <string name="newLocation">הוסף מיקום</string>
-    <string name="address_title">כתובת</string>
+    <string name="address_title">כתובת:</string>
     <string name="full_address_View">מדינה, עיר, רחוב</string>
     <string name="latitude">קו רוחב</string>
     <string name="longitude">קו אורך</string>
@@ -33,10 +33,10 @@
     <string name="search_hint">חיפוש</string>
     <string name="name">שם המקום:</string>
     <string name="distance_search_row">מרחק ממני:</string>
-    <string name="instructions_heading">הוסף מיקום חדש:</string>
+    <string name="instructions_heading">הוסף מיקום חדש</string>
     <string name="distance">מרחק ממני:</string>
     <string name="name_fav">שם:</string>
-    <string name="add_new_location">הוסף מיקום חדש:</string>
+    <string name="add_new_location">הוסף מיקום חדש</string>
     <string name="location">מקומות:</string>
     <string name="title_popup_welcome">ברוכים הבאים:</string>
     <string name="mile_km_title">באיזו יחידת מדידה אתם מעוניינים להשתמש?</string>
@@ -48,8 +48,8 @@
     <string name="about_us3_explain_search_View_ID">1. לחפש מיקום קרוב אליי או ע\"י מילים.</string>
     <string name="about_us4_explain_save_View_ID">2. לשמור מקום לרשימת חועדפים</string>
     <string name="about_us5_explain_functions_View_ID">3. לשתף מיקום או למחוק מיקום מהמועדפים</string>
-    <string name="searching">מחפש...</string>
-    <string name="searchingMessage">מחפש... אנא המתינו...</string>
+    <string name="searching">מחפש…</string>
+    <string name="searchingMessage">מחפש… אנא המתינו…</string>
     <string name="save">שמור</string>
     <string name="settings_popup">לא בוצעו שינויים</string>
     <string name="action_delete">מחק את כל הרשימה</string>
@@ -88,15 +88,16 @@
     <string name="synagogue">בית כנסת</string>
     <string name="no_gps_connection">אין חיבור ג\'י פי אס</string>
     <string name="no_gps_connection_worning">חיפוש ע\"י מיקום ואפשרויות נוספות עלולות ליצור בעיות!!</string>
-    <string name="nearby_chsen_type">בחרת לחפש:</string>
+    <string name="nearby_chsen_type">בחרת לחפש:  </string>
     <string name="place_added_to_fav">מיקום זה נוסף לרשימת המועדפים</string>
     <string name="understand">הבנתי</string>
     <string name="no_connection_message_offline">האפליקציה במצב לא מקוון</string>
     <string name="no_connection">אין חיבור אינטרנט</string>
     <string name="coffie">בית קפה</string>
     <string name="radius_title">הכנס רדיוס לחיפוש מקומות קרובים:</string>
-    <string name="radius1_RADIO_BTN">1 ק\"מ \\ מייל</string>
-    <string name="radius2_RADIO_BTN">2 ק\"מ \\ מייל</string>
-    <string name="radius5_RADIO_BTN">5 ק\"מ \\ מייל</string>
-    <string name="radius10_RADIO_BTN">10 ק\"מ \\ מייל</string>
+    <string name="radius1_RADIO_BTN">1000</string>
+    <string name="radius2_RADIO_BTN">2000</string>
+    <string name="radius5_RADIO_BTN">5000</string>
+    <string name="radius10_RADIO_BTN">10000</string>
+    <string name="set_radius_ET_HINT">2000 = 2 ק\"מ</string>
 </resources>
