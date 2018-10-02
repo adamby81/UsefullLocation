@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements
     MapsFragment myMapFragment;
 
     public static String address;
-    public static float latitude;
-    public static float longitude;
+    public static double latitude;
+    public static double longitude;
 
     private android.support.v7.app.AlertDialog.Builder dialogBuilder;
     private android.support.v7.app.AlertDialog dialog;
@@ -110,22 +110,25 @@ public class MainActivity extends AppCompatActivity implements
             locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         } else {
 
-            AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setTitle(getString(R.string.no_gps_connection));
-            alertDialogBuilder.setMessage(getString(R.string.no_gps_connection_worning));
-            alertDialogBuilder.setPositiveButton(getString(R.string.understand), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            AlertDialog alert = alertDialogBuilder.create();
-            alert.show();
+//            AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(MainActivity.this);
+//            alertDialogBuilder.setTitle(getString(R.string.no_gps_connection));
+//            alertDialogBuilder.setMessage(getString(R.string.no_gps_connection_worning));
+//            alertDialogBuilder.setPositiveButton(getString(R.string.understand), new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                }
+//            });
+//            AlertDialog alert = alertDialogBuilder.create();
+//            alert.show();
         }
     }
 
     public static void updateLocationInfo(Location location) {
-        latitude = (float) location.getLatitude();
-        longitude = (float) location.getLongitude();
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+
+        latitude = (float) lat;
+        longitude = (float) lng;
     }
 
     @Override
@@ -185,8 +188,8 @@ public class MainActivity extends AppCompatActivity implements
             fragmentTransaction.commit();
 
             Bundle bundleMapsAndSearch = new Bundle();
-            bundleMapsAndSearch.putFloat("lat", latitude);
-            bundleMapsAndSearch.putFloat("lng", longitude);
+            bundleMapsAndSearch.putDouble("lat", latitude);
+            bundleMapsAndSearch.putDouble("lng", longitude);
             bundleMapsAndSearch.putString("name", name);
 
             myMapFragment.setArguments(bundleMapsAndSearch);
@@ -239,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements
                     != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
+
             startListening();
 
 
@@ -267,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean loadFragment(Fragment fragment) {
 
+        startListening();
         if (fragment != null) {
 
 
@@ -292,8 +297,8 @@ public class MainActivity extends AppCompatActivity implements
                 fragment = new SearchFragment();
 
                 Bundle bundleSearch = new Bundle();
-                bundleSearch.putFloat("latitude", latitude);
-                bundleSearch.putFloat("longitude", longitude);
+                bundleSearch.putDouble("latitudeMap", latitude);
+                bundleSearch.putDouble("longitudeMap", longitude);
 
                 fragment.setArguments(bundleSearch);
 
@@ -303,8 +308,8 @@ public class MainActivity extends AppCompatActivity implements
                 fragment = new MapsFragment();
 
                 Bundle bundleMaps = new Bundle();
-                bundleMaps.putFloat("lat", latitude);
-                bundleMaps.putFloat("lng", longitude);
+                bundleMaps.putDouble("lat", latitude);
+                bundleMaps.putDouble("lng", longitude);
                 bundleMaps.putString("name", address);
 
                 fragment.setArguments(bundleMaps);
@@ -504,14 +509,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void passDataLocationToMap(float lat, float lng, String name) {
+    public void passDataLocationToMap(double lat, double lng, String name) {
 
          myMapFragment = new MapsFragment();
 
         Bundle bundleMaps = new Bundle();
 
-        bundleMaps.putFloat("lat", lat);
-        bundleMaps.putFloat("lng", lng);
+        bundleMaps.putDouble("lat", lat);
+        bundleMaps.putDouble("lng", lng);
         bundleMaps.putString("name", name);
 
         myMapFragment.setArguments(bundleMaps);

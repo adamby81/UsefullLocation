@@ -4,17 +4,17 @@ public class PlaceOfInterest {
 
     private int _id;
     private String address;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
     private String name;
     private String photoUrl;
-    private float distance;
+    private double distance;
 
 
     //TODO NEEDS TO CHANGE ALL DB AND LOCATION CLASSES ACCORDING THE NEW COLUMNS!!9חח
 
 
-    public PlaceOfInterest(String address, float latitude, float longitude, String name, String photoUrl, float distance) {
+    public PlaceOfInterest(String address, double latitude, double longitude, String name, String photoUrl, double distance) {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -34,7 +34,7 @@ public class PlaceOfInterest {
 
     }
 
-    public float getDistance() {
+    public double getDistance() {
         return distance;
     }
 
@@ -58,7 +58,7 @@ public class PlaceOfInterest {
         this.address = address;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
@@ -66,7 +66,7 @@ public class PlaceOfInterest {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 

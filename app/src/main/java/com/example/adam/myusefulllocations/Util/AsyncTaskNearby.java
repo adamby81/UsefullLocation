@@ -2,6 +2,7 @@ package com.example.adam.myusefulllocations.Util;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.example.adam.myusefulllocations.Activity.MainActivity;
@@ -24,9 +25,11 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
     private static final String TAG = "AsyncTaskNearby";
     private ProgressDialog progressDialog;
 
+    public SharedPreferences mPrefs;
     private Context context;
     private DatabaseHandler db;
-    public float currentLng, currentLat;
+    public double currentLng;
+    public double currentLat;
     public CursorAdapterSearch cursorAdapterSearch;
 
     private final String API_KEY = "AIzaSyCmEYpUa4JvvgEefYJnzTtISDhJzpES84M";
@@ -74,9 +77,9 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
                 String img = "";
                 String prefix = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
 
-                float lng;
-                float lat;
-                float distance;
+                double lng;
+                double lat;
+                double distance;
                 JSONObject jsonobject;
                 JSONObject geometry;
                 JSONObject viewport;
@@ -108,10 +111,10 @@ public class AsyncTaskNearby extends AsyncTask<Void, Void, String> {
                                 name = jsonobject.getString("name");
                                 address = jsonobject.getString("vicinity");
 
-                                lat = Float.valueOf(northeast.getString("lat"));
-                                lng = Float.valueOf(northeast.getString("lng"));
+                                lat = Double.parseDouble(northeast.getString("lat"));
+                                lng = Double.parseDouble(northeast.getString("lng"));
 
-                                distance = (float) distance(currentLat, currentLng, lat, lng);
+                                distance = distance(currentLat, currentLng, lat, lng);
                                 photos = jsonobject.getJSONArray("photos");
 
                                 for (int j = 0; j < photos.length(); j++) {

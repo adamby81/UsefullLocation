@@ -85,7 +85,7 @@ public class FavoritesActivity extends AppCompatActivity {
             Global global = new Global(FavoritesActivity.this);
 
             if (!global.isNetworkConnected()) {
-                //String url = "//www.waze.com/ul?ll="+latitude+"%2C"+longitude+"&navigate=yes&zoom=17";
+                //String url = "//www.waze.com/ul?ll="+latitudeMap+"%2C"+longitudeMap+"&navigate=yes&zoom=17";
                 //Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
                 URL url = null;
                 try {

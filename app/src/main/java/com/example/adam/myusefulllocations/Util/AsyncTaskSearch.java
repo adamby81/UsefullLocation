@@ -23,8 +23,8 @@ import javax.net.ssl.HttpsURLConnection;
 public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
 
     BufferedReader bufferedReader;
-    public float currentLat;
-    public float currentLng;
+    public double currentLat;
+    public double currentLng;
    public CursorAdapterSearch cursorAdapterSearch;
     FusedLocationProviderClient fusedLocationProviderClient;
     private String searchText = "";
@@ -97,9 +97,9 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                 String img = "";
                 String prefix = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400";
 
-                float lng;
-                float lat;
-                float distance;
+                double lng;
+                double lat;
+                double distance;
 
                 JSONObject jsonobject;
                 JSONObject geometry;
@@ -124,10 +124,10 @@ public class AsyncTaskSearch extends AsyncTask<Void, Void, String> {
                         name = jsonobject.getString("name");
                         address = jsonobject.getString("formatted_address");
 
-                        lat = Float.parseFloat(northeast.getString("lat"));
-                        lng = Float.parseFloat(northeast.getString("lng"));
+                        lat = Double.parseDouble(northeast.getString("lat"));
+                        lng = Double.parseDouble(northeast.getString("lng"));
 
-                        distance = (float) distance(currentLat, currentLng, lat, lng);
+                        distance = distance(currentLat, currentLng, lat, lng);
 
                         photos = jsonobject.getJSONArray("photos");
 

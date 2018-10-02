@@ -26,8 +26,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     private GoogleMap googleMap;
 
-    public float latitude;
-    public float longitude;
+    public double latitudeMap;
+    public double longitudeMap;
     public String name;
 
     private Context mContext;
@@ -41,14 +41,29 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            latitude = bundle.getFloat("lat", 0);
-            longitude = bundle.getFloat("lng", 0);
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+            }
+           // MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+//            double lastKnownLat = MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+//
+//            double lastKnownLng = MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+
+
+            latitudeMap = bundle.getDouble("lat",  0);
+            longitudeMap = bundle.getDouble("lng",  0);
             name = bundle.getString("name", null);
 
         }else {
 
-            latitude = MainActivity.latitude;
-            longitude = MainActivity.longitude;
+            latitudeMap = MainActivity.latitude;
+            longitudeMap = MainActivity.longitude;
 
         }
         MainActivity.hideKeyboard(getActivity());
@@ -67,7 +82,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 googleMap.setMyLocationEnabled(true);
 
 
-                myCurrentLocation = new LatLng(latitude, longitude);
+                myCurrentLocation = new LatLng(latitudeMap, longitudeMap);
                 titleName = name;
                 googleMap.addMarker(new MarkerOptions().position(myCurrentLocation).title(titleName));
 
@@ -125,7 +140,34 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap mMap) {
-        googleMap=mMap;
-    }
+        googleMap = mMap;
 
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+            }
+            // MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+//            double lastKnownLat = MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+//
+//            double lastKnownLng = MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+
+
+            latitudeMap = bundle.getDouble("lat", 0);
+            longitudeMap = bundle.getDouble("lng", 0);
+            name = bundle.getString("name", null);
+
+        } else {
+
+            latitudeMap = MainActivity.latitude;
+            longitudeMap = MainActivity.longitude;
+
+        }
+    }
 }

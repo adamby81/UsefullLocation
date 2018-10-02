@@ -1,14 +1,17 @@
 package com.example.adam.myusefulllocations.Fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -116,8 +119,6 @@ public class SearchFragment extends Fragment implements LocationListener {
     }
 
 
-
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
 
@@ -134,9 +135,9 @@ public class SearchFragment extends Fragment implements LocationListener {
             Intent share = new Intent(Intent.ACTION_SEND);
             share.setType("text/plain");
             share.putExtra(Intent.EXTRA_SUBJECT, name);
-            share.putExtra(Intent.EXTRA_TEXT,"https://www.google.com/maps/search/?api=1&query="+latitude+","+longitude);
+            share.putExtra(Intent.EXTRA_TEXT, "https://www.google.com/maps/search/?api=1&query=" + latitude + "," + longitude);
 
-            startActivity(Intent.createChooser(share,"Share Via"));
+            startActivity(Intent.createChooser(share, "Share Via"));
 
         } else if (item.getTitle() == getString(R.string.add_to_fav)) {
             Cursor c = db.getPlaceSearch(Constants.TABLE_NAME_SEARCH, (int) info.id);
@@ -149,7 +150,7 @@ public class SearchFragment extends Fragment implements LocationListener {
             float longitude = c.getFloat(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
             String image = c.getString(c.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE));
 
-            PlaceOfInterest place = new PlaceOfInterest(address,latitude,longitude,name,image, distance);
+            PlaceOfInterest place = new PlaceOfInterest(address, latitude, longitude, name, image, distance);
             db.addPlaceFavorites(activity, place, Constants.TABLE_NAME_FAV);
 
             Toast.makeText(activity, getString(R.string.place_added_to_fav), Toast.LENGTH_SHORT).show();
@@ -162,12 +163,12 @@ public class SearchFragment extends Fragment implements LocationListener {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            super.onCreateContextMenu(menu, v, menuInfo);
-            menu.setHeaderTitle(getString(R.string.select_action));
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle(getString(R.string.select_action));
 
-            menu.add(0, v.getId(), 0, getString(R.string.share));
+        menu.add(0, v.getId(), 0, getString(R.string.share));
 
-            menu.add(0, v.getId(), 0, getString(R.string.add_to_fav));
+        menu.add(0, v.getId(), 0, getString(R.string.add_to_fav));
 
     }
 
@@ -238,6 +239,24 @@ public class SearchFragment extends Fragment implements LocationListener {
             public void onClick(View v) {
 
                 MainActivity.hideKeyboard(getActivity());
+
+                mPrefs = getActivity().getSharedPreferences(MY_PREFS, 0);
+
+                MainActivity.nearbyRadius = mPrefs.getString("radius", "2000");
+
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+
+                MainActivity.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
 
                 dialogBuilder = new AlertDialog.Builder(getContext());
                 View view = getLayoutInflater().inflate(R.layout.popup_nearby, null);
@@ -464,8 +483,8 @@ public class SearchFragment extends Fragment implements LocationListener {
 
                 fromSearchFrag = true;
                 cursor = (Cursor) parent.getAdapter().getItem(position);
-                float lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
-                float lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
+                double lat = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LATITUDE));
+                double lng = cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_LONGITUDE));
                 String name = cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_NAME));
 
                 dataPassListener.passDataLocationToMap(lat, lng, name);
@@ -485,6 +504,7 @@ public class SearchFragment extends Fragment implements LocationListener {
 
         db.deleteSearchLocationTable(Constants.TABLE_NAME_SEARCH);
         asyncTaskNearby = new AsyncTaskNearby();
+
         try {
             asyncTaskNearby.setContext(getActivity());
             asyncTaskNearby.currentLat = MainActivity.latitude;

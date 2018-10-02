@@ -1,5 +1,6 @@
 package com.example.adam.myusefulllocations.Util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -32,6 +33,7 @@ public class CursorAdapterSearch extends CursorAdapter {
         return LayoutInflater.from(context).inflate(R.layout.list_row, parent, false);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final SharedPreferences sharedpreferences = context.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -51,9 +53,9 @@ public class CursorAdapterSearch extends CursorAdapter {
         }
 
         else {
-            float distance = Float.valueOf(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE)));
+            double distance = Double.valueOf(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_DISTANCE)));
             distance *= 0.62137;
-            placeDistance.setText(Float.toString(distance).concat(" ml"));
+            placeDistance.setText(Double.toString(distance).concat(" ml"));
         }
 
         Picasso.get().load(cursor.getString(cursor.getColumnIndex(Constants.KEY_SEARCH_LOCATION_IMAGE))).into(placeImage);
